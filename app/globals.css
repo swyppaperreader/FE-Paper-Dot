@@ -90,8 +90,8 @@
   --color-info-rgb: 98, 108, 113;
 
   /* Typography */
-  --font-family-base: "FKGroteskNeue", "Geist", "Inter", -apple-system,
-    BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-family-base: var(--font-roboto), "Roboto", -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-family-mono: "Berkeley Mono", ui-monospace, SFMono-Regular, Menlo,
     Monaco, Consolas, monospace;
   --font-size-xs: 11px;
@@ -778,7 +778,7 @@ select.form-control {
 @import "tailwindcss";
 
 :root {
-  --font-inter: var(--font-family-base);
+  --font-roboto: var(--font-family-base);
   --primary-color: var(--color-primary);
   --text-dark: var(--color-text);
   --text-light: var(--color-text-secondary);
