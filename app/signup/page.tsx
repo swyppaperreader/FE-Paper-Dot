@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import Navigation from '../components/Navigation';
 
 export default function SignupPage() {
   const [email, setEmail] = useState('');
@@ -18,9 +17,12 @@ export default function SignupPage() {
     password?: string;
     confirmPassword?: string;
   }>({});
+  const [currentVerificationCode, setCurrentVerificationCode] = useState<string>('');
 
-  // 데모용 인증번호 (실제로는 서버에서 생성)
-  const DEMO_VERIFICATION_CODE = '123456';
+  // 랜덤 6자리 숫자 생성
+  const generateVerificationCode = (): string => {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+  };
 
   const handleSendVerificationCode = () => {
     if (!email) {
@@ -28,17 +30,20 @@ export default function SignupPage() {
       return;
     }
 
-    // 이메일 형식 검증
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setErrors({ email: '올바른 이메일 형식이 아닙니다.' });
       return;
     }
 
-    // 데모: 인증번호 전송 시뮬레이션
+    // 새로운 인증번호 생성
+    const newCode = generateVerificationCode();
+    setCurrentVerificationCode(newCode);
     setIsCodeSent(true);
     setErrors({});
-    alert(`인증번호가 전송되었습니다.\n데모 인증번호: ${DEMO_VERIFICATION_CODE}`);
+
+    // 팝업으로 인증번호 표시
+    alert(`인증번호가 전송되었습니다.\n\n인증번호: ${newCode}`);
   };
 
   const handleVerifyCode = () => {
@@ -47,8 +52,7 @@ export default function SignupPage() {
       return;
     }
 
-    // 데모: 인증번호 검증
-    if (verificationCode === DEMO_VERIFICATION_CODE) {
+    if (verificationCode === currentVerificationCode) {
       setIsCodeVerified(true);
       setErrors({});
       alert('인증번호가 확인되었습니다.');
@@ -66,22 +70,18 @@ export default function SignupPage() {
       confirmPassword?: string;
     } = {};
 
-    // 이메일 검증
     if (!email) {
       newErrors.email = '이메일을 입력해주세요.';
     }
 
-    // 인증번호 검증
     if (!isCodeVerified) {
       newErrors.verificationCode = '인증번호를 확인해주세요.';
     }
 
-    // 비밀번호 검증
     if (password.length < 8) {
       newErrors.password = '비밀번호는 8자 이상이어야 합니다.';
     }
 
-    // 비밀번호 확인 검증
     if (password !== confirmPassword) {
       newErrors.confirmPassword = '비밀번호가 일치하지 않습니다.';
     }
@@ -91,15 +91,27 @@ export default function SignupPage() {
       return;
     }
 
-    // 회원가입 로직 구현
+    if (!agreed) {
+      alert('이용약관에 동의해주세요.');
+      return;
+    }
+
     console.log('Signup:', { email, password });
     alert('회원가입이 완료되었습니다!');
   };
 
   return (
     <div className="min-h-screen bg-[#F2F4F6]">
-      <Navigation />
-      <div className="flex items-center justify-center min-h-[calc(100vh-80px)] pt-32 pb-20 px-6 sm:px-10">
+      {/* Simple Header */}
+      <header className="bg-white shadow-sm fixed top-0 left-0 right-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <Link href="/" className="text-2xl font-bold text-[#558AF0] hover:text-[#1D4084] transition-colors">
+            Paperdot.
+          </Link>
+        </div>
+      </header>
+
+      <div className="flex items-center justify-center min-h-screen pt-24 pb-20 px-6 sm:px-10">
         <div className="w-full max-w-md">
           <div className="bg-white rounded-2xl shadow-xl p-8 md:p-10">
             {/* Header */}
@@ -131,13 +143,11 @@ export default function SignupPage() {
                       setEmail(e.target.value);
                       setErrors({ ...errors, email: undefined });
                     }}
-                    required
                     disabled={isCodeVerified}
-                    className={`flex-1 px-4 py-3 border-2 rounded-lg focus:outline-none transition-colors duration-300 text-[#1A1A1A] text-base ${
-                      errors.email
-                        ? 'border-red-500'
-                        : 'border-[#E1E1E1] focus:border-[#558AF0]'
-                    } ${isCodeVerified ? 'bg-gray-100' : ''}`}
+                    className={`flex-1 px-4 py-3 border-2 rounded-lg focus:outline-none transition-colors duration-300 text-[#1A1A1A] text-base ${errors.email
+                      ? 'border-red-500'
+                      : 'border-[#E1E1E1] focus:border-[#558AF0]'
+                      } ${isCodeVerified ? 'bg-gray-100' : ''}`}
                     placeholder="your@email.com"
                   />
                   <button
@@ -172,14 +182,12 @@ export default function SignupPage() {
                         setVerificationCode(e.target.value);
                         setErrors({ ...errors, verificationCode: undefined });
                       }}
-                      required
                       disabled={isCodeVerified}
                       maxLength={6}
-                      className={`flex-1 px-4 py-3 border-2 rounded-lg focus:outline-none transition-colors duration-300 text-[#1A1A1A] text-base ${
-                        errors.verificationCode
-                          ? 'border-red-500'
-                          : 'border-[#E1E1E1] focus:border-[#558AF0]'
-                      } ${isCodeVerified ? 'bg-gray-100' : ''}`}
+                      className={`flex-1 px-4 py-3 border-2 rounded-lg focus:outline-none transition-colors duration-300 text-[#1A1A1A] text-base ${errors.verificationCode
+                        ? 'border-red-500'
+                        : 'border-[#E1E1E1] focus:border-[#558AF0]'
+                        } ${isCodeVerified ? 'bg-gray-100' : ''}`}
                       placeholder="인증번호 6자리 입력"
                     />
                     <button
@@ -203,7 +211,7 @@ export default function SignupPage() {
                   )}
                   {isCodeSent && !isCodeVerified && (
                     <p className="mt-2 text-xs text-[#737A82]">
-                      데모 인증번호: {DEMO_VERIFICATION_CODE}
+                      팝업 창에서 확인한 인증번호를 입력해주세요.
                     </p>
                   )}
                 </div>
@@ -225,13 +233,11 @@ export default function SignupPage() {
                     setPassword(e.target.value);
                     setErrors({ ...errors, password: undefined });
                   }}
-                  required
                   minLength={8}
-                  className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-colors duration-300 text-[#1A1A1A] text-base ${
-                    errors.password
-                      ? 'border-red-500'
-                      : 'border-[#E1E1E1] focus:border-[#558AF0]'
-                  }`}
+                  className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-colors duration-300 text-[#1A1A1A] text-base ${errors.password
+                    ? 'border-red-500'
+                    : 'border-[#E1E1E1] focus:border-[#558AF0]'
+                    }`}
                   placeholder="8자 이상 입력해주세요"
                 />
                 {errors.password ? (
@@ -259,12 +265,10 @@ export default function SignupPage() {
                     setConfirmPassword(e.target.value);
                     setErrors({ ...errors, confirmPassword: undefined });
                   }}
-                  required
-                  className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-colors duration-300 text-[#1A1A1A] text-base ${
-                    errors.confirmPassword
-                      ? 'border-red-500'
-                      : 'border-[#E1E1E1] focus:border-[#558AF0]'
-                  }`}
+                  className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-colors duration-300 text-[#1A1A1A] text-base ${errors.confirmPassword
+                    ? 'border-red-500'
+                    : 'border-[#E1E1E1] focus:border-[#558AF0]'
+                    }`}
                   placeholder="비밀번호를 다시 입력해주세요"
                 />
                 {errors.confirmPassword && (
@@ -281,7 +285,6 @@ export default function SignupPage() {
                     type="checkbox"
                     checked={agreed}
                     onChange={(e) => setAgreed(e.target.checked)}
-                    required
                     className="mt-1 w-4 h-4 text-[#558AF0] border-[#E1E1E1] rounded focus:ring-[#558AF0]"
                   />
                   <span className="ml-2 text-sm text-[#737A82] leading-[1.8]">
@@ -306,7 +309,7 @@ export default function SignupPage() {
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={!isCodeVerified}
+                disabled={!isCodeVerified || !agreed}
                 className="w-full bg-[#558AF0] text-white py-3 rounded-lg font-semibold hover:bg-[#1D4084] transition-all duration-300 hover:scale-[1.02] shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
                 회원가입
