@@ -1,0 +1,341 @@
+/* ========== 전체 섹션 ========== */
+.section {
+  background-color: #f8f9fa;
+  padding: 80px 40px;
+  min-height: auto;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ========== 헤더 섹션 ========== */
+.header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.mainTitle {
+  font-size: 36px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 12px 0;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: #666;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* ========== 스텝 진행 인디케이터 ========== */
+.stepIndicator {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 60px;
+  padding: 0 20px;
+}
+
+.indicatorWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+/* 굵은 검은 점 */
+.indicatorDot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: #1a1a1a;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* 라벨 */
+.indicatorLabel {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-top: 12px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+/* 점선 */
+.indicatorLine {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  border-top: 2px dashed #d1d5db;
+  z-index: 1;
+}
+
+/* ========== 이미지 행 (위에 가로 배치) ========== */
+.imagesRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  /* ← 텍스트와 동일 */
+  gap: 24px;
+  /* ← 텍스트와 동일 */
+  margin-bottom: 60px;
+}
+
+.imageWrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+}
+
+/* ========== 이미지 영역 (높이 조정됨) ========== */
+.stepImage {
+  background: linear-gradient(135deg, #e8f0ff 0%, #f0f4fa 100%);
+  padding: 40px 30px;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  flex: 1;
+  /* ← 변경: 0 1 300px → 1 */
+  width: 100%;
+  /* ← 추가: 그리드 셀의 100% 사용 */
+}
+
+.imagePlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconArea {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.iconCircle {
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(135deg, #558af0 0%, #3b6fbf 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.25;
+}
+
+.icon {
+  font-size: 50px;
+  display: block;
+}
+
+/* ========== 설명 행 (아래 세로 배치) ========== */
+.descriptionsRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 0;
+}
+
+/* ========== 설명 카드 ========== */
+.descriptionCard {
+  background: white;
+  border-radius: 8px;
+  padding: 24px 20px;
+  border: 1px solid #e5e7eb;
+  text-align: center;
+  transition: all 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.descriptionCard:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: #558af0;
+}
+
+/* 스텝 제목 */
+.stepTitle {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 12px 0;
+}
+
+/* 스텝 설명 */
+.stepDescription {
+  font-size: 13px;
+  color: #000000;
+  margin: 0;
+  line-height: 1.6;
+  word-break: keep-all;
+}
+
+/* ========== 반응형 ========== */
+@media (max-width: 1024px) {
+  .imagesRow {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 60px;
+  }
+
+  .stepImage {
+    background: linear-gradient(135deg, #e8f0ff 0%, #f0f4fa 100%);
+    padding: 40px 30px;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    flex: 1;
+    width: 100%;
+  }
+
+  .connectorLine {
+    display: none;
+  }
+
+
+  .descriptionsRow {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 40px 20px;
+  }
+
+  .container {
+    max-width: 100%;
+  }
+
+  .mainTitle {
+    font-size: 28px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+  }
+
+  /* Step Indicator 반응형 */
+  .stepIndicator {
+    padding: 0 10px;
+    margin-bottom: 40px;
+  }
+
+  .indicatorLabel {
+    font-size: 11px;
+    margin-top: 8px;
+  }
+
+  .indicatorDot {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* 이미지 행 반응형 */
+  .imagesRow {
+    flex-direction: column;
+    align-items: stretch;
+    margin-bottom: 40px;
+  }
+
+  .imageWrapper {
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .stepImage {
+    flex: 1;
+    min-height: 160px;
+    padding: 30px 20px;
+  }
+
+  .connectorLine {
+    display: none;
+  }
+
+  .iconCircle {
+    width: 80px;
+    height: 80px;
+  }
+
+  .icon {
+    font-size: 40px;
+  }
+
+  /* 설명 행 반응형 */
+  .descriptionsRow {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .stepTitle {
+    font-size: 14px;
+  }
+
+  .stepDescription {
+    font-size: 12px;
+  }
+
+  .descriptionCard {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .section {
+    padding: 30px 16px;
+  }
+
+  .header {
+    margin-bottom: 40px;
+  }
+
+  .mainTitle {
+    font-size: 24px;
+  }
+
+  .stepIndicator {
+    margin-bottom: 30px;
+  }
+
+  .indicatorLabel {
+    font-size: 10px;
+  }
+
+  .stepImage {
+    flex: 1;
+    /* ← 모든 공간을 균등하게 사용 */
+    max-width: 400px;
+    /* ← 최대 너비 제한 */
+    min-width: 280px;
+    /* ← 최소 너비 제한 */
+  }
+
+
+  .iconCircle {
+    width: 70px;
+    height: 70px;
+  }
+
+  .icon {
+    font-size: 35px;
+  }
+}

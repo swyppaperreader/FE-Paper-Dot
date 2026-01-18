@@ -1,0 +1,142 @@
+/* 전체 footer */
+.footer {
+  background-color: white;
+  border-top: 1px solid #e5e7eb;
+  padding: 32px 24px;
+}
+
+/* 컨테이너 */
+.container {
+  max-width: 80rem; /* max-w-7xl */
+  margin: 0 auto;
+}
+
+/* 로고 섹션 */
+.logoSection {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.logoBadge {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.logoText {
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
+}
+
+.companyName {
+  font-weight: bold;
+  color: #111827;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+}
+
+/* 콘텐츠 섹션 */
+.contentSection {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* 링크 그룹 */
+.linkGroup {
+  display: flex;
+  gap: 24px;
+  order: 1;
+}
+
+.link {
+  color: #6b7280;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 200ms ease;
+}
+
+.link:hover {
+  color: #111827;
+}
+
+.divider {
+  display: none;
+  color: #d1d5db;
+}
+
+/* Copyright 섹션 */
+.copyrightSection {
+  text-align: center;
+  order: 3;
+}
+
+.copyright {
+  margin: 0;
+  color: #9ca3af;
+  font-size: 12px;
+}
+
+/* 이메일 섹션 */
+.emailSection {
+  text-align: left;
+  order: 2;
+}
+
+.email {
+  color: #6b7280;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 200ms ease;
+  word-break: break-all;
+}
+
+.email:hover {
+  color: #111827;
+}
+
+/* 📱 반응형: sm (640px 이상) */
+@media (min-width: 640px) {
+  .contentSection {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .linkGroup {
+    gap: 16px;
+    order: 1;
+  }
+
+  .divider {
+    display: inline;
+  }
+
+  .copyrightSection {
+    order: 2;
+  }
+
+  .emailSection {
+    order: 3;
+    text-align: right;
+  }
+
+  .email {
+    word-break: normal;
+  }
+
+  .copyright {
+    font-size: 14px;
+  }
+}

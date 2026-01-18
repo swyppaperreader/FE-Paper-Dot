@@ -4,7 +4,7 @@ import TranslationFeature from './components/TranslationFeature';
 import FeatureTabs from './components/FeatureTabs';
 import CheckSection from './components/CheckSection';
 import HowToUse from './components/HowToUse';
-import ReadingTools from './components/ReadingTools';
+
 import Footer from './components/Footer';
 
 export default function Home() {
@@ -16,7 +16,7 @@ export default function Home() {
       <FeatureTabs />
       <CheckSection />
       <HowToUse />
-      <ReadingTools />
+
       <Footer />
     </main>
   );
