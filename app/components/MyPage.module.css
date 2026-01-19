@@ -1,0 +1,483 @@
+/* components/MyPage.module.css */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap');
+
+/* 컨테이너 */
+.container {
+  min-height: 100vh;
+  background-color: #F2F4F6;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* 헤더 스타일 - 회색 띠 형태 */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #E5E5E5;
+  z-index: 50;
+  border-bottom: 1px solid #d1d5db;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  padding: 0 40px;
+  gap: 40px;
+}
+
+.headerLeft {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.serviceName {
+  background-color: white;
+  color: #1A1A1A;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: 'Roboto', sans-serif;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.headerCenter {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.headerRight {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.headerButton {
+  background-color: white;
+  color: #1A1A1A;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: 'Roboto', sans-serif;
+  cursor: pointer;
+  transition: all 300ms;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  white-space: nowrap;
+}
+
+.headerButton:hover {
+  background-color: #f9fafb;
+}
+
+.contentWrapper {
+  display: flex;
+  min-height: calc(100vh - 80px);
+  padding-top: 100px;
+  padding-bottom: 40px;
+  padding-left: 40px;
+  padding-right: 40px;
+  gap: 40px;
+}
+
+/* 왼쪽 사이드바 - 고정 너비 */
+.sidebar {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tabButton {
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 300ms;
+  text-align: left;
+  border: none;
+  font-family: 'Roboto', sans-serif;
+}
+
+.tabButtonInactive {
+  background-color: white;
+  border: 1px solid #E1E1E1;
+  color: #1A1A1A;
+}
+
+.tabButtonInactive:hover {
+  background-color: #f9f9f9;
+}
+
+.tabButtonActive {
+  background-color: #558AF0;
+  color: white;
+}
+
+/* 오른쪽 콘텐츠 영역 */
+.contentArea {
+  flex: 1;
+  max-width: 900px;
+}
+
+.contentBox {
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+}
+
+/* 섹션 */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+}
+
+/* 프로필 영역 */
+.profileSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-bottom: 40px;
+  margin-bottom: 40px;
+  border-bottom: 1px solid #E1E1E1;
+}
+
+.profileSectionNoBorder {
+  border-bottom: none;
+  padding-bottom: 24px;
+  margin-bottom: 24px;
+}
+
+/* 프로필과 로그아웃 버튼을 함께 배치 */
+.profileWithLogout {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding-bottom: 40px;
+  margin-bottom: 40px;
+  border-bottom: 1px solid #E1E1E1;
+}
+
+.profileWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex: 1;
+}
+
+.profileImage {
+  width: 100px;
+  height: 100px;
+  background-color: #d1d5db;
+  border-radius: 50%;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #737A82;
+  font-size: 14px;
+  font-family: 'Roboto', sans-serif;
+}
+
+.profileName {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin-bottom: 8px;
+  font-family: 'Roboto', sans-serif;
+}
+
+.profileJoinDate {
+  color: #737A82;
+  font-size: 14px;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* 카드 그룹 */
+.cardGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.card {
+  padding: 20px;
+  border: 1px solid #E1E1E1;
+  border-radius: 10px;
+  transition: background-color 300ms;
+  cursor: pointer;
+}
+
+.card:hover {
+  background-color: #f9f9f9;
+}
+
+.cardTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1A1A1A;
+  font-family: 'Roboto', sans-serif;
+}
+
+.cardDescription {
+  color: #737A82;
+  margin-top: 6px;
+  font-size: 14px;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* 입력 필드 */
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.inputLabel {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1A1A1A;
+  font-family: 'Roboto', sans-serif;
+}
+
+.labelNumber {
+  color: #558AF0;
+  margin-right: 6px;
+  font-weight: 700;
+}
+
+.input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #E1E1E1;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #1A1A1A;
+  transition: border-color 300ms;
+  font-family: 'Roboto', sans-serif;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #558AF0;
+  box-shadow: 0 0 0 3px rgba(85, 138, 240, 0.1);
+}
+
+.inputDisabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+  color: #999;
+}
+
+/* 카카오 로그인 버튼 */
+.kakaoButton {
+  width: 100%;
+  padding: 12px 16px;
+  background-color: white;
+  color: #1A1A1A;
+  border: 1px solid #E1E1E1;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 300ms;
+  font-family: 'Roboto', sans-serif;
+  text-align: left;
+}
+
+.kakaoButton:hover {
+  background-color: #f9f9f9;
+}
+
+/* 버튼 그룹 */
+.buttonRow {
+  display: flex;
+  gap: 12px;
+  padding-top: 20px;
+}
+
+.saveButton {
+  flex: 1;
+  padding: 12px 16px;
+  background-color: #558AF0;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 300ms;
+  font-family: 'Roboto', sans-serif;
+}
+
+.saveButton:hover {
+  background-color: #1D4084;
+}
+
+.cancelButton {
+  flex: 1;
+  padding: 12px 16px;
+  background-color: white;
+  color: #1A1A1A;
+  border: 1px solid #E1E1E1;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 300ms;
+  font-family: 'Roboto', sans-serif;
+}
+
+.cancelButton:hover {
+  background-color: #f9f9f9;
+}
+
+/* 로그아웃 컨테이너 - 오른쪽 상단 정렬 */
+.logoutContainer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 20px;
+  margin-top: auto;
+}
+
+.logoutButton {
+  padding: 12px 16px;
+  background-color: white;
+  color: #1A1A1A;
+  border: 1px solid #E1E1E1;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 300ms;
+  font-family: 'Roboto', sans-serif;
+}
+
+.logoutButton:hover {
+  background-color: #f9f9f9;
+}
+
+/* 회원탈퇴 버튼 */
+.deleteAccountContainer {
+  display: flex;
+  justify-content: center;
+  padding-top: 20px;
+}
+
+.deleteAccountButton {
+  padding: 12px 24px;
+  background-color: white;
+  color: #dc2626;
+  border: 1px solid #dc2626;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 300ms;
+  font-family: 'Roboto', sans-serif;
+}
+
+.deleteAccountButton:hover {
+  background-color: #fef2f2;
+  border-color: #b91c1c;
+}
+
+/* 반응형 - 태블릿 */
+@media (max-width: 1024px) {
+  .contentWrapper {
+    flex-direction: column;
+    gap: 30px;
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+
+  .sidebar {
+    width: 100%;
+  }
+
+  .buttonGroup {
+    flex-direction: row;
+    gap: 12px;
+  }
+
+  .tabButton {
+    flex: 1;
+  }
+
+  .contentBox {
+    padding: 30px;
+  }
+}
+
+/* 반응형 - 모바일 */
+@media (max-width: 640px) {
+  .contentWrapper {
+    flex-direction: column;
+    gap: 20px;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 16px;
+  }
+
+  .sidebar {
+    width: 100%;
+  }
+
+  .buttonGroup {
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  .tabButton {
+    flex: 1;
+    padding: 12px 12px;
+    font-size: 13px;
+  }
+
+  .contentBox {
+    padding: 20px;
+  }
+
+  .profileImage {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 16px;
+  }
+
+  .profileName {
+    font-size: 24px;
+  }
+
+  .profileSection {
+    padding-bottom: 24px;
+    margin-bottom: 24px;
+  }
+
+  .cardGroup {
+    margin-bottom: 24px;
+  }
+
+  .inputGroup {
+    margin-bottom: 20px;
+  }
+}
