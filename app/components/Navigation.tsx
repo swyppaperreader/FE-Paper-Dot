@@ -67,11 +67,10 @@ export default function Navigation() {
               <div key={section.id} className="flex items-center">
                 <button
                   onClick={() => scrollToSection(section.id)}
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all duration-300 ${
-                    activeSection === section.id
+                  className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all duration-300 ${activeSection === section.id
                       ? 'bg-[#558AF0] text-white scale-110'
                       : 'bg-[#F0F4FA] text-[#737A82] hover:bg-[#DEE3EB] hover:scale-105'
-                  }`}
+                    }`}
                   aria-label={`Go to section ${section.label}`}
                 >
                   {section.label}
@@ -138,11 +137,10 @@ export default function Navigation() {
                 <button
                   key={section.id}
                   onClick={() => scrollToSection(section.id)}
-                  className={`text-left px-4 py-2 rounded-lg transition-colors duration-300 ${
-                    activeSection === section.id
+                  className={`text-left px-4 py-2 rounded-lg transition-colors duration-300 ${activeSection === section.id
                       ? 'bg-[#558AF0] text-white'
                       : 'text-[#474952] hover:bg-[#F0F4FA]'
-                  }`}
+                    }`}
                 >
                   {section.label}. {section.id}
                 </button>
