@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
+import { useState } from "react";
+import Link from "next/link";
 
 export default function SignupPage() {
-  const [email, setEmail] = useState('');
-  const [verificationCode, setVerificationCode] = useState('');
+  const [email, setEmail] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [isCodeVerified, setIsCodeVerified] = useState(false);
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [agreed, setAgreed] = useState(false);
   const [errors, setErrors] = useState<{
     email?: string;
@@ -17,7 +17,8 @@ export default function SignupPage() {
     password?: string;
     confirmPassword?: string;
   }>({});
-  const [currentVerificationCode, setCurrentVerificationCode] = useState<string>('');
+  const [currentVerificationCode, setCurrentVerificationCode] =
+    useState<string>("");
 
   // 랜덤 6자리 숫자 생성
   const generateVerificationCode = (): string => {
@@ -26,13 +27,13 @@ export default function SignupPage() {
 
   const handleSendVerificationCode = () => {
     if (!email) {
-      setErrors({ email: '이메일을 입력해주세요.' });
+      setErrors({ email: "이메일을 입력해주세요." });
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      setErrors({ email: '올바른 이메일 형식이 아닙니다.' });
+      setErrors({ email: "올바른 이메일 형식이 아닙니다." });
       return;
     }
 
@@ -48,16 +49,16 @@ export default function SignupPage() {
 
   const handleVerifyCode = () => {
     if (!verificationCode) {
-      setErrors({ verificationCode: '인증번호를 입력해주세요.' });
+      setErrors({ verificationCode: "인증번호를 입력해주세요." });
       return;
     }
 
     if (verificationCode === currentVerificationCode) {
       setIsCodeVerified(true);
       setErrors({});
-      alert('인증번호가 확인되었습니다.');
+      alert("인증번호가 확인되었습니다.");
     } else {
-      setErrors({ verificationCode: '인증번호가 일치하지 않습니다.' });
+      setErrors({ verificationCode: "인증번호가 일치하지 않습니다." });
     }
   };
 
@@ -71,19 +72,19 @@ export default function SignupPage() {
     } = {};
 
     if (!email) {
-      newErrors.email = '이메일을 입력해주세요.';
+      newErrors.email = "이메일을 입력해주세요.";
     }
 
     if (!isCodeVerified) {
-      newErrors.verificationCode = '인증번호를 확인해주세요.';
+      newErrors.verificationCode = "인증번호를 확인해주세요.";
     }
 
     if (password.length < 8) {
-      newErrors.password = '비밀번호는 8자 이상이어야 합니다.';
+      newErrors.password = "비밀번호는 8자 이상이어야 합니다.";
     }
 
     if (password !== confirmPassword) {
-      newErrors.confirmPassword = '비밀번호가 일치하지 않습니다.';
+      newErrors.confirmPassword = "비밀번호가 일치하지 않습니다.";
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -92,12 +93,12 @@ export default function SignupPage() {
     }
 
     if (!agreed) {
-      alert('이용약관에 동의해주세요.');
+      alert("이용약관에 동의해주세요.");
       return;
     }
 
-    console.log('Signup:', { email, password });
-    alert('회원가입이 완료되었습니다!');
+    console.log("Signup:", { email, password });
+    alert("회원가입이 완료되었습니다!");
   };
 
   return (
@@ -105,7 +106,9 @@ export default function SignupPage() {
       {/* Simple Header */}
       <header className="bg-white shadow-sm fixed top-0 left-0 right-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <Link href="/" className="text-2xl font-bold text-[#558AF0] hover:text-[#1D4084] transition-colors">
+          <Link
+            href="/"
+            className="text-2xl font-bold text-[#558AF0] hover:text-[#1D4084] transition-colors">
             Paperdot.
           </Link>
         </div>
@@ -130,8 +133,7 @@ export default function SignupPage() {
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-semibold text-[#1A1A1A] mb-2"
-                >
+                  className="block text-sm font-semibold text-[#1A1A1A] mb-2">
                   이메일
                 </label>
                 <div className="flex gap-2">
@@ -144,19 +146,19 @@ export default function SignupPage() {
                       setErrors({ ...errors, email: undefined });
                     }}
                     disabled={isCodeVerified}
-                    className={`flex-1 px-4 py-3 border-2 rounded-lg focus:outline-none transition-colors duration-300 text-[#1A1A1A] text-base ${errors.email
-                      ? 'border-red-500'
-                      : 'border-[#E1E1E1] focus:border-[#558AF0]'
-                      } ${isCodeVerified ? 'bg-gray-100' : ''}`}
+                    className={`flex-1 px-4 py-3 border-2 rounded-lg focus:outline-none transition-colors duration-300 text-[#1A1A1A] text-base ${
+                      errors.email
+                        ? "border-red-500"
+                        : "border-[#E1E1E1] focus:border-[#558AF0]"
+                    } ${isCodeVerified ? "bg-gray-100" : ""}`}
                     placeholder="your@email.com"
                   />
                   <button
                     type="button"
                     onClick={handleSendVerificationCode}
                     disabled={isCodeVerified}
-                    className="px-4 py-3 bg-[#558AF0] text-white rounded-lg font-semibold hover:bg-[#1D4084] transition-all duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed whitespace-nowrap"
-                  >
-                    {isCodeSent ? '재전송' : '인증번호 전송'}
+                    className="px-4 py-3 bg-[#558AF0] text-white rounded-lg font-semibold hover:bg-[#1D4084] transition-all duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed whitespace-nowrap">
+                    {isCodeSent ? "재전송" : "인증번호 전송"}
                   </button>
                 </div>
                 {errors.email && (
@@ -169,8 +171,7 @@ export default function SignupPage() {
                 <div>
                   <label
                     htmlFor="verificationCode"
-                    className="block text-sm font-semibold text-[#1A1A1A] mb-2"
-                  >
+                    className="block text-sm font-semibold text-[#1A1A1A] mb-2">
                     인증번호
                   </label>
                   <div className="flex gap-2">
@@ -184,19 +185,19 @@ export default function SignupPage() {
                       }}
                       disabled={isCodeVerified}
                       maxLength={6}
-                      className={`flex-1 px-4 py-3 border-2 rounded-lg focus:outline-none transition-colors duration-300 text-[#1A1A1A] text-base ${errors.verificationCode
-                        ? 'border-red-500'
-                        : 'border-[#E1E1E1] focus:border-[#558AF0]'
-                        } ${isCodeVerified ? 'bg-gray-100' : ''}`}
+                      className={`flex-1 px-4 py-3 border-2 rounded-lg focus:outline-none transition-colors duration-300 text-[#1A1A1A] text-base ${
+                        errors.verificationCode
+                          ? "border-red-500"
+                          : "border-[#E1E1E1] focus:border-[#558AF0]"
+                      } ${isCodeVerified ? "bg-gray-100" : ""}`}
                       placeholder="인증번호 6자리 입력"
                     />
                     <button
                       type="button"
                       onClick={handleVerifyCode}
                       disabled={isCodeVerified}
-                      className="px-4 py-3 bg-[#558AF0] text-white rounded-lg font-semibold hover:bg-[#1D4084] transition-all duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed whitespace-nowrap"
-                    >
-                      {isCodeVerified ? '인증완료' : '인증확인'}
+                      className="px-4 py-3 bg-[#558AF0] text-white rounded-lg font-semibold hover:bg-[#1D4084] transition-all duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed whitespace-nowrap">
+                      {isCodeVerified ? "인증완료" : "인증확인"}
                     </button>
                   </div>
                   {errors.verificationCode && (
@@ -221,8 +222,7 @@ export default function SignupPage() {
               <div>
                 <label
                   htmlFor="password"
-                  className="block text-sm font-semibold text-[#1A1A1A] mb-2"
-                >
+                  className="block text-sm font-semibold text-[#1A1A1A] mb-2">
                   비밀번호
                 </label>
                 <input
@@ -234,10 +234,11 @@ export default function SignupPage() {
                     setErrors({ ...errors, password: undefined });
                   }}
                   minLength={8}
-                  className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-colors duration-300 text-[#1A1A1A] text-base ${errors.password
-                    ? 'border-red-500'
-                    : 'border-[#E1E1E1] focus:border-[#558AF0]'
-                    }`}
+                  className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-colors duration-300 text-[#1A1A1A] text-base ${
+                    errors.password
+                      ? "border-red-500"
+                      : "border-[#E1E1E1] focus:border-[#558AF0]"
+                  }`}
                   placeholder="8자 이상 입력해주세요"
                 />
                 {errors.password ? (
@@ -253,8 +254,7 @@ export default function SignupPage() {
               <div>
                 <label
                   htmlFor="confirmPassword"
-                  className="block text-sm font-semibold text-[#1A1A1A] mb-2"
-                >
+                  className="block text-sm font-semibold text-[#1A1A1A] mb-2">
                   비밀번호 확인
                 </label>
                 <input
@@ -265,10 +265,11 @@ export default function SignupPage() {
                     setConfirmPassword(e.target.value);
                     setErrors({ ...errors, confirmPassword: undefined });
                   }}
-                  className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-colors duration-300 text-[#1A1A1A] text-base ${errors.confirmPassword
-                    ? 'border-red-500'
-                    : 'border-[#E1E1E1] focus:border-[#558AF0]'
-                    }`}
+                  className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-colors duration-300 text-[#1A1A1A] text-base ${
+                    errors.confirmPassword
+                      ? "border-red-500"
+                      : "border-[#E1E1E1] focus:border-[#558AF0]"
+                  }`}
                   placeholder="비밀번호를 다시 입력해주세요"
                 />
                 {errors.confirmPassword && (
@@ -290,15 +291,13 @@ export default function SignupPage() {
                   <span className="ml-2 text-sm text-[#737A82] leading-[1.8]">
                     <Link
                       href="/terms"
-                      className="text-[#558AF0] hover:text-[#1D4084] transition-colors duration-300"
-                    >
+                      className="text-[#558AF0] hover:text-[#1D4084] transition-colors duration-300">
                       이용약관
                     </Link>
-                    과{' '}
+                    과{" "}
                     <Link
                       href="/privacy"
-                      className="text-[#558AF0] hover:text-[#1D4084] transition-colors duration-300"
-                    >
+                      className="text-[#558AF0] hover:text-[#1D4084] transition-colors duration-300">
                       개인정보처리방침
                     </Link>
                     에 동의합니다.
@@ -310,8 +309,7 @@ export default function SignupPage() {
               <button
                 type="submit"
                 disabled={!isCodeVerified || !agreed}
-                className="w-full bg-[#558AF0] text-white py-3 rounded-lg font-semibold hover:bg-[#1D4084] transition-all duration-300 hover:scale-[1.02] shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:scale-100"
-              >
+                className="w-full bg-[#558AF0] text-white py-3 rounded-lg font-semibold hover:bg-[#1D4084] transition-all duration-300 hover:scale-[1.02] shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:scale-100">
                 회원가입
               </button>
             </form>
@@ -319,11 +317,10 @@ export default function SignupPage() {
             {/* Login Link */}
             <div className="mt-6 text-center">
               <p className="text-sm text-[#737A82]">
-                이미 계정이 있으신가요?{' '}
+                이미 계정이 있으신가요?{" "}
                 <Link
                   href="/login"
-                  className="text-[#558AF0] hover:text-[#1D4084] font-semibold transition-colors duration-300"
-                >
+                  className="text-[#558AF0] hover:text-[#1D4084] font-semibold transition-colors duration-300">
                   로그인
                 </Link>
               </p>
