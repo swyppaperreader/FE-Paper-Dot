@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import styles from "./CheckSection.module.css";
+import styles from "./forthMainScreen.module.css";
 
 interface TargetUser {
   id: string;
