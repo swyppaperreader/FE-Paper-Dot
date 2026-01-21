@@ -1,6 +1,6 @@
 'use client';
 
-import styles from './HowToUse.module.css';
+import styles from './fifthMainScreen.module.css';
 
 interface Step {
   id: number;

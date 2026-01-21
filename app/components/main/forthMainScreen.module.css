@@ -5,6 +5,7 @@
 }
 
 .container {
+  position: relative;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -45,7 +46,7 @@
 }
 
 /* 두 번째 카드 전체를 아래로 내리기 */
-.cardsGrid > .cardWrapper:nth-child(2) {
+.cardsGrid>.cardWrapper:nth-child(2) {
   margin-top: 40px;
 }
 
