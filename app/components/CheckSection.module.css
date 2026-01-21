@@ -45,7 +45,7 @@
 }
 
 /* 두 번째 카드 전체를 아래로 내리기 */
-.cardsGrid>.cardWrapper:nth-child(2) {
+.cardsGrid > .cardWrapper:nth-child(2) {
   margin-top: 40px;
 }
 
@@ -117,7 +117,7 @@
 }
 
 .bulletItem::before {
-  content: '•';
+  content: "•";
   position: absolute;
   left: 0;
   color: #558af0;

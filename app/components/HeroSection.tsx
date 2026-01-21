@@ -1,13 +1,10 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
+import Link from "next/link";
 
 export default function HeroSection() {
   return (
-    <section
-      id="hero"
-      className="py-[80px] px-[40px] bg-white"
-    >
+    <section id="hero" className="py-[80px] px-[40px] bg-white h-screen">
       <div className="max-w-[1200px] mx-auto">
         <div className="grid md:grid-cols-2 gap-[48px] items-center">
           {/* Left: Text Content */}
@@ -20,15 +17,13 @@ export default function HeroSection() {
                 논문, 전공서적, 리포트, 메뉴얼 등 다양한 문서를
                 <br />
                 원문과 한글 번역을 문장 단위로 병렬 표시해
-                <br />
-                더 쉽고 빠르게 이해하세요.
+                <br />더 쉽고 빠르게 이해하세요.
               </p>
             </div>
             <div className="pt-4">
               <Link
                 href="/signup"
-                className="inline-block bg-[#558AF0] text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-[#1D4084] transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
-              >
+                className="inline-block bg-[#558AF0] text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-[#1D4084] transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl">
                 무료로 시작하기
               </Link>
             </div>
@@ -43,8 +38,7 @@ export default function HeroSection() {
                     className="w-12 h-12 text-white"
                     fill="none"
                     stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                    viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -53,9 +47,7 @@ export default function HeroSection() {
                     />
                   </svg>
                 </div>
-                <p className="text-[#737A82] text-sm">
-                  제품 스크린샷 영역
-                </p>
+                <p className="text-[#737A82] text-sm">제품 스크린샷 영역</p>
               </div>
             </div>
           </div>

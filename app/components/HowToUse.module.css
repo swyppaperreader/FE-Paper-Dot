@@ -208,7 +208,6 @@
     display: none;
   }
 
-
   .descriptionsRow {
     grid-template-columns: repeat(3, 1fr);
     gap: 16px;
@@ -328,7 +327,6 @@
     min-width: 280px;
     /* ← 최소 너비 제한 */
   }
-
 
   .iconCircle {
     width: 70px;
