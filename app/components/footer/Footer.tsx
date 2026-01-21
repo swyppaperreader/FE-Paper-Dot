@@ -1,6 +1,6 @@
-import Link from 'next/link'
-import Image from 'next/image'
-import styles from './Footer.module.css'
+import Link from "next/link";
+import Image from "next/image";
+import styles from "./Footer.module.css";
 
 export default function Footer() {
   return (
@@ -40,15 +40,12 @@ export default function Footer() {
 
           {/* 오른쪽: 문의 이메일 */}
           <div className={styles.emailSection}>
-            <a
-              href="mailto:olola9791@gmail.com"
-              className={styles.email}
-            >
+            <a href="mailto:olola9791@gmail.com" className={styles.email}>
               문의: olola9791@gmail.com
             </a>
           </div>
         </div>
       </div>
     </footer>
-  )
+  );
 }
