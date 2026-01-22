@@ -1,5 +1,5 @@
 import styles from "./mainTopScreen.module.css";
-import TextIcon from "@/public/text.svg";
+
 import BackgroundImage from "@/public/bg.svg";
 import Button from "../button/Button";
 
@@ -16,8 +16,8 @@ export default function MainTopScreenUi() {
         </p>
         <Button style={styles.button}>지금 시작하기</Button>
         <div className={styles.textButton}>
-          <TextIcon />
-          텍스트 번역
+          📄
+          PDF 번역
         </div>
         <div className={styles.backgroundImageContainer}>
           <BackgroundImage className={styles.backgroundImage} />
