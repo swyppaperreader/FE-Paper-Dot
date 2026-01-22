@@ -7,7 +7,7 @@ export default function Home() {
     <main className="min-h-screen">
       <Header />
       <MainLayout />
-      <Footer />
+      {/* <Footer /> */}
     </main>
   );
 }

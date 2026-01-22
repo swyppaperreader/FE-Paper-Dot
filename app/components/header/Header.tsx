@@ -5,10 +5,12 @@ export default function Header() {
   return (
     <header className={styles.header}>
       <div className={styles.container}>
-        <Link href="/" className={styles.link}>
+        <Link href="/login" className={styles.link}>
           Paperdot.
         </Link>
-        <button className={styles.button}>로그인/회원가입</button>
+        <Link href="/login" className={styles.button}>
+          로그인/회원가입
+        </Link>
       </div>
     </header>
   );
