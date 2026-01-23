@@ -1,7 +1,7 @@
 /* components/MyPage.module.css */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap');
 
-/* ============ 컨테이너 ============ */
+/* ==================== 기본 스타일 ==================== */
 .container {
   min-height: 100vh;
   background-color: #ffffff;
@@ -10,7 +10,7 @@
   flex-direction: column;
 }
 
-/* ============ 헤더 스타일 ============ */
+/* ==================== 헤더 ==================== */
 .header {
   position: fixed;
   top: 0;
@@ -39,7 +39,6 @@
 
 .logoImage {
   height: auto;
-  width: auto;
   max-height: 32px;
   object-fit: contain;
 }
@@ -68,7 +67,6 @@
   font-family: 'Roboto', sans-serif;
   cursor: pointer;
   transition: all 300ms;
-
   white-space: nowrap;
 }
 
@@ -76,8 +74,7 @@
   background-color: #4472d9;
 }
 
-
-/* ============ 콘텐츠 래퍼 ============ */
+/* ==================== 콘텐츠 래퍼 ==================== */
 .contentWrapper {
   display: flex;
   flex: 1;
@@ -85,7 +82,7 @@
   min-height: calc(100vh - 60px);
 }
 
-/* ============ 왼쪽 사이드바 ============ */
+/* ==================== 사이드바 ==================== */
 .sidebar {
   width: 200px;
   background-color: #ffffff;
@@ -97,21 +94,6 @@
 .buttonGroup {
   display: flex;
   flex-direction: column;
-  gap: 0;
-}
-
-.sidebarGroupLabel {
-  padding: 12px 20px;
-  font-size: 11px;
-  font-weight: 700;
-  color: #9ca3af;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-top: 8px;
-}
-
-.sidebarGroupLabel:first-of-type {
-  margin-top: 0;
 }
 
 .tabButton {
@@ -126,6 +108,9 @@
   border: none;
   font-family: 'Roboto', sans-serif;
   background: transparent;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .tabButtonInactive {
@@ -138,21 +123,20 @@
 }
 
 .tabButtonActive {
-  background-color: transparent;
   color: #558AF0;
   border-left: 4px solid #558AF0;
   padding-left: 16px;
   font-weight: 600;
 }
 
-/* ============ 오른쪽 콘텐츠 영역 ============ */
+/* ==================== 콘텐츠 영역 ==================== */
 .contentArea {
   flex: 1;
   padding: 40px;
   background-color: #ffffff;
 }
 
-/* ============ 프로필 드롭다운 메뉴 ============ */
+/* ==================== 프로필 메뉴 ==================== */
 .profileMenuWrapper {
   position: relative;
 }
@@ -184,8 +168,9 @@
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   min-width: 240px;
-  z-index: 100;
+  z-index: 101;
   overflow: hidden;
+  pointer-events: auto;
 }
 
 .profileDropdownHeader {
@@ -256,17 +241,17 @@
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 99;
+  z-index: 100;
+  background-color: transparent;
+  pointer-events: auto;
 }
 
-/* ============ 섹션 스타일 ============ */
+/* ==================== 문서함 ==================== */
 .section {
   display: flex;
   flex-direction: column;
-  gap: 0;
 }
 
-/* ============ 문서 목록 페이지 ============ */
 .documentsTable {
   width: 100%;
   border-collapse: collapse;
@@ -313,7 +298,6 @@
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
-  font-family: 'Roboto', sans-serif;
 }
 
 .fileBadgePdf {
@@ -326,7 +310,7 @@
   color: #1d4ed8;
 }
 
-/* ============ 문서 페이지 - Empty State ============ */
+/* ==================== Empty State ==================== */
 .emptyStatePrompt {
   display: flex;
   flex-direction: column;
@@ -339,7 +323,6 @@
   font-weight: 700;
   color: #1A1A1A;
   margin: 0;
-  padding: 0;
 }
 
 .emptyStatePromptBox {
@@ -384,12 +367,6 @@
   flex-direction: column;
   gap: 20px;
   align-items: flex-start;
-  padding: 0;
-  background-color: transparent;
-  border-radius: 0;
-  min-height: auto;
-  justify-content: flex-start;
-  text-align: left;
 }
 
 .recentDocumentsTitle {
@@ -398,7 +375,6 @@
   color: #1A1A1A;
   margin: 0;
   width: 100%;
-  text-align: left;
 }
 
 .emptyStateSubMessage {
@@ -407,7 +383,6 @@
   margin: 0;
 }
 
-/* ============ 최근 문서 제안 메시지 ============ */
 .recentDocumentPrompt {
   background-color: #f0f4fd;
   border-radius: 12px;
@@ -429,7 +404,7 @@
   font-weight: 700;
 }
 
-/* ============ 계정정보 섹션 ============ */
+/* ==================== 계정 정보 ==================== */
 .accountHeader {
   margin-bottom: 32px;
 }
@@ -461,12 +436,6 @@
   height: 80px;
   background-color: #d1d5db;
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #737A82;
-  font-size: 13px;
-  font-family: 'Roboto', sans-serif;
   flex-shrink: 0;
 }
 
@@ -512,9 +481,7 @@
   font-size: 14px;
   font-weight: 600;
   color: #1A1A1A;
-  font-family: 'Roboto', sans-serif;
   min-width: 100px;
-  text-align: left;
 }
 
 .accountSocialLoginRight {
@@ -541,7 +508,6 @@
   font-family: 'Roboto', sans-serif;
   background-color: #fafafa;
   flex: 1;
-  min-width: 0;
 }
 
 .accountInput:focus {
@@ -556,7 +522,6 @@
   color: #999;
 }
 
-/* ============ 계정관리 섹션 ============ */
 .accountDivider {
   width: 100%;
   height: 1px;
@@ -596,11 +561,7 @@
   color: #374151;
 }
 
-.deleteAccountLink:active {
-  color: #1f2937;
-}
-
-/* ============ 회원탈퇴 모달 ============ */
+/* ==================== 모달 공통 ==================== */
 .deleteModal {
   position: fixed;
   top: 0;
@@ -673,126 +634,116 @@
   background-color: #dc2626;
 }
 
-/* ============ 프로필 영역 (개인정보 & 보안) ============ */
-.profileWithLogout {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding-bottom: 32px;
-  margin-bottom: 32px;
-  border-bottom: 1px solid #E1E1E1;
-  gap: 20px;
-}
-
-.profileWrapper {
-  display: flex;
-  align-items: center;
-  text-align: left;
-  flex: 1;
-  gap: 16px;
-}
-
-.profileImage {
-  width: 80px;
-  height: 80px;
-  background-color: #d1d5db;
-  border-radius: 50%;
+/* ==================== 로그아웃 모달 ==================== */
+.logoutModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #737A82;
-  font-size: 13px;
-  font-family: 'Roboto', sans-serif;
-  flex-shrink: 0;
+  z-index: 1000;
 }
 
-.profileName {
+.logoutModalBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+.logoutModalContent {
+  position: relative;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 32px 24px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  animation: slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  z-index: 1001;
+}
+
+.logoutModalTitle {
   font-size: 20px;
   font-weight: 700;
   color: #1A1A1A;
-  margin: 0;
-  font-family: 'Roboto', sans-serif;
+  margin: 0 0 12px 0;
+  text-align: center;
 }
 
-.profileJoinDate {
-  color: #737A82;
-  font-size: 13px;
-  font-family: 'Roboto', sans-serif;
-  margin: 0;
+.logoutModalMessage {
+  font-size: 14px;
+  color: #626c71;
+  text-align: center;
+  margin: 0 0 28px 0;
+  line-height: 1.6;
 }
 
-.logoutButton {
-  padding: 10px 16px;
-  background-color: white;
-  color: #1A1A1A;
-  border: 1px solid #E1E1E1;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 13px;
-  cursor: pointer;
-  transition: all 300ms;
-  font-family: 'Roboto', sans-serif;
-}
-
-.logoutButton:hover {
-  background-color: #f9f9f9;
-}
-
-/* ============ 카드 그룹 ============ */
-.cardGroup {
+.logoutModalButtons {
   display: flex;
-  flex-direction: column;
   gap: 12px;
-  margin-bottom: 32px;
+  justify-content: center;
 }
 
-.card {
-  padding: 16px;
-  border: 1px solid #E1E1E1;
-  border-radius: 8px;
-  transition: background-color 300ms;
-  cursor: pointer;
-  background-color: #f9f9f9;
-}
-
-.card:hover {
-  background-color: #f3f3f3;
-}
-
-.cardTitle {
+.logoutModalCancelBtn {
+  flex: 1;
+  padding: 12px 20px;
+  border: 1px solid rgba(94, 82, 64, 0.2);
+  background-color: #f5f5f5;
+  color: #626c71;
   font-size: 14px;
   font-weight: 600;
-  color: #1A1A1A;
-  font-family: 'Roboto', sans-serif;
-  margin: 0;
-}
-
-.deleteAccountContainer {
-  display: flex;
-  justify-content: center;
-  padding-top: 24px;
-  margin-top: 24px;
-}
-
-.deleteAccountButton {
-  padding: 10px 20px;
-  background-color: white;
-  color: #dc2626;
-  border: 1px solid #dc2626;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 13px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 300ms;
+  transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
   font-family: 'Roboto', sans-serif;
 }
 
-.deleteAccountButton:hover {
-  background-color: #fef2f2;
-  border-color: #b91c1c;
+.logoutModalCancelBtn:hover {
+  background-color: #efefef;
+  border-color: rgba(94, 82, 64, 0.3);
 }
 
-/* ============ 반응형 ============ */
+.logoutModalConfirmBtn {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  background-color: #dc2626;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: 'Roboto', sans-serif;
+}
+
+.logoutModalConfirmBtn:hover {
+  background-color: #b91c1c;
+  box-shadow: 0 4px 12px rgba(32, 128, 141, 0.2);
+  transform: translateY(-1px);
+}
+
+/* ==================== 애니메이션 ==================== */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==================== 반응형 (태블릿) ==================== */
 @media (max-width: 1024px) {
   .header {
     padding: 0 30px;
@@ -808,10 +759,6 @@
     border-right: none;
     border-bottom: 1px solid #e5e7eb;
     padding: 12px 0;
-  }
-
-  .tabButton {
-    padding: 10px 16px;
   }
 
   .tabButtonActive {
@@ -835,10 +782,6 @@
     gap: 16px;
   }
 
-  .accountLogoutBtnTop {
-    align-self: flex-end;
-  }
-
   .accountFormRow {
     flex-direction: column;
     align-items: flex-start;
@@ -849,20 +792,13 @@
     width: 100%;
   }
 
-  .accountSocialLoginRight {
-    width: 100%;
-  }
-
-  .emptyStatePrompt {
-    margin-bottom: 40px;
-  }
-
   .emptyStatePromptBox {
     padding: 28px 30px;
     min-height: 180px;
   }
 }
 
+/* ==================== 반응형 (작은 태블릿) ==================== */
 @media (max-width: 768px) {
   .header {
     padding: 0 20px;
@@ -882,15 +818,6 @@
     padding: 20px;
   }
 
-  .contentBox {
-    padding: 20px;
-  }
-
-  .tableCell {
-    padding: 8px;
-    font-size: 12px;
-  }
-
   .emptyStatePromptTitle {
     font-size: 16px;
   }
@@ -901,30 +828,8 @@
     gap: 16px;
   }
 
-  .emptyStatePromptText {
-    font-size: 13px;
-  }
-
-  .emptyStatePromptButton {
-    padding: 10px 20px;
-    font-size: 12px;
-  }
-
   .recentDocumentsTitle {
     font-size: 16px;
-  }
-
-  .emptyStateSubMessage {
-    font-size: 13px;
-  }
-
-  .recentDocumentPrompt {
-    padding: 20px;
-    margin-bottom: 30px;
-  }
-
-  .recentDocumentPromptText {
-    font-size: 14px;
   }
 
   .accountProfileImageSmall {
@@ -936,11 +841,6 @@
     font-size: 16px;
   }
 
-  .accountLogoutBtnTop {
-    font-size: 12px;
-    padding: 8px 16px;
-  }
-
   .accountFormLabel {
     font-size: 13px;
     min-width: 80px;
@@ -950,21 +850,9 @@
     font-size: 13px;
     padding: 10px 12px;
   }
-
-  .accountSocialLoginText {
-    font-size: 13px;
-  }
-
-  .profileImage {
-    width: 60px;
-    height: 60px;
-  }
-
-  .profileName {
-    font-size: 18px;
-  }
 }
 
+/* ==================== 반응형 (모바일) ==================== */
 @media (max-width: 640px) {
   .header {
     padding: 0 16px;
@@ -977,22 +865,12 @@
     font-size: 11px;
   }
 
-  .headerProfileImage {
-    width: 36px;
-    height: 36px;
-    font-size: 12px;
-  }
-
   .contentWrapper {
     margin-top: 50px;
     min-height: calc(100vh - 50px);
   }
 
   .contentArea {
-    padding: 16px;
-  }
-
-  .contentBox {
     padding: 16px;
   }
 
@@ -1004,32 +882,6 @@
     padding: 20px;
     min-height: 140px;
     gap: 12px;
-  }
-
-  .emptyStatePromptText {
-    font-size: 12px;
-  }
-
-  .emptyStatePromptButton {
-    padding: 8px 16px;
-    font-size: 11px;
-  }
-
-  .recentDocumentsTitle {
-    font-size: 14px;
-  }
-
-  .emptyStateSubMessage {
-    font-size: 12px;
-  }
-
-  .recentDocumentPrompt {
-    padding: 16px;
-    margin-bottom: 20px;
-  }
-
-  .recentDocumentPromptText {
-    font-size: 12px;
   }
 
   .accountTitle {
@@ -1045,15 +897,6 @@
     font-size: 14px;
   }
 
-  .accountTopBar {
-    padding-bottom: 20px;
-    margin-bottom: 20px;
-  }
-
-  .accountFormSection {
-    gap: 16px;
-  }
-
   .accountFormLabel {
     font-size: 12px;
     min-width: 70px;
@@ -1064,49 +907,22 @@
     padding: 8px 10px;
   }
 
-  .accountSocialLoginText {
+  .logoutModalContent {
+    max-width: 90vw;
+    padding: 24px 16px;
+  }
+
+  .logoutModalTitle {
+    font-size: 18px;
+  }
+
+  .logoutModalMessage {
+    font-size: 13px;
+  }
+
+  .logoutModalCancelBtn,
+  .logoutModalConfirmBtn {
     font-size: 12px;
+    padding: 10px 16px;
   }
-
-  .accountFormRow {
-    gap: 12px;
-  }
-
-  .profileImage {
-    width: 60px;
-    height: 60px;
-  }
-
-  .profileName {
-    font-size: 16px;
-  }
-
-  .profileWithLogout {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-  .profileWrapper {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .documentsTable {
-    font-size: 12px;
-  }
-
-  .tableCell {
-    padding: 8px;
-  }
-}
-
-.tabButton {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.tabButton img {
-  display: inline-block;
 }
