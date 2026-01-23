@@ -4,6 +4,8 @@ import { useState } from "react";
 import Image from "next/image";
 import styles from "./MyPage.module.css";
 import Footer from "./footer/Footer";
+import NewDocumentModal from "./NewDocumentModal";
+import { useRouter } from "next/navigation";
 
 interface Document {
   id: string;
@@ -14,12 +16,17 @@ interface Document {
 }
 
 export default function MyPage() {
-  const [activeTab, setActiveTab] = useState<
-    "documents" | "account" | "privacy"
-  >("documents");
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState<"documents" | "account">(
+    "documents"
+  );
 
+  // ⭐ 상태 관리
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showNewDocumentModal, setShowNewDocumentModal] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false); // ⭐ 로그아웃 팝업
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const mockUser = {
     id: "12345",
@@ -33,6 +40,29 @@ export default function MyPage() {
   const [documents, setDocuments] = useState<Document[]>([]);
   const latestDocument = documents.length > 0 ? documents[0] : null;
 
+  // ⭐ 새 문서 만들기 핸들러
+  const handleStartNewDocument = () => {
+    router.push("/newdocument");
+  };
+
+  // 새 문서 업로드 핸들러
+  const handleFileSelect = (file: File) => {
+    console.log("업로드된 파일:", file.name);
+
+    const newDoc: Document = {
+      id: Date.now().toString(),
+      name: file.name,
+      type: "pdf",
+      date: new Date().toLocaleDateString("ko-KR"),
+      size: `${Math.round(file.size / 1024)} KB`,
+    };
+
+    setDocuments([newDoc, ...documents]);
+    setSelectedFile(file);
+    setShowNewDocumentModal(false);
+    alert(`✅ ${file.name} 업로드 완료!`);
+  };
+
   // 프로필 메뉴 토글
   const handleProfileMenuToggle = () => {
     setShowProfileMenu(!showProfileMenu);
@@ -41,6 +71,50 @@ export default function MyPage() {
   // 프로필 메뉴 닫기
   const closeProfileMenu = () => {
     setShowProfileMenu(false);
+  };
+
+  // ⭐ 내 문서함 버튼 핸들러
+  const handleMyDocuments = () => {
+    setActiveTab("documents");
+    closeProfileMenu();
+  };
+
+  // ⭐ 내 계정 버튼 핸들러
+  const handleMyAccount = () => {
+    setActiveTab("account");
+    closeProfileMenu();
+  };
+
+  // ⭐ 로그아웃 버튼 핸들러 (팝업 표시)
+  const handleLogoutClick = () => {
+    setShowLogoutModal(true);
+  };
+
+  // ⭐ 로그아웃 확인
+  const handleLogoutConfirm = async () => {
+    try {
+      console.log("로그아웃 진행 중...");
+
+      // 여기에 실제 로그아웃 로직 추가
+      // await logout();
+
+      setTimeout(() => {
+        alert("로그아웃되었습니다.");
+        setShowLogoutModal(false);
+        closeProfileMenu();
+        // 로그아웃 후 로그인 페이지로 이동
+        router.push("/login");
+      }, 500);
+    } catch (error) {
+      console.error("로그아웃 실패:", error);
+      alert("로그아웃 중 오류가 발생했습니다.");
+      setShowLogoutModal(false);
+    }
+  };
+
+  // ⭐ 로그아웃 취소
+  const handleLogoutCancel = () => {
+    setShowLogoutModal(false);
   };
 
   // 회원탈퇴 핸들러
@@ -64,6 +138,7 @@ export default function MyPage() {
     }
   };
 
+  // ⭐ 문서함 렌더 함수
   const renderDocuments = () => (
     <div className={styles.section}>
       {documents.length === 0 ? (
@@ -78,7 +153,10 @@ export default function MyPage() {
                 <br />
                 파일을 번역하고 관리해보세요
               </p>
-              <button className={styles.emptyStatePromptButton}>
+              <button
+                className={styles.emptyStatePromptButton}
+                onClick={handleStartNewDocument}
+              >
                 지금 시작하기
               </button>
             </div>
@@ -124,12 +202,14 @@ export default function MyPage() {
                         display: "flex",
                         alignItems: "center",
                         gap: "12px",
-                      }}>
+                      }}
+                    >
                       <span
                         className={`${styles.fileBadge} ${doc.type === "pdf"
                           ? styles.fileBadgePdf
                           : styles.fileBadgeTxt
-                          }`}>
+                          }`}
+                      >
                         {doc.type.toUpperCase()}
                       </span>
                       <span>{doc.name}</span>
@@ -146,6 +226,7 @@ export default function MyPage() {
     </div>
   );
 
+  // ⭐ 계정 정보 렌더 함수
   const renderAccountInfo = () => (
     <div className={styles.section}>
       <div className={styles.accountHeader}>
@@ -154,12 +235,15 @@ export default function MyPage() {
 
       <div className={styles.accountTopBar}>
         <div className={styles.accountProfileBar}>
-          <div className={styles.accountProfileImageSmall}>
-
-          </div>
+          <div className={styles.accountProfileImageSmall}></div>
           <h2 className={styles.accountProfileNameSmall}>{mockUser.name}</h2>
         </div>
-        <button className={styles.accountLogoutBtnTop}>로그아웃</button>
+        <button
+          className={styles.accountLogoutBtnTop}
+          onClick={handleLogoutClick}
+        >
+          로그아웃
+        </button>
       </div>
 
       <div className={styles.accountFormSection}>
@@ -208,7 +292,8 @@ export default function MyPage() {
 
         <button
           onClick={handleDeleteAccount}
-          className={styles.deleteAccountLink}>
+          className={styles.deleteAccountLink}
+        >
           회원탈퇴
         </button>
 
@@ -224,12 +309,14 @@ export default function MyPage() {
               <div className={styles.deleteModalButtons}>
                 <button
                   onClick={() => setShowDeleteModal(false)}
-                  className={styles.deleteModalCancelBtn}>
+                  className={styles.deleteModalCancelBtn}
+                >
                   취소
                 </button>
                 <button
                   onClick={handleDeleteAccount}
-                  className={styles.deleteModalConfirmBtn}>
+                  className={styles.deleteModalConfirmBtn}
+                >
                   탈퇴하기
                 </button>
               </div>
@@ -240,51 +327,10 @@ export default function MyPage() {
     </div>
   );
 
-  const renderPrivacySecurity = () => (
-    <div className={styles.section}>
-      <div className={styles.profileWithLogout}>
-        <div className={styles.profileWrapper}>
-          <div className={styles.profileImage}>
-            <Image
-              src="/account-inactive.png"
-              alt="프로필"
-              width={80}
-              height={80}
-              style={{ borderRadius: "50%", objectFit: "cover" }}
-              priority
-            />
-          </div>
-          <div>
-            <h2 className={styles.profileName}>{mockUser.name}</h2>
-            <p className={styles.profileJoinDate}>소셜 로그인</p>
-          </div>
-        </div>
-        <button className={styles.logoutButton}>로그아웃</button>
-      </div>
-
-      <div className={styles.cardGroup}>
-        <div className={styles.card}>
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <Image
-              src="/kakaoLogo.svg"
-              alt="카카오"
-              width={32}
-              height={32}
-              priority
-            />
-            <p className={styles.cardTitle}>카카오톡 연동 로그인</p>
-          </div>
-        </div>
-      </div>
-
-      <div className={styles.deleteAccountContainer}>
-        <button className={styles.deleteAccountButton}>회원탈퇴</button>
-      </div>
-    </div>
-  );
-
+  // ⭐ 메인 렌더
   return (
     <div className={styles.container}>
+      {/* ==================== 헤더 ==================== */}
       <header className={styles.header}>
         <div className={styles.headerLeft}>
           <div className={styles.logoContainer}>
@@ -302,11 +348,19 @@ export default function MyPage() {
         <div className={styles.headerCenter} />
 
         <div className={styles.headerRight}>
-          <button className={styles.headerButton}>새 문서로 이동하기</button>
+          <button
+            className={styles.headerButton}
+            onClick={handleStartNewDocument}
+          >
+            새 문서 만들기
+          </button>
+
+          {/* ==================== 프로필 메뉴 ==================== */}
           <div className={styles.profileMenuWrapper}>
             <button
               className={styles.headerProfileImage}
-              onClick={handleProfileMenuToggle}>
+              onClick={handleProfileMenuToggle}
+            >
               <Image
                 src="/user-default.png"
                 alt="프로필"
@@ -317,57 +371,110 @@ export default function MyPage() {
               />
             </button>
 
+            {/* 프로필 드롭다운 메뉴 */}
             {showProfileMenu && (
-              <div className={styles.profileDropdown}>
-                <div className={styles.profileDropdownHeader}>
-                  <h3 className={styles.profileDropdownName}>{mockUser.name}</h3>
-                  <p className={styles.profileDropdownEmail}>{mockUser.email}</p>
+              <>
+                {/* 배경 (가장 아래) */}
+                <div
+                  className={styles.profileMenuBackdrop}
+                  onClick={closeProfileMenu}
+                />
+
+                {/* 드롭다운 (배경 위) */}
+                <div className={styles.profileDropdown}>
+                  <div className={styles.profileDropdownHeader}>
+                    <h3 className={styles.profileDropdownName}>{mockUser.name}</h3>
+                    <p className={styles.profileDropdownEmail}>
+                      {mockUser.email}
+                    </p>
+                  </div>
+                  <div className={styles.profileDropdownDivider} />
+                  {/* 내 문서함 버튼 */}
+                  <button
+                    className={styles.profileDropdownItem}
+                    onClick={handleMyDocuments}
+                  >
+                    내 문서함
+                  </button>
+                  {/* 내 계정 버튼 */}
+                  <button
+                    className={styles.profileDropdownItem}
+                    onClick={handleMyAccount}
+                  >
+                    내 계정
+                  </button>
+                  <div className={styles.profileDropdownDivider} />
+                  {/* 로그아웃 버튼 */}
+                  <button
+                    className={styles.profileDropdownLogout}
+                    onClick={handleLogoutClick}
+                  >
+                    로그아웃
+                  </button>
                 </div>
-                <div className={styles.profileDropdownDivider} />
-                <button
-                  className={styles.profileDropdownItem}
-                  onClick={() => {
-                    setActiveTab("documents");
-                    closeProfileMenu();
-                  }}>
-                  내 문서함
-                </button>
-                <button
-                  className={styles.profileDropdownItem}
-                  onClick={() => {
-                    setActiveTab("account");
-                    closeProfileMenu();
-                  }}>
-                  내 계정
-                </button>
-                <div className={styles.profileDropdownDivider} />
-                <button className={styles.profileDropdownLogout}>
-                  로그아웃
-                </button>
-              </div>
+              </>
             )}
           </div>
         </div>
       </header>
 
-      {showProfileMenu && (
-        <div
-          className={styles.profileMenuBackdrop}
-          onClick={closeProfileMenu}
-        />
+
+      {/* ==================== 로그아웃 확인 팝업 ==================== */}
+      {showLogoutModal && (
+        <div className={styles.logoutModal}>
+          <div className={styles.logoutModalContent}>
+            <h2 className={styles.logoutModalTitle}>로그아웃</h2>
+            <p className={styles.logoutModalMessage}>
+              정말로 로그아웃 하시겠습니까?
+            </p>
+            <div className={styles.logoutModalButtons}>
+              <button
+                onClick={handleLogoutCancel}
+                className={styles.logoutModalCancelBtn}
+              >
+                취소
+              </button>
+              <button
+                onClick={handleLogoutConfirm}
+                className={styles.logoutModalConfirmBtn}
+              >
+                로그아웃
+              </button>
+            </div>
+          </div>
+          <div
+            className={styles.logoutModalBackdrop}
+            onClick={handleLogoutCancel}
+          />
+        </div>
       )}
 
+      {/* 새 문서 모달 */}
+      <NewDocumentModal
+        isOpen={showNewDocumentModal}
+        onClose={() => setShowNewDocumentModal(false)}
+        onFileSelect={handleFileSelect}
+      />
+
+      {/* ==================== 콘텐츠 영역 ==================== */}
       <div className={styles.contentWrapper}>
+        {/* 사이드바 */}
         <div className={styles.sidebar}>
           <div className={styles.buttonGroup}>
+            {/* 내 문서함 탭 버튼 */}
             <button
               onClick={() => setActiveTab("documents")}
               className={`${styles.tabButton} ${activeTab === "documents"
                 ? styles.tabButtonActive
                 : styles.tabButtonInactive
-                }`}>
+                }`}
+            >
               <Image
-                src={activeTab === "documents" ? "/file-active.png" : "/file-inactive.png"}
+                src={
+                  activeTab === "documents"
+                    ? "/file-active.png"
+                    : "/file-inactive.png"
+                }
                 alt="문서함"
                 width={20}
                 height={20}
@@ -376,14 +483,20 @@ export default function MyPage() {
               내 문서함
             </button>
 
+            {/* 내 계정 탭 버튼 */}
             <button
               onClick={() => setActiveTab("account")}
               className={`${styles.tabButton} ${activeTab === "account"
                 ? styles.tabButtonActive
                 : styles.tabButtonInactive
-                }`}>
+                }`}
+            >
               <Image
-                src={activeTab === "account" ? "/account-active.png" : "/account-inactive.png"}
+                src={
+                  activeTab === "account"
+                    ? "/account-active.png"
+                    : "/account-inactive.png"
+                }
                 alt="계정"
                 width={20}
                 height={20}
@@ -394,13 +507,14 @@ export default function MyPage() {
           </div>
         </div>
 
+        {/* 메인 콘텐츠 */}
         <div className={styles.contentArea}>
           {activeTab === "documents" && renderDocuments()}
           {activeTab === "account" && renderAccountInfo()}
-          {activeTab === "privacy" && renderPrivacySecurity()}
         </div>
       </div>
 
+      {/* 푸터 */}
       <Footer />
     </div>
   );
