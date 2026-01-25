@@ -14,16 +14,12 @@ export default function MainTopScreenUi() {
           끊김 없이 읽어보세요.
         </p>
         <Button style={styles.button}>지금 시작하기</Button>
-        <div className={styles.textButton}>📄 PDF 번역</div>
+        <div className={styles.textButton}>
+          <Image src="/text.svg" alt="번역" width={20} height={20} /> 텍스트
+          번역
+        </div>
         <div className={styles.backgroundImageContainer}>
-          <Image
-            src="/bg.svg"
-            alt="배경 이미지"
-            className={styles.backgroundImage}
-            width={800}
-            height={600}
-            priority
-          />
+          <Image src="/bg.svg" alt="배경 이미지" priority fill />
           <div className={styles.overLay} />
         </div>
       </div>
