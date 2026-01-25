@@ -53,7 +53,7 @@ export default function NewDocumentPage() {
   };
 
   const handleFileUpload = (file: File) => {
-    const fileId = crypto.randomUUID();
+    const fileId = window.crypto.randomUUID();
 
     setUploadingFiles((prev) => [
       ...prev,
@@ -78,10 +78,10 @@ export default function NewDocumentPage() {
         prev.map((f) =>
           f.id === fileId
             ? {
-                ...f,
-                progress,
-                status: progress === 100 ? "completed" : "uploading",
-              }
+              ...f,
+              progress,
+              status: progress === 100 ? "completed" : "uploading",
+            }
             : f
         )
       );
@@ -180,11 +180,10 @@ export default function NewDocumentPage() {
 
                   <div className={styles.progressBarContainer}>
                     <div
-                      className={`${styles.progressBar} ${
-                        uploadFile.status === "completed"
-                          ? styles.progressBarCompleted
-                          : ""
-                      }`}
+                      className={`${styles.progressBar} ${uploadFile.status === "completed"
+                        ? styles.progressBarCompleted
+                        : ""
+                        }`}
                       style={{
                         width: `${uploadFile.progress}%`,
                       }}
@@ -192,11 +191,10 @@ export default function NewDocumentPage() {
                   </div>
 
                   <p
-                    className={`${styles.statusMessage} ${
-                      uploadFile.status === "completed"
-                        ? styles.statusCompleted
-                        : ""
-                    }`}>
+                    className={`${styles.statusMessage} ${uploadFile.status === "completed"
+                      ? styles.statusCompleted
+                      : ""
+                      }`}>
                     {uploadFile.status === "uploading" && "업로드 중..."}
                     {uploadFile.status === "completed" && "업로드 완료! ✓"}
                     {uploadFile.status === "error" && "업로드 실패"}
@@ -208,9 +206,8 @@ export default function NewDocumentPage() {
 
           {uploadingFiles.length === 0 && (
             <div
-              className={`${styles.uploadArea} ${
-                isDragging ? styles.uploadAreaDragging : ""
-              }`}
+              className={`${styles.uploadArea} ${isDragging ? styles.uploadAreaDragging : ""
+                }`}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}

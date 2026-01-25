@@ -36,32 +36,32 @@ export default function HowToUse() {
           <p className={styles.subtitle}>간단한 3단계로 시작하세요</p>
         </div>
 
-        {/* ✨ 스텝 진행 인디케이터 (상단) */}
-        <div className={styles.stepIndicator}>
-          {steps.map((step, index) => (
-            <div key={step.id} className={styles.indicatorWrapper}>
-              {/* 굵은 점 */}
-              <div
-                className={styles.indicatorDot}
-                aria-label={`Step ${step.id}`}
-              />
-
-              {/* 라벨 */}
-              <span className={styles.indicatorLabel}>STEP {step.id}</span>
-
-              {/* 점선 (마지막 제외) */}
-              {index < steps.length - 1 && (
-                <div className={styles.indicatorLine} />
-              )}
+        {/* ========== 최상단: STEP 1, 2, 3 텍스트 ========== */}
+        <div className={styles.stepLabelsRow}>
+          {steps.map((step) => (
+            <div key={`label-${step.id}`} className={styles.stepLabelWrapper}>
+              <span className={styles.stepLabelText}>STEP {step.id}</span>
             </div>
           ))}
         </div>
 
-        {/* 스텝 이미지들 - 그리드 레이아웃 (텍스트와 동일) */}
+        {/* ========== 두 번째: 점과 점선 ========== */}
+        <div className={styles.stepDotsRow}>
+          {/* 첫 번째 점에서 마지막 이미지 오른쪽 끝까지 연결하는 점선 */}
+          <div className={styles.stepLineConnector} />
+
+          {steps.map((step) => (
+            <div key={`dot-${step.id}`} className={styles.stepDotWrapper}>
+              {/* 굵은 점 */}
+              <div className={styles.stepDot} />
+            </div>
+          ))}
+        </div>
+
+        {/* ========== 세 번째: 이미지 3개 가로 배치 ========== */}
         <div className={styles.imagesRow}>
-          {steps.map((step, index) => (
-            <div key={step.id} className={styles.imageWrapper}>
-              {/* 이미지 영역 */}
+          {steps.map((step) => (
+            <div key={`image-${step.id}`} className={styles.imageWrapper}>
               <div className={styles.stepImage}>
                 <div className={styles.imagePlaceholder}>
                   <div className={styles.iconArea}>
@@ -73,19 +73,14 @@ export default function HowToUse() {
                   </div>
                 </div>
               </div>
-
-              {/* 연결선 (마지막 제외) */}
-              {index < steps.length - 1 && (
-                <div className={styles.connectorLine} />
-              )}
             </div>
           ))}
         </div>
 
-        {/* 스텝 설명들 - 그리드 레이아웃 (이미지와 동일) */}
+        {/* ========== 하단: 설명 3개 가로 배치 ========== */}
         <div className={styles.descriptionsRow}>
           {steps.map((step) => (
-            <div key={step.id} className={styles.descriptionCard}>
+            <div key={`desc-${step.id}`} className={styles.descriptionCard}>
               <p className={styles.stepDescription}>{step.description}</p>
             </div>
           ))}
