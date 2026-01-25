@@ -4,7 +4,7 @@ import MainTopScreenUi from "../MainTopScreenUi";
 import ThirdMainScreen from "../ThirdMainScreen";
 import ForthMainScreen from "../ForthMainScreen";
 import FifthMainScreen from "../FifthMainScreen";
-import Footer from "../../footer/Footer";
+
 export default function MainLayout() {
   return (
     <>
@@ -13,7 +13,6 @@ export default function MainLayout() {
       <ThirdMainScreen />
       <ForthMainScreen />
       <FifthMainScreen />
-      <Footer />
     </>
   );
 }

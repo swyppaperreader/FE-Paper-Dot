@@ -1,19 +1,17 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect } from "react";
 import styles from "./login.module.css";
 import GoogleIcon from "@/public/googleLogo.svg";
 import KakaoIcon from "@/public/kakaoLogo.svg";
 import { useSearchParams } from "next/navigation";
 
-export default function LoginPage() {
+function LoginContent() {
   const searchParams = useSearchParams();
   const code = searchParams.get("code");
 
   const client_id = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID;
   const redirect_uri = process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI;
-
-  const [res, setRes] = useState(null);
 
   const handleKakaoLogin = () => {
     const url = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${client_id}&redirect_uri=${redirect_uri}`;
@@ -32,18 +30,6 @@ export default function LoginPage() {
 
     window.location.href = url;
   };
-
-  // useEffect(() => {
-  //   if (!code) return;
-
-  //   const fetchToken = async () => {
-  //     const res = await fetch(`/api/auth/google?code=${code}`);
-  //     const data = await res.json();
-  //     console.log("구글 토큰:", data);
-  //   };
-
-  //   fetchToken();
-  // }, []);
 
   //카카오는 우선 엑세스 토큰만 받기로
   useEffect(() => {
@@ -72,5 +58,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className={styles.container}>로딩중...</div>}>
+      <LoginContent />
+    </Suspense>
   );
 }

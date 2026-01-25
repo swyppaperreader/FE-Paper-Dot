@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Image from "next/image";
 import styles from "./forthMainScreen.module.css";
 
 interface TargetUser {
@@ -56,16 +56,18 @@ export default function CheckSection() {
         </div>
 
         <div className={styles.cardsGrid}>
-          {targetUsers.map((user, index) => (
+          {targetUsers.map((user) => (
             <div key={user.id} className={styles.cardWrapper}>
               {/* 이미지 영역 */}
               <div className={styles.imageArea}>
                 <div className={styles.iconPlaceholder}>
                   {/* 여기에 일러스트 이미지 삽입 */}
-                  <img
+                  <Image
                     src={`/images/${user.id}.png`}
                     alt={user.title}
                     className={styles.illustration}
+                    width={300}
+                    height={300}
                   />
                 </div>
               </div>

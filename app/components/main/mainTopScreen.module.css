@@ -2,6 +2,7 @@
   width: 100%;
   height: calc(100vh - 60px);
   position: relative;
+  overflow: hidden;
 }
 
 .content {
@@ -63,6 +64,7 @@
 }
 
 .backgroundImage {
+  max-width: 100%;
   object-fit: cover;
   object-position: center;
 }

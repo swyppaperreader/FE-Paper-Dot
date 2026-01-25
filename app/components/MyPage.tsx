@@ -26,7 +26,6 @@ export default function MyPage() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showNewDocumentModal, setShowNewDocumentModal] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false); // ⭐ 로그아웃 팝업
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const mockUser = {
     id: "12345",
@@ -58,7 +57,6 @@ export default function MyPage() {
     };
 
     setDocuments([newDoc, ...documents]);
-    setSelectedFile(file);
     setShowNewDocumentModal(false);
     alert(`✅ ${file.name} 업로드 완료!`);
   };
@@ -155,8 +153,7 @@ export default function MyPage() {
               </p>
               <button
                 className={styles.emptyStatePromptButton}
-                onClick={handleStartNewDocument}
-              >
+                onClick={handleStartNewDocument}>
                 지금 시작하기
               </button>
             </div>
@@ -202,14 +199,13 @@ export default function MyPage() {
                         display: "flex",
                         alignItems: "center",
                         gap: "12px",
-                      }}
-                    >
+                      }}>
                       <span
-                        className={`${styles.fileBadge} ${doc.type === "pdf"
-                          ? styles.fileBadgePdf
-                          : styles.fileBadgeTxt
-                          }`}
-                      >
+                        className={`${styles.fileBadge} ${
+                          doc.type === "pdf"
+                            ? styles.fileBadgePdf
+                            : styles.fileBadgeTxt
+                        }`}>
                         {doc.type.toUpperCase()}
                       </span>
                       <span>{doc.name}</span>
@@ -240,8 +236,7 @@ export default function MyPage() {
         </div>
         <button
           className={styles.accountLogoutBtnTop}
-          onClick={handleLogoutClick}
-        >
+          onClick={handleLogoutClick}>
           로그아웃
         </button>
       </div>
@@ -292,8 +287,7 @@ export default function MyPage() {
 
         <button
           onClick={handleDeleteAccount}
-          className={styles.deleteAccountLink}
-        >
+          className={styles.deleteAccountLink}>
           회원탈퇴
         </button>
 
@@ -309,14 +303,12 @@ export default function MyPage() {
               <div className={styles.deleteModalButtons}>
                 <button
                   onClick={() => setShowDeleteModal(false)}
-                  className={styles.deleteModalCancelBtn}
-                >
+                  className={styles.deleteModalCancelBtn}>
                   취소
                 </button>
                 <button
                   onClick={handleDeleteAccount}
-                  className={styles.deleteModalConfirmBtn}
-                >
+                  className={styles.deleteModalConfirmBtn}>
                   탈퇴하기
                 </button>
               </div>
@@ -350,8 +342,7 @@ export default function MyPage() {
         <div className={styles.headerRight}>
           <button
             className={styles.headerButton}
-            onClick={handleStartNewDocument}
-          >
+            onClick={handleStartNewDocument}>
             새 문서 만들기
           </button>
 
@@ -359,8 +350,7 @@ export default function MyPage() {
           <div className={styles.profileMenuWrapper}>
             <button
               className={styles.headerProfileImage}
-              onClick={handleProfileMenuToggle}
-            >
+              onClick={handleProfileMenuToggle}>
               <Image
                 src="/user-default.png"
                 alt="프로필"
@@ -383,7 +373,9 @@ export default function MyPage() {
                 {/* 드롭다운 (배경 위) */}
                 <div className={styles.profileDropdown}>
                   <div className={styles.profileDropdownHeader}>
-                    <h3 className={styles.profileDropdownName}>{mockUser.name}</h3>
+                    <h3 className={styles.profileDropdownName}>
+                      {mockUser.name}
+                    </h3>
                     <p className={styles.profileDropdownEmail}>
                       {mockUser.email}
                     </p>
@@ -392,23 +384,20 @@ export default function MyPage() {
                   {/* 내 문서함 버튼 */}
                   <button
                     className={styles.profileDropdownItem}
-                    onClick={handleMyDocuments}
-                  >
+                    onClick={handleMyDocuments}>
                     내 문서함
                   </button>
                   {/* 내 계정 버튼 */}
                   <button
                     className={styles.profileDropdownItem}
-                    onClick={handleMyAccount}
-                  >
+                    onClick={handleMyAccount}>
                     내 계정
                   </button>
                   <div className={styles.profileDropdownDivider} />
                   {/* 로그아웃 버튼 */}
                   <button
                     className={styles.profileDropdownLogout}
-                    onClick={handleLogoutClick}
-                  >
+                    onClick={handleLogoutClick}>
                     로그아웃
                   </button>
                 </div>
@@ -417,7 +406,6 @@ export default function MyPage() {
           </div>
         </div>
       </header>
-
 
       {/* ==================== 로그아웃 확인 팝업 ==================== */}
       {showLogoutModal && (
@@ -430,14 +418,12 @@ export default function MyPage() {
             <div className={styles.logoutModalButtons}>
               <button
                 onClick={handleLogoutCancel}
-                className={styles.logoutModalCancelBtn}
-              >
+                className={styles.logoutModalCancelBtn}>
                 취소
               </button>
               <button
                 onClick={handleLogoutConfirm}
-                className={styles.logoutModalConfirmBtn}
-              >
+                className={styles.logoutModalConfirmBtn}>
                 로그아웃
               </button>
             </div>
@@ -464,11 +450,11 @@ export default function MyPage() {
             {/* 내 문서함 탭 버튼 */}
             <button
               onClick={() => setActiveTab("documents")}
-              className={`${styles.tabButton} ${activeTab === "documents"
-                ? styles.tabButtonActive
-                : styles.tabButtonInactive
-                }`}
-            >
+              className={`${styles.tabButton} ${
+                activeTab === "documents"
+                  ? styles.tabButtonActive
+                  : styles.tabButtonInactive
+              }`}>
               <Image
                 src={
                   activeTab === "documents"
@@ -486,11 +472,11 @@ export default function MyPage() {
             {/* 내 계정 탭 버튼 */}
             <button
               onClick={() => setActiveTab("account")}
-              className={`${styles.tabButton} ${activeTab === "account"
-                ? styles.tabButtonActive
-                : styles.tabButtonInactive
-                }`}
-            >
+              className={`${styles.tabButton} ${
+                activeTab === "account"
+                  ? styles.tabButtonActive
+                  : styles.tabButtonInactive
+              }`}>
               <Image
                 src={
                   activeTab === "account"

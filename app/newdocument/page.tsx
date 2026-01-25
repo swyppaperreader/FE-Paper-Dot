@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useRef } from "react";
 import Image from "next/image";
 import Header from "../components/header/Header";
 
@@ -14,10 +13,9 @@ interface UploadingFile {
 }
 
 export default function NewDocumentPage() {
-  const router = useRouter();
   const [isDragging, setIsDragging] = useState(false);
   const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([]);
-  const fileInputRef: React.Ref<HTMLInputElement> = require("react").useRef(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -55,7 +53,7 @@ export default function NewDocumentPage() {
   };
 
   const handleFileUpload = (file: File) => {
-    const fileId = Date.now().toString();
+    const fileId = crypto.randomUUID();
 
     setUploadingFiles((prev) => [
       ...prev,
@@ -80,10 +78,10 @@ export default function NewDocumentPage() {
         prev.map((f) =>
           f.id === fileId
             ? {
-              ...f,
-              progress,
-              status: progress === 100 ? "completed" : "uploading",
-            }
+                ...f,
+                progress,
+                status: progress === 100 ? "completed" : "uploading",
+              }
             : f
         )
       );
@@ -102,9 +100,7 @@ export default function NewDocumentPage() {
   };
 
   const handleClick = () => {
-    if ((fileInputRef as React.RefObject<HTMLInputElement>).current) {
-      (fileInputRef as React.RefObject<HTMLInputElement>).current?.click();
-    }
+    fileInputRef.current?.click();
   };
 
   const formatFileSize = (bytes: number) => {
@@ -167,8 +163,7 @@ export default function NewDocumentPage() {
                             viewBox="0 0 24 24"
                             fill="none"
                             stroke="currentColor"
-                            strokeWidth="3"
-                          >
+                            strokeWidth="3">
                             <polyline points="20 6 9 17 4 12" />
                           </svg>
                         </div>
@@ -176,8 +171,7 @@ export default function NewDocumentPage() {
                       {uploadFile.status === "error" && (
                         <button
                           className={styles.removeButton}
-                          onClick={() => handleRemoveFile(uploadFile.id)}
-                        >
+                          onClick={() => handleRemoveFile(uploadFile.id)}>
                           ✕
                         </button>
                       )}
@@ -186,10 +180,11 @@ export default function NewDocumentPage() {
 
                   <div className={styles.progressBarContainer}>
                     <div
-                      className={`${styles.progressBar} ${uploadFile.status === "completed"
-                        ? styles.progressBarCompleted
-                        : ""
-                        }`}
+                      className={`${styles.progressBar} ${
+                        uploadFile.status === "completed"
+                          ? styles.progressBarCompleted
+                          : ""
+                      }`}
                       style={{
                         width: `${uploadFile.progress}%`,
                       }}
@@ -197,11 +192,11 @@ export default function NewDocumentPage() {
                   </div>
 
                   <p
-                    className={`${styles.statusMessage} ${uploadFile.status === "completed"
-                      ? styles.statusCompleted
-                      : ""
-                      }`}
-                  >
+                    className={`${styles.statusMessage} ${
+                      uploadFile.status === "completed"
+                        ? styles.statusCompleted
+                        : ""
+                    }`}>
                     {uploadFile.status === "uploading" && "업로드 중..."}
                     {uploadFile.status === "completed" && "업로드 완료! ✓"}
                     {uploadFile.status === "error" && "업로드 실패"}
@@ -213,13 +208,14 @@ export default function NewDocumentPage() {
 
           {uploadingFiles.length === 0 && (
             <div
-              className={`${styles.uploadArea} ${isDragging ? styles.uploadAreaDragging : ""
-                }`}
+              className={`${styles.uploadArea} ${
+                isDragging ? styles.uploadAreaDragging : ""
+              }`}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
-              onClick={handleClick}
-            ><div className={styles.uploadIconWrapper}>
+              onClick={handleClick}>
+              <div className={styles.uploadIconWrapper}>
                 <div className={styles.uploadIcon}>
                   <svg
                     width="48"
@@ -229,8 +225,7 @@ export default function NewDocumentPage() {
                     stroke="currentColor"
                     strokeWidth="2"
                     strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
+                    strokeLinejoin="round">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                     <polyline points="17 8 12 3 7 8" />
                     <line x1="12" y1="3" x2="12" y2="15" />
@@ -259,8 +254,6 @@ export default function NewDocumentPage() {
           />
         </div>
       </main>
-
-
     </div>
   );
 }

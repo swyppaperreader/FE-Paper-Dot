@@ -5,6 +5,7 @@
   align-items: center;
   flex-direction: column;
   background-color: #fff;
+  overflow: hidden;
 }
 
 .contentContainer {
@@ -26,7 +27,8 @@
 }
 
 .contentLeftTextImage {
-  width: 572px;
+  width: 40%;
+  /* max-width: 572px; */
   height: 394px;
   margin-right: 36px;
   display: flex;
@@ -75,7 +77,8 @@
 }
 
 .contentRightImage {
-  width: 572px;
+  width: 100%;
+  max-width: 572px;
   height: 394px;
   border-radius: 20px;
   background: #d9d9d9;

@@ -100,8 +100,10 @@ nav,
 section {
   display: block;
 }
+html,
 body {
   line-height: 1;
+  overflow-x: hidden;
 }
 ol,
 ul {
