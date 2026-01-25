@@ -1,6 +1,5 @@
+import Image from "next/image";
 import styles from "./mainTopScreen.module.css";
-
-import BackgroundImage from "@/public/bg.svg";
 import Button from "../button/Button";
 
 export default function MainTopScreenUi() {
@@ -15,12 +14,16 @@ export default function MainTopScreenUi() {
           끊김 없이 읽어보세요.
         </p>
         <Button style={styles.button}>지금 시작하기</Button>
-        <div className={styles.textButton}>
-          📄
-          PDF 번역
-        </div>
+        <div className={styles.textButton}>📄 PDF 번역</div>
         <div className={styles.backgroundImageContainer}>
-          <BackgroundImage className={styles.backgroundImage} />
+          <Image
+            src="/bg.svg"
+            alt="배경 이미지"
+            className={styles.backgroundImage}
+            width={800}
+            height={600}
+            priority
+          />
           <div className={styles.overLay} />
         </div>
       </div>

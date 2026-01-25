@@ -1,9 +1,8 @@
 "use client";
 
 import React, { Suspense, useEffect } from "react";
+import Image from "next/image";
 import styles from "./login.module.css";
-import GoogleIcon from "@/public/googleLogo.svg";
-import KakaoIcon from "@/public/kakaoLogo.svg";
 import { useSearchParams } from "next/navigation";
 
 function LoginContent() {
@@ -50,10 +49,12 @@ function LoginContent() {
         <h1 className={styles.title}>Paperdot</h1>
         <div className={styles.buttonContainer}>
           <button onClick={handleGoogleLogin} className={styles.googleButton}>
-            <GoogleIcon /> Google로 로그인
+            <Image src="/googleLogo.svg" alt="Google" width={20} height={20} />
+            Google로 로그인
           </button>
           <button onClick={handleKakaoLogin} className={styles.kakaoButton}>
-            <KakaoIcon /> 카카오로 로그인
+            <Image src="/kakaoLogo.svg" alt="Kakao" width={20} height={20} />
+            카카오로 로그인
           </button>
         </div>
       </div>
