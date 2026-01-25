@@ -21,12 +21,6 @@ function LoginContent() {
       : process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI;
   };
 
-  const redirect_uri = isClient ? getRedirectUri() : "";
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
   const handleKakaoLogin = () => {
     const kakaoRedirectUri = getRedirectUri();
     const url = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${client_id}&redirect_uri=${kakaoRedirectUri}`;
@@ -55,7 +49,9 @@ function LoginContent() {
     const fetchToken = async () => {
       const currentRedirectUri = getRedirectUri();
       const res = await fetch(
-        `/api/auth/kakao?code=${code}&redirect_uri=${encodeURIComponent(currentRedirectUri!)}`
+        `/api/auth/kakao?code=${code}&redirect_uri=${encodeURIComponent(
+          currentRedirectUri!
+        )}`
       );
       const data = await res.json();
       console.log("카카오 토큰:", data);
