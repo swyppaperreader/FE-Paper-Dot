@@ -53,7 +53,7 @@ export default function NewDocumentPage() {
   };
 
   const handleFileUpload = (file: File) => {
-    const fileId = crypto.randomUUID();
+    const fileId = window.crypto.randomUUID();
 
     setUploadingFiles((prev) => [
       ...prev,
