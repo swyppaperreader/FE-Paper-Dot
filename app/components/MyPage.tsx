@@ -27,6 +27,9 @@ export default function MyPage() {
   const [showNewDocumentModal, setShowNewDocumentModal] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false); // ⭐ 로그아웃 팝업
 
+  // 페이지네이션 상태 추가 ⭐
+  const [currentPage, setCurrentPage] = useState(1);
+
   const mockUser = {
     id: "12345",
     name: "김유저",
@@ -37,6 +40,10 @@ export default function MyPage() {
   };
 
   const [documents, setDocuments] = useState<Document[]>([]);
+  const itemsPerPage = 6;
+  const totalPages = Math.ceil(documents.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentDocuments = documents.slice(startIndex, startIndex + itemsPerPage);
   const latestDocument = documents.length > 0 ? documents[0] : null;
 
   // ⭐ 새 문서 만들기 핸들러
@@ -75,6 +82,7 @@ export default function MyPage() {
   const handleMyDocuments = () => {
     setActiveTab("documents");
     closeProfileMenu();
+    setCurrentPage(1); // 페이지 초기화 ⭐
   };
 
   // ⭐ 내 계정 버튼 핸들러
@@ -136,7 +144,7 @@ export default function MyPage() {
     }
   };
 
-  // ⭐ 문서함 렌더 함수
+  // ⭐ 문서함 렌더 함수 (페이지네이션 적용)
   const renderDocuments = () => (
     <div className={styles.section}>
       {documents.length === 0 ? (
@@ -176,53 +184,85 @@ export default function MyPage() {
           </div>
 
           <h2 className={styles.recentDocumentsTitle}>최근 읽은 문서</h2>
-          <table className={styles.documentsTable}>
-            <thead className={styles.tableHeader}>
-              <tr>
-                <th className={styles.tableHeaderCell} style={{ width: "40%" }}>
-                  파일명
-                </th>
-                <th className={styles.tableHeaderCell} style={{ width: "20%" }}>
-                  날짜
-                </th>
-                <th className={styles.tableHeaderCell} style={{ width: "20%" }}>
-                  용량
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {documents.map((doc) => (
-                <tr key={doc.id} className={styles.tableRow}>
-                  <td className={styles.tableCell}>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "12px",
-                      }}>
-                      <span
-                        className={`${styles.fileBadge} ${
-                          doc.type === "pdf"
+          <div className={styles.tableContainer}>
+            <table className={styles.documentsTable}>
+              <thead className={styles.tableHeader}>
+                <tr>
+                  <th className={styles.tableHeaderCell} style={{ width: "40%" }}>
+                    파일명
+                  </th>
+                  <th className={styles.tableHeaderCell} style={{ width: "20%" }}>
+                    날짜
+                  </th>
+                  <th className={styles.tableHeaderCell} style={{ width: "20%" }}>
+                    용량
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentDocuments.map((doc) => (
+                  <tr key={doc.id} className={styles.tableRow}>
+                    <td className={styles.tableCell}>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "12px",
+                        }}>
+                        <span
+                          className={`${styles.fileBadge} ${doc.type === "pdf"
                             ? styles.fileBadgePdf
                             : styles.fileBadgeTxt
-                        }`}>
-                        {doc.type.toUpperCase()}
-                      </span>
-                      <span>{doc.name}</span>
-                    </div>
-                  </td>
-                  <td className={styles.tableCell}>{doc.date}</td>
-                  <td className={styles.tableCell}>{doc.size}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                            }`}>
+                          {doc.type.toUpperCase()}
+                        </span>
+                        <span>{doc.name}</span>
+                      </div>
+                    </td>
+                    <td className={styles.tableCell}>{doc.date}</td>
+                    <td className={styles.tableCell}>{doc.size}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            {/* 페이지네이션 ⭐ */}
+            {totalPages > 1 && (
+              <div className={styles.pagination}>
+                <button
+                  className={`${styles.pageBtn} ${currentPage === 1 ? styles.pageBtnDisabled : ""
+                    }`}
+                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                  disabled={currentPage === 1}>
+                  ‹
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <button
+                    key={i + 1}
+                    className={`${styles.pageBtn} ${currentPage === i + 1 ? styles.pageBtnActive : ""
+                      }`}
+                    onClick={() => setCurrentPage(i + 1)}>
+                    {i + 1}
+                  </button>
+                ))}
+                <button
+                  className={`${styles.pageBtn} ${currentPage === totalPages ? styles.pageBtnDisabled : ""
+                    }`}
+                  onClick={() =>
+                    setCurrentPage(Math.min(totalPages, currentPage + 1))
+                  }
+                  disabled={currentPage === totalPages}>
+                  ›
+                </button>
+              </div>
+            )}
+          </div>
         </>
       )}
     </div>
   );
 
-  // ⭐ 계정 정보 렌더 함수
+  // ⭐ 계정 정보 렌더 함수 (그대로)
   const renderAccountInfo = () => (
     <div className={styles.section}>
       <div className={styles.accountHeader}>
@@ -234,9 +274,7 @@ export default function MyPage() {
           <div className={styles.accountProfileImageSmall}></div>
           <h2 className={styles.accountProfileNameSmall}>{mockUser.name}</h2>
         </div>
-        <button
-          className={styles.accountLogoutBtnTop}
-          onClick={handleLogoutClick}>
+        <button className={styles.accountLogoutBtnTop} onClick={handleLogoutClick}>
           로그아웃
         </button>
       </div>
@@ -268,27 +306,15 @@ export default function MyPage() {
             placeholder="이름 입력"
           />
         </div>
-
-        <div className={styles.accountFormRow}>
-          <label className={styles.accountFormLabel}>이메일</label>
-          <input
-            type="email"
-            defaultValue={mockUser.email}
-            className={`${styles.accountInput} ${styles.accountInputDisabled}`}
-            disabled
-          />
-        </div>
       </div>
 
       <div className={styles.accountDivider} />
 
       <div className={styles.accountManagementSection}>
-        <h3 className={styles.accountManagementTitle}>계정관리</h3>
 
-        <button
-          onClick={handleDeleteAccount}
-          className={styles.deleteAccountLink}>
-          회원탈퇴
+
+        <button onClick={handleDeleteAccount} className={styles.deleteAccountLink}>
+          탈퇴하기
         </button>
 
         {showDeleteModal && (
@@ -340,9 +366,7 @@ export default function MyPage() {
         <div className={styles.headerCenter} />
 
         <div className={styles.headerRight}>
-          <button
-            className={styles.headerButton}
-            onClick={handleStartNewDocument}>
+          <button className={styles.headerButton} onClick={handleStartNewDocument}>
             새 문서 만들기
           </button>
 
@@ -373,31 +397,20 @@ export default function MyPage() {
                 {/* 드롭다운 (배경 위) */}
                 <div className={styles.profileDropdown}>
                   <div className={styles.profileDropdownHeader}>
-                    <h3 className={styles.profileDropdownName}>
-                      {mockUser.name}
-                    </h3>
-                    <p className={styles.profileDropdownEmail}>
-                      {mockUser.email}
-                    </p>
+                    <h3 className={styles.profileDropdownName}>{mockUser.name}</h3>
                   </div>
                   <div className={styles.profileDropdownDivider} />
                   {/* 내 문서함 버튼 */}
-                  <button
-                    className={styles.profileDropdownItem}
-                    onClick={handleMyDocuments}>
+                  <button className={styles.profileDropdownItem} onClick={handleMyDocuments}>
                     내 문서함
                   </button>
                   {/* 내 계정 버튼 */}
-                  <button
-                    className={styles.profileDropdownItem}
-                    onClick={handleMyAccount}>
+                  <button className={styles.profileDropdownItem} onClick={handleMyAccount}>
                     내 계정
                   </button>
                   <div className={styles.profileDropdownDivider} />
                   {/* 로그아웃 버튼 */}
-                  <button
-                    className={styles.profileDropdownLogout}
-                    onClick={handleLogoutClick}>
+                  <button className={styles.profileDropdownLogout} onClick={handleLogoutClick}>
                     로그아웃
                   </button>
                 </div>
@@ -416,14 +429,10 @@ export default function MyPage() {
               정말로 로그아웃 하시겠습니까?
             </p>
             <div className={styles.logoutModalButtons}>
-              <button
-                onClick={handleLogoutCancel}
-                className={styles.logoutModalCancelBtn}>
+              <button onClick={handleLogoutCancel} className={styles.logoutModalCancelBtn}>
                 취소
               </button>
-              <button
-                onClick={handleLogoutConfirm}
-                className={styles.logoutModalConfirmBtn}>
+              <button onClick={handleLogoutConfirm} className={styles.logoutModalConfirmBtn}>
                 로그아웃
               </button>
             </div>
@@ -450,11 +459,10 @@ export default function MyPage() {
             {/* 내 문서함 탭 버튼 */}
             <button
               onClick={() => setActiveTab("documents")}
-              className={`${styles.tabButton} ${
-                activeTab === "documents"
-                  ? styles.tabButtonActive
-                  : styles.tabButtonInactive
-              }`}>
+              className={`${styles.tabButton} ${activeTab === "documents"
+                ? styles.tabButtonActive
+                : styles.tabButtonInactive
+                }`}>
               <Image
                 src={
                   activeTab === "documents"
@@ -472,11 +480,10 @@ export default function MyPage() {
             {/* 내 계정 탭 버튼 */}
             <button
               onClick={() => setActiveTab("account")}
-              className={`${styles.tabButton} ${
-                activeTab === "account"
-                  ? styles.tabButtonActive
-                  : styles.tabButtonInactive
-              }`}>
+              className={`${styles.tabButton} ${activeTab === "account"
+                ? styles.tabButtonActive
+                : styles.tabButtonInactive
+                }`}>
               <Image
                 src={
                   activeTab === "account"

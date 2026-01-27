@@ -57,11 +57,11 @@
 }
 
 .headerButton {
-  background-color: #558AF0;
+  background-color: #4787FF;
   color: white;
   padding: 8px 14px;
   border-radius: 6px;
-  border: 1px solid #558AF0;
+  border: 1px solid #4787FF;
   font-size: 13px;
   font-weight: 500;
   font-family: 'Roboto', sans-serif;
@@ -123,8 +123,8 @@
 }
 
 .tabButtonActive {
-  color: #558AF0;
-  border-left: 4px solid #558AF0;
+  color: #4787FF;
+  border-left: 4px solid #4787FF;
   padding-left: 16px;
   font-weight: 600;
 }
@@ -347,7 +347,7 @@
 
 .emptyStatePromptButton {
   padding: 12px 28px;
-  background-color: #558AF0;
+  background-color: #4787FF;
   color: white;
   border: none;
   border-radius: 6px;
@@ -388,7 +388,7 @@
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 40px;
-  border-left: 4px solid #558AF0;
+  border-left: 4px solid #4787FF;
 }
 
 .recentDocumentPromptText {
@@ -400,7 +400,7 @@
 }
 
 .recentDocumentPromptText strong {
-  color: #558AF0;
+  color: #4787FF;
   font-weight: 700;
 }
 
@@ -512,7 +512,7 @@
 
 .accountInput:focus {
   outline: none;
-  border-color: #558AF0;
+  border-color: #4787FF;
   background-color: white;
 }
 
@@ -530,10 +530,15 @@
 }
 
 .accountManagementSection {
+  margin-top: 80px;
+  /* 얼마나 아래로 내릴지 조절 */
   display: flex;
-  flex-direction: column;
+  justify-content: flex-end;
+  /* 가로 방향 오른쪽 정렬 */
+  align-items: center;
+  /* 세로 가운데 정렬(필요 없으면 삭제) */
   gap: 12px;
-  margin-top: 32px;
+  /* 제목과 버튼 사이 간격 */
 }
 
 .accountManagementTitle {
@@ -555,6 +560,9 @@
   font-weight: 400;
   transition: color 0.2s;
   font-family: 'Roboto', sans-serif;
+  margin-left: 16px;
+  /* 제목과 버튼 간 여백. 필요 없으면 0 */
+
 }
 
 .deleteAccountLink:hover {
@@ -763,7 +771,7 @@
 
   .tabButtonActive {
     border-left: none;
-    border-bottom: 3px solid #558AF0;
+    border-bottom: 3px solid #4787FF;
     padding-left: 16px;
   }
 
@@ -925,4 +933,52 @@
     font-size: 12px;
     padding: 10px 16px;
   }
+}
+
+.tableContainer {
+  position: relative;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
+  padding: 16px 0;
+  border-top: 1px solid #E1E1E1;
+}
+
+.pageBtn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #E1E1E1;
+  background: white;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #6B7280;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Roboto', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pageBtn:hover:not(.pageBtnDisabled) {
+  border-color: #4787FF;
+  color: #4787FF;
+  background: #F0F4FD;
+}
+
+.pageBtnActive {
+  background: #4787FF !important;
+  color: white !important;
+  border-color: #4787FF !important;
+}
+
+.pageBtnDisabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
