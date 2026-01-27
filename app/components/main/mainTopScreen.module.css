@@ -43,6 +43,8 @@
   left: 65%;
   top: 95%;
   display: flex;
+  flex-direction: row;
+  align-items: center;
   padding: 16px 45px;
   box-sizing: border-box;
   gap: 9.6px;
@@ -52,6 +54,14 @@
   color: #4b4d55;
   font-size: 19.2px;
   box-shadow: 4.8px 4.8px 12px 1.2px #21232a0a;
+}
+
+.textButton img {
+  flex-shrink: 0;
+}
+
+.textButton span {
+  line-height: 1.1;
 }
 
 .backgroundImageContainer {
@@ -72,4 +82,18 @@
   z-index: -1;
   background: linear-gradient(270deg, #b1cfff 0%, #c6c1ff 100%);
   filter: blur(120.00000762939453px);
+}
+
+.bgImageWrapper {
+  position: relative;
+  height: 100%;
+  width: 50%;
+  margin: 0 auto;
+}
+
+.backgroundSecondImageContainer {
+  height: 100%;
+  position: absolute;
+  left: -20%;
+  top: 40%;
 }

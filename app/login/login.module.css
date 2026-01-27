@@ -49,6 +49,7 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
+  cursor: pointer;
 }
 
 .kakaoButton {
@@ -65,4 +66,5 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
+  cursor: pointer;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useEffect, useState, useRef } from "react";
+import React, { Suspense, useEffect, useRef } from "react";
 import Image from "next/image";
 import styles from "./login.module.css";
 import { useSearchParams } from "next/navigation";
@@ -8,9 +8,7 @@ import { useSearchParams } from "next/navigation";
 function LoginContent() {
   const searchParams = useSearchParams();
   const code = searchParams.get("code");
-  const [isClient, setIsClient] = useState(false);
-  const hasProcessedCode = useRef(false); // 이중 실행 방지
-
+  const hasProcessedCode = useRef(false);
   const client_id = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID;
 
   // 클라이언트 사이드에서만 redirect_uri 결정
@@ -43,7 +41,8 @@ function LoginContent() {
 
   // 카카오 토큰 요청
   useEffect(() => {
-    if (!code || !isClient || hasProcessedCode.current) return;
+    if (!code || typeof window === "undefined" || hasProcessedCode.current)
+      return;
     hasProcessedCode.current = true; // 이중 실행 방지
 
     const fetchToken = async () => {
@@ -58,7 +57,7 @@ function LoginContent() {
     };
 
     fetchToken();
-  }, [code, isClient]);
+  }, [code]);
 
   return (
     <div className={styles.container}>
