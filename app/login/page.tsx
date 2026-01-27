@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useEffect, useState, useRef } from "react";
+import React, { Suspense, useEffect, useRef } from "react";
 import Image from "next/image";
 import styles from "./login.module.css";
 import { useSearchParams } from "next/navigation";
@@ -8,16 +8,8 @@ import { useSearchParams } from "next/navigation";
 function LoginContent() {
   const searchParams = useSearchParams();
   const code = searchParams.get("code");
-  const [isClient, setIsClient] = useState(false);
-  const hasProcessedCode = useRef(false); // 이중 실행 방지
-  const [kakaoToken, setKakaoToken] = useState<string | null>(null);
-
+  const hasProcessedCode = useRef(false);
   const client_id = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID;
-
-  // 클라이언트 마운트 확인
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   // 클라이언트 사이드에서만 redirect_uri 결정
   const getRedirectUri = () => {
@@ -49,7 +41,8 @@ function LoginContent() {
 
   // 카카오 토큰 요청
   useEffect(() => {
-    if (!code || !isClient || hasProcessedCode.current) return;
+    if (!code || typeof window === "undefined" || hasProcessedCode.current)
+      return;
     hasProcessedCode.current = true; // 이중 실행 방지
 
     const fetchToken = async () => {
@@ -60,13 +53,11 @@ function LoginContent() {
         )}`
       );
       const data = await res.json();
-      setKakaoToken(data);
+      console.log("카카오 토큰:", data);
     };
 
     fetchToken();
-  }, [code, isClient]);
-
-  console.log(kakaoToken);
+  }, [code]);
 
   return (
     <div className={styles.container}>

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Button from "../button/Button";
 import styles from "./secondMainScreen.module.css";
 
