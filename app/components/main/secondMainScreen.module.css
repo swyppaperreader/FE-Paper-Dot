@@ -1,0 +1,131 @@
+.container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  background-color: #fff;
+}
+
+.contentContainer {
+  box-sizing: border-box;
+  width: calc(100% - 72px);
+  height: 591px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 40px;
+  border-radius: 40px;
+  border: 1px solid #dee3eb;
+  background: #fff;
+}
+
+.contentLeftContainer {
+  width: 40%;
+}
+
+.title {
+  color: #21232a;
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 150%;
+  letter-spacing: -0.8px;
+}
+
+.button {
+  margin-top: 20px;
+}
+
+.description {
+  color: #4b4d55;
+  font-size: 1.125rem;
+  font-weight: 400;
+  line-height: 150%;
+  letter-spacing: -0.36px;
+  margin-top: 78px;
+}
+
+.contentRightContainer {
+  width: 60%;
+  height: 100%;
+}
+
+.rectangle {
+  width: 100%;
+  height: 100%;
+  background-color: #dee3eb;
+}
+.container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  background-color: #fff;
+}
+
+.contentContainer {
+  box-sizing: border-box;
+  width: calc(100% - 72px);
+  height: 591px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 40px;
+  padding-left: 36px;
+  border-radius: 40px;
+  border: 1px solid #dee3eb;
+  background: #fff;
+}
+
+.contentLeftContainer {
+  width: 40%;
+}
+
+.title {
+  color: #21232a;
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 150%;
+  letter-spacing: -0.8px;
+}
+
+.button {
+  margin-top: 20px;
+}
+
+.description {
+  color: #4b4d55;
+  font-size: 1.125rem;
+  font-weight: 400;
+  line-height: 150%;
+  letter-spacing: -0.36px;
+  margin-top: 78px;
+}
+
+.contentRightContainer {
+  width: 60%;
+  position: relative;
+}
+
+.overlay {
+  background: linear-gradient(
+    0deg,
+    rgba(71, 135, 255, 0.3) 0%,
+    rgba(126, 115, 255, 0.1) 100%
+  );
+  border-top-right-radius: 40px;
+  border-bottom-right-radius: 40px;
+  width: 100%;
+  height: 100%;
+}
+
+.rectangle {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  border-radius: 40px;
+  width: 636px;
+  height: 511px;
+  background-color: white;
+}

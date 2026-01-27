@@ -1,0 +1,99 @@
+.container {
+  width: 100%;
+  height: calc(100vh - 60px);
+  position: relative;
+  overflow: hidden;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 160px;
+  gap: 16px;
+  position: relative;
+}
+
+.title {
+  color: #21232a;
+  text-align: center;
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 150%;
+  letter-spacing: -0.96px;
+  text-transform: capitalize;
+}
+
+.description {
+  color: #4b4d55;
+  text-align: center;
+  font-size: 1.125rem;
+  font-weight: 400;
+  line-height: 150%;
+  letter-spacing: -0.36px;
+}
+
+.button {
+  margin-top: 1%;
+}
+
+.textButton {
+  position: absolute;
+  left: 65%;
+  top: 95%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 16px 45px;
+  box-sizing: border-box;
+  gap: 9.6px;
+  border-radius: 9.6px;
+  border: 1.2px solid #dee3eb;
+  background: #fff;
+  color: #4b4d55;
+  font-size: 19.2px;
+  box-shadow: 4.8px 4.8px 12px 1.2px #21232a0a;
+}
+
+.textButton img {
+  flex-shrink: 0;
+}
+
+.textButton span {
+  line-height: 1.1;
+}
+
+.backgroundImageContainer {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 100%;
+  margin-top: 60px;
+}
+
+.overLay {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60%;
+  height: 100%;
+  z-index: -1;
+  background: linear-gradient(270deg, #b1cfff 0%, #c6c1ff 100%);
+  filter: blur(120.00000762939453px);
+}
+
+.bgImageWrapper {
+  position: relative;
+  height: 100%;
+  width: 50%;
+  margin: 0 auto;
+}
+
+.backgroundSecondImageContainer {
+  height: 100%;
+  position: absolute;
+  left: -20%;
+  top: 40%;
+}
