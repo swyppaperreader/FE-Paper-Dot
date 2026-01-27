@@ -1,9 +1,8 @@
 /* ==================== CONTAINER ==================== */
 .container {
-  min-height: 100vh;
+  min-height: calc(100vh - 60px);
   display: flex;
   flex-direction: column;
-  background-color: var(--color-background, #ffffff);
 }
 
 .main {
@@ -11,39 +10,42 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px 20px;
 }
 
 .content {
-  width: 100%;
-  max-width: 700px;
+  width: 43.75%;
 }
 
 /* ==================== PAGE HEADER ==================== */
 .pageHeader {
   text-align: center;
-  margin-bottom: 48px;
+  gap: 8px;
+  margin-bottom: 40px;
 }
 
 .pageTitle {
-  font-size: 32px;
-  font-weight: 700;
-  color: var(--color-text, #134252);
-  margin: 0 0 12px 0;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
+  color: #000;
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 150%;
+  letter-spacing: -0.64px;
 }
 
 .pageSubtitle {
-  font-size: 16px;
-  color: var(--color-text-secondary, #626c71);
-  margin: 0;
-  line-height: 1.5;
+  color: #000;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 150%;
+  letter-spacing: -0.32px;
 }
 
 /* ==================== UPLOAD AREA ==================== */
 .uploadArea {
-  padding: 48px 32px;
+  padding-inline: 60px;
+  padding-top: 120px;
+  padding-bottom: 20px;
   border: 2px dashed var(--color-border, rgba(94, 82, 64, 0.2));
   border-radius: 12px;
   background-color: var(--color-secondary, #ffffff);
@@ -53,33 +55,24 @@
 }
 
 .uploadArea:hover {
-  border-color: var(--color-primary, #4787FF);
-  background-color: var(--color-secondary, rgba(94, 82, 64, 0.18));
+  border-radius: 8px;
+  border: 1px solid #dee3eb;
+  background: #f0f4fa;
 }
 
 .uploadAreaDragging {
-  border-color: var(--color-primary, #4787FF);
+  border-color: var(--color-primary, #4787ff);
   background-color: rgba(32, 128, 141, 0.08);
   transform: scale(1.02);
 }
 
 /* ==================== UPLOAD ICON WRAPPER (원형 배경) ==================== */
 .uploadIconWrapper {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background-color: #e5e7eb;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 24px;
-  transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
-  flex-shrink: 0;
-}
-
-.uploadArea:hover .uploadIconWrapper {
-  background-color: #d1d5db;
-  transform: translateY(-4px);
+  gap: 20px;
 }
 
 .uploadAreaDragging .uploadIconWrapper {
@@ -88,47 +81,47 @@
 }
 
 /* ==================== UPLOAD ICON ==================== */
-.uploadIcon {
-  color: #1f2937;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 48px;
-  height: 48px;
-  line-height: 1;
-  transition: transform 250ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.uploadIcon svg {
-  display: block;
-  width: 48px;
-  height: 48px;
+.uploadIconImage {
+  background-color: #dee3eb;
+  border-radius: 50%;
+  padding: 8px;
+  width: 60px;
+  height: 60px;
 }
 
 /* ==================== UPLOAD TEXT SECTION ==================== */
 .uploadText {
-  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .uploadMainText {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--color-text, #134252);
-  margin: 0 0 8px 0;
-  line-height: 1.4;
+  color: #21232a;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 150%;
+  letter-spacing: -0.32px;
 }
 
 .uploadSubText {
-  font-size: 14px;
-  color: var(--color-text-secondary, #626c71);
-  margin: 0;
-  line-height: 1.5;
+  color: #737a82;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 150%;
+  letter-spacing: -0.32px;
 }
 
 .uploadLimit {
-  font-size: 12px;
-  color: var(--color-text-secondary, #626c71);
-  margin: 0;
+  color: #8f959d;
+  text-align: center;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 150%;
+  letter-spacing: -0.26px;
+  margin-top: 100px;
 }
 
 .hiddenFileInput {
@@ -136,42 +129,74 @@
 }
 
 /* ==================== UPLOADING CONTAINER ==================== */
-.uploadingContainer {
+.uploadingFilesWrapper {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 16px;
-  margin-bottom: 32px;
+  height: 46.8vh;
   animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  border: 1px solid #dee3eb;
+  padding: 0 60px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  position: relative;
+}
+
+.closeIcon {
+  position: absolute;
+  right: 5%;
+  top: 40%;
+  cursor: pointer;
 }
 
 .uploadingItem {
-  padding: 20px;
-  border: 1px solid var(--color-card-border, rgba(94, 82, 64, 0.12));
-  border-radius: 12px;
-  background-color: var(--color-surface, #ffffff);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
   transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
 }
 
-.uploadingItem:hover {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
-  border-color: var(--color-primary, #4787FF);
+.fileInfo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+}
+
+.fileName {
+  color: #000;
+  text-align: left;
+  font-size: 1rem;
+  line-height: 150%;
+  letter-spacing: -0.32px;
+}
+
+.fileSize {
+  color: #4b4d55;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 150%;
+  letter-spacing: -0.28px;
+  white-space: nowrap;
 }
 
 /* ==================== UPLOADING ITEM HEADER ==================== */
 .uploadingItemHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
+  width: 100%;
+  border: 1px solid blue;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .uploadingItemInfo {
   display: flex;
   align-items: center;
   gap: 12px;
-  flex: 1;
-  min-width: 0;
+  width: 100%;
 }
 
 .fileIcon {
@@ -183,7 +208,7 @@
   justify-content: center;
   background-color: #ffffff;
   border-radius: 8px;
-  color: var(--color-primary, #4787FF);
+  color: var(--color-primary, #4787ff);
 }
 
 .fileIcon img {
@@ -194,7 +219,9 @@
 
 .fileDetails {
   flex: 1;
+  display: flex;
   min-width: 0;
+  flex-direction: row;
 }
 
 .fileName {
@@ -224,10 +251,13 @@
 }
 
 .progressPercent {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--color-primary, #4787FF);
-  display: block;
+  color: #4b4d55;
+  text-align: right;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 150%;
+  letter-spacing: -0.28px;
+  white-space: nowrap;
 }
 
 .checkmark {
@@ -236,7 +266,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--color-success, #4787FF);
+  background-color: var(--color-success, #4787ff);
   border-radius: 50%;
   color: white;
   animation: scaleIn 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -260,28 +290,26 @@
 
 /* ==================== PROGRESS BAR ==================== */
 .progressBarContainer {
-  width: 100%;
-  height: 6px;
+  flex: 1;
   background-color: var(--color-secondary, rgba(94, 82, 64, 0.12));
-  border-radius: 3px;
-  overflow: hidden;
-  margin-bottom: 12px;
+  border-radius: 100px;
+  height: 12px;
 }
 
 .progressBar {
-  height: 100%;
-  background: linear-gradient(90deg,
-      #4787FF,
-      #4787FF);
-  border-radius: 3px;
+  height: 12px;
+  background: linear-gradient(90deg, #4787ff, #4787ff);
+  border-radius: 100px;
   transition: width 300ms cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 0 10px rgba(32, 128, 141, 0.3);
 }
 
 .progressBarCompleted {
-  background: linear-gradient(90deg,
-      var(--color-success, #4787FF),
-      var(--color-primary, #4787FF));
+  background: linear-gradient(
+    90deg,
+    var(--color-success, #4787ff),
+    var(--color-primary, #4787ff)
+  );
 }
 
 /* ==================== STATUS MESSAGE ==================== */
@@ -294,7 +322,7 @@
 }
 
 .statusCompleted {
-  color: var(--color-success, #4787FF);
+  color: var(--color-success, #4787ff);
   font-weight: 600;
 }
 

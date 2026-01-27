@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import styles from "./MyPage.module.css";
 import Footer from "./footer/Footer";
-import NewDocumentModal from "./NewDocumentModal";
+import NewDocumentModal from "@/app/components/document/ui/NewDocument";
 import { useRouter } from "next/navigation";
 
 interface Document {
