@@ -10,8 +10,14 @@ function LoginContent() {
   const code = searchParams.get("code");
   const [isClient, setIsClient] = useState(false);
   const hasProcessedCode = useRef(false); // 이중 실행 방지
+  const [kakaoToken, setKakaoToken] = useState<string | null>(null);
 
   const client_id = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID;
+
+  // 클라이언트 마운트 확인
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // 클라이언트 사이드에서만 redirect_uri 결정
   const getRedirectUri = () => {
@@ -54,11 +60,13 @@ function LoginContent() {
         )}`
       );
       const data = await res.json();
-      console.log("카카오 토큰:", data);
+      setKakaoToken(data);
     };
 
     fetchToken();
   }, [code, isClient]);
+
+  console.log(kakaoToken);
 
   return (
     <div className={styles.container}>

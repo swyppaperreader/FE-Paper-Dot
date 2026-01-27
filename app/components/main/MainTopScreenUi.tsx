@@ -19,15 +19,17 @@ export default function MainTopScreenUi() {
           <span>텍스트 번역</span>
         </div>
         <div className={styles.backgroundImageContainer}>
-          <Image src="/bg.svg" alt="배경 이미지" priority fill />
-          <div className={styles.backgroundSecondImageContainer}>
-            <Image
-              src="/backgroundSecond.svg"
-              alt="메인 이미지"
-              priority
-              width={216}
-              height={180}
-            />
+          <div className={styles.bgImageWrapper}>
+            <Image src="/bg.svg" alt="배경 이미지" priority fill />
+            <div className={styles.backgroundSecondImageContainer}>
+              <Image
+                src="/backgroundSecond.svg"
+                alt="메인 이미지"
+                priority
+                width={216}
+                height={180}
+              />
+            </div>
           </div>
           <div className={styles.overLay} />
         </div>

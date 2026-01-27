@@ -6,7 +6,7 @@ export default function SecondMainScreen() {
   return (
     <section className={styles.container}>
       <div className={styles.contentContainer}>
-        <div className={styles.content}>
+        <div className={styles.contentLeftContainer}>
           <h1 className={styles.title}>
             번역하고,
             <br /> 문장별로 확인하니까
@@ -17,15 +17,10 @@ export default function SecondMainScreen() {
             <br /> 고민할 필요 없어요.
             <br /> 문장단위 번역으로 왕복 시간을 아껴드릴게요.
           </p>
-          <Image
-            src="/main.svg"
-            alt="메인 이미지"
-            className={styles.image}
-            width={500}
-            height={400}
-            priority
-          />
+        </div>
+        <div className={styles.contentRightContainer}>
           <div className={styles.overlay} />
+          <div className={styles.rectangle} />
         </div>
       </div>
     </section>
