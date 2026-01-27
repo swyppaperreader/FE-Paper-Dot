@@ -5,7 +5,7 @@ import Image from "next/image";
 import Header from "@/app/components/header/Header";
 
 import styles from "./NewDocument.module.css";
-import { useFormatFileSize } from "@/app/utils/useFormatFileSize";
+import { formatFileSize } from "@/app/utils/useFormatFileSize";
 interface UploadingFile {
   id: string;
   file: File;
@@ -124,7 +124,7 @@ export default function NewDocumentPage() {
                 <p className={styles.fileName}>{uploadingFiles[0].file.name}</p>
                 <div className={styles.fileInfo}>
                   <p className={styles.fileSize}>
-                    {useFormatFileSize(uploadingFiles[0].file.size)}
+                    {formatFileSize(uploadingFiles[0].file.size)}
                   </p>
                   <div className={styles.progressBarContainer}>
                     <div
