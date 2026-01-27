@@ -4,7 +4,6 @@ import { useState } from "react";
 import Image from "next/image";
 import styles from "./MyPage.module.css";
 import Footer from "./footer/Footer";
-import NewDocumentModal from "./NewDocumentModal";
 import { useRouter } from "next/navigation";
 
 interface Document {
@@ -24,7 +23,6 @@ export default function MyPage() {
   // ⭐ 상태 관리
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const [showNewDocumentModal, setShowNewDocumentModal] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false); // ⭐ 로그아웃 팝업
 
   // 페이지네이션 상태 추가 ⭐
@@ -49,23 +47,6 @@ export default function MyPage() {
   // ⭐ 새 문서 만들기 핸들러
   const handleStartNewDocument = () => {
     router.push("/newdocument");
-  };
-
-  // 새 문서 업로드 핸들러
-  const handleFileSelect = (file: File) => {
-    console.log("업로드된 파일:", file.name);
-
-    const newDoc: Document = {
-      id: Date.now().toString(),
-      name: file.name,
-      type: "pdf",
-      date: new Date().toLocaleDateString("ko-KR"),
-      size: `${Math.round(file.size / 1024)} KB`,
-    };
-
-    setDocuments([newDoc, ...documents]);
-    setShowNewDocumentModal(false);
-    alert(`✅ ${file.name} 업로드 완료!`);
   };
 
   // 프로필 메뉴 토글
@@ -419,7 +400,6 @@ export default function MyPage() {
           </div>
         </div>
       </header>
-
       {/* ==================== 로그아웃 확인 팝업 ==================== */}
       {showLogoutModal && (
         <div className={styles.logoutModal}>
@@ -443,14 +423,6 @@ export default function MyPage() {
           />
         </div>
       )}
-
-      {/* 새 문서 모달 */}
-      <NewDocumentModal
-        isOpen={showNewDocumentModal}
-        onClose={() => setShowNewDocumentModal(false)}
-        onFileSelect={handleFileSelect}
-      />
-
       {/* ==================== 콘텐츠 영역 ==================== */}
       <div className={styles.contentWrapper}>
         {/* 사이드바 */}
@@ -506,7 +478,6 @@ export default function MyPage() {
           {activeTab === "account" && renderAccountInfo()}
         </div>
       </div>
-
       {/* 푸터 */}
       <Footer />
     </div>
