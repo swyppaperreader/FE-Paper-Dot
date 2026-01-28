@@ -1,5 +1,5 @@
-import MyPage from "../components/mypage/ui/MyPage";
+// import MyPage from "../components/mypage/ui/MyPage";
 
-export default function MyPageRoute() {
-  return <MyPage />;
-}
+// export default function MyPageRoute() {
+//   return <MyPage />;
+// }

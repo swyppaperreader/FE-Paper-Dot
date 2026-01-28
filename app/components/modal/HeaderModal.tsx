@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import styles from "./headerModal.module.css";
 import Button from "../button/Button";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function HeaderModal() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -25,8 +26,14 @@ export default function HeaderModal() {
             <p className={styles.headerModalEmail}>testid@naver.com</p>
           </div>
           <div className={styles.headerMiddleTitleContainer}>
-            <p className={styles.headerMiddleTitle}>내 문서함</p>
-            <p className={styles.headerMiddleTitle}>내 계정</p>
+            <Link
+              href="/mypage/mydocument"
+              className={styles.headerMiddleTitle}>
+              내 문서함
+            </Link>
+            <Link href="/mypage/account" className={styles.headerMiddleTitle}>
+              내 계정
+            </Link>
           </div>
           <div className={styles.headerModalLogoutButton}>
             <p className={styles.headerModalEmail}>로그아웃</p>
