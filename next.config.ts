@@ -4,9 +4,9 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   turbopack: {
     rules: {
-      ".svg": {
+      "*.svg": {
         loaders: ["@svgr/webpack"],
-        as: ".js",
+        as: "*.js",
       },
     },
   },
