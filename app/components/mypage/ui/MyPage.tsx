@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import styles from "./MyPage.module.css";
-import Footer from "./footer/Footer";
+import Footer from "../../footer/Footer";
 import { useRouter } from "next/navigation";
 
 interface Document {

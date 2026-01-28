@@ -62,13 +62,13 @@ export default function CheckSection() {
               <div className={styles.imageArea}>
                 <div className={styles.iconPlaceholder}>
                   {/* 여기에 일러스트 이미지 삽입 */}
-                  <Image
+                  {/* <Image
                     src={`/images/${user.id}.png`}
                     alt={user.title}
                     className={styles.illustration}
                     width={300}
                     height={300}
-                  />
+                  /> */}
                 </div>
               </div>
 
