@@ -8,7 +8,7 @@ export default function Header() {
   return (
     <header className={styles.header}>
       <div className={styles.container}>
-        <Link href={isLogin ? "/" : "/login"} className={styles.link}>
+        <Link href={"/"} className={styles.link}>
           {/* 로고 이미지 자리 */}
           <div className={styles.logo}></div>
           Paperdot.
