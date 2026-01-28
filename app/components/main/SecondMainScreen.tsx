@@ -10,7 +10,7 @@ export default function SecondMainScreen() {
             번역하고,
             <br /> 문장별로 확인하니까
           </h1>
-          <Button style={styles.button}>지금 시작하기</Button>
+          <Button>지금 시작하기</Button>
           <p className={styles.description}>
             &quot;어디 읽고 있었지? PDF와 번역창을 번갈아 보느라 놓쳤어&quot;
             <br /> 고민할 필요 없어요.
