@@ -24,7 +24,23 @@ export default function MyPage() {
   // ⭐ 상태 관리
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const [showLogoutModal, setShowLogoutModal] = useState(false); // ⭐ 로그아웃 팝업
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+  // 페이지네이션 상태
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // ⭐ 탈퇴 사유 관련 상태 (한 화면에서 모두 처리)
+  const [selectedReason, setSelectedReason] = useState<string>("");
+  const [customReason, setCustomReason] = useState<string>("");
+  const [agreeToDelete, setAgreeToDelete] = useState(false);
+
+  const deleteReasons = [
+    "더 이상 사용할 일이 없어서",
+    "필요한 기능이 없어서 (하이라이트, 단어장 등)",
+    "다른 서비스(번역기, ai)를 이용해서",
+    "번역 품질이 기대에 미치지 못해서",
+    "기타(직접입력)",
+  ];
 
   const mockUser = {
     id: "12345",
@@ -36,6 +52,13 @@ export default function MyPage() {
   };
 
   const [documents, setDocuments] = useState<Document[]>([]);
+  const itemsPerPage = 6;
+  const totalPages = Math.ceil(documents.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentDocuments = documents.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
   const latestDocument = documents.length > 0 ? documents[0] : null;
 
   // ⭐ 새 문서 만들기 핸들러
@@ -52,6 +75,7 @@ export default function MyPage() {
   const handleMyDocuments = () => {
     setActiveTab("documents");
     closeProfileMenu();
+    setCurrentPage(1);
   };
 
   // ⭐ 내 계정 버튼 핸들러
@@ -70,14 +94,10 @@ export default function MyPage() {
     try {
       console.log("로그아웃 진행 중...");
 
-      // 여기에 실제 로그아웃 로직 추가
-      // await logout();
-
       setTimeout(() => {
         alert("로그아웃되었습니다.");
         setShowLogoutModal(false);
         closeProfileMenu();
-        // 로그아웃 후 로그인 페이지로 이동
         router.push("/login");
       }, 500);
     } catch (error) {
@@ -92,24 +112,47 @@ export default function MyPage() {
     setShowLogoutModal(false);
   };
 
-  // 회원탈퇴 핸들러
-  const handleDeleteAccount = async () => {
-    if (!showDeleteModal) {
-      setShowDeleteModal(true);
+  // ⭐ 탈퇴하기 버튼 클릭 (한 화면 모달 표시)
+  const handleDeleteAccountClick = () => {
+    setShowDeleteModal(true);
+    setSelectedReason("");
+    setCustomReason("");
+    setAgreeToDelete(false);
+  };
+
+  // ⭐ 탈퇴 확인
+  const handleConfirmDelete = async () => {
+    if (!agreeToDelete) {
+      alert("약관에 동의해주세요.");
+      return;
+    }
+    if (!selectedReason) {
+      alert("탈퇴 사유를 선택해주세요.");
+      return;
+    }
+    if (selectedReason === "기타(직접입력)" && !customReason.trim()) {
+      alert("탈퇴 사유를 입력해주세요.");
       return;
     }
 
     try {
-      console.log("회원탈퇴 진행 중...");
-      setTimeout(() => {
-        alert("회원탈퇴가 완료되었습니다.");
-      }, 1000);
+      const reason =
+        selectedReason === "기타(직접입력)" ? customReason : selectedReason;
 
+      console.log("탈퇴 사유:", reason);
+
+      // API 호출
+      // await fetch('/api/user/delete', {
+      //   method: 'DELETE',
+      //   body: JSON.stringify({ reason })
+      // });
+
+      alert("회원탈퇴가 완료되었습니다.");
       setShowDeleteModal(false);
+      router.push("/login");
     } catch (error) {
-      console.error("회원탈퇴 실패:", error);
-      alert("회원탈퇴 중 오류가 발생했습니다.");
-      setShowDeleteModal(false);
+      console.error("탈퇴 실패:", error);
+      alert("탈퇴 중 오류가 발생했습니다.");
     }
   };
 
