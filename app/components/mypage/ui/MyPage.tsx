@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import styles from "./MyPage.module.css";
-import Footer from "./footer/Footer";
+import Footer from "../../footer/Footer";
 import { useRouter } from "next/navigation";
 
 interface Document {
@@ -303,90 +303,6 @@ export default function MyPage() {
   // ⭐ 메인 렌더
   return (
     <div className={styles.container}>
-      {/* ==================== 헤더 ==================== */}
-      <header className={styles.header}>
-        <div className={styles.headerLeft}>
-          <div className={styles.logoContainer}>
-            <Image
-              src="/Paperdot.logo.png"
-              alt="Paperdot 로고"
-              width={100}
-              height={32}
-              className={styles.logoImage}
-              priority
-            />
-          </div>
-        </div>
-
-        <div className={styles.headerCenter} />
-
-        <div className={styles.headerRight}>
-          <button
-            className={styles.headerButton}
-            onClick={handleStartNewDocument}>
-            새 문서 만들기
-          </button>
-
-          {/* ==================== 프로필 메뉴 ==================== */}
-          <div className={styles.profileMenuWrapper}>
-            <button
-              className={styles.headerProfileImage}
-              onClick={handleProfileMenuToggle}>
-              <Image
-                src="/user-default.png"
-                alt="프로필"
-                width={40}
-                height={40}
-                style={{ borderRadius: "50%", objectFit: "cover" }}
-                priority
-              />
-            </button>
-
-            {/* 프로필 드롭다운 메뉴 */}
-            {showProfileMenu && (
-              <>
-                {/* 배경 (가장 아래) */}
-                <div
-                  className={styles.profileMenuBackdrop}
-                  onClick={closeProfileMenu}
-                />
-
-                {/* 드롭다운 (배경 위) */}
-                <div className={styles.profileDropdown}>
-                  <div className={styles.profileDropdownHeader}>
-                    <h3 className={styles.profileDropdownName}>
-                      {mockUser.name}
-                    </h3>
-                    <p className={styles.profileDropdownEmail}>
-                      {mockUser.email}
-                    </p>
-                  </div>
-                  <div className={styles.profileDropdownDivider} />
-                  {/* 내 문서함 버튼 */}
-                  <button
-                    className={styles.profileDropdownItem}
-                    onClick={handleMyDocuments}>
-                    내 문서함
-                  </button>
-                  {/* 내 계정 버튼 */}
-                  <button
-                    className={styles.profileDropdownItem}
-                    onClick={handleMyAccount}>
-                    내 계정
-                  </button>
-                  <div className={styles.profileDropdownDivider} />
-                  {/* 로그아웃 버튼 */}
-                  <button
-                    className={styles.profileDropdownLogout}
-                    onClick={handleLogoutClick}>
-                    로그아웃
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      </header>
       {/* ==================== 로그아웃 확인 팝업 ==================== */}
       {showLogoutModal && (
         <div className={styles.logoutModal}>

@@ -1,4 +1,4 @@
-import MyPage from '../components/MyPage';
+import MyPage from "../components/mypage/ui/MyPage";
 
 export default function MyPageRoute() {
   return <MyPage />;

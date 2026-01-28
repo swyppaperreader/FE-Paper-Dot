@@ -25,9 +25,9 @@ export default function MainTopScreenUi() {
               <Image
                 src="/backgroundSecond.svg"
                 alt="메인 이미지"
-                priority
                 width={216}
                 height={180}
+                loading="lazy"
               />
             </div>
           </div>

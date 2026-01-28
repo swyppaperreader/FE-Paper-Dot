@@ -2,10 +2,18 @@ import styles from "./button.module.css";
 
 export default function Button({
   children,
-  style,
+  className,
+  onClick,
 }: {
   children: React.ReactNode;
-  style?: string;
+  className?: string;
+  onClick?: () => void;
 }) {
-  return <button className={`${styles.button} ${style}`}>{children}</button>;
+  return (
+    <button
+      onClick={onClick}
+      className={`${className ? className : styles.button} `}>
+      {children}
+    </button>
+  );
 }

@@ -1,0 +1,105 @@
+.headerModalContainer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.userImageButton {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+}
+
+.myPageButtonContainer {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  position: relative;
+}
+
+.newDocumentButton {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 150%;
+  letter-spacing: -0.28px;
+  padding: 11.5px 16px;
+  border-radius: 8px;
+  background: #4787ff;
+  border: none;
+  cursor: pointer;
+  transition: all 300ms;
+  white-space: nowrap;
+  &:hover {
+    opacity: 0.5;
+  }
+}
+
+.headerModalWrapper {
+  position: absolute;
+  top: 20%;
+  right: 5%;
+  transform: translateY(25%);
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.15);
+  z-index: 100;
+}
+
+.headerModal {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-bottom: 1px solid #dee3eb;
+  padding: 8px 16px;
+  width: 200px;
+}
+
+.headerModalName {
+  color: #21232a;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 150%;
+  letter-spacing: -0.32px;
+}
+
+.headerModalEmail {
+  color: #737a82;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 150%;
+  letter-spacing: -0.28px;
+}
+
+.headerMiddleTitleContainer {
+  display: flex;
+  gap: 4px;
+  flex-direction: column;
+  padding: 8px 0;
+}
+
+.headerMiddleTitle {
+  padding: 8px 16px;
+  color: #21232a;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 150%;
+  letter-spacing: -0.28px;
+}
+
+.headerModalLogoutButton {
+  border-top: 1px solid #dee3eb;
+  padding: 16px 16px;
+  color: #8f959d;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 150%;
+  letter-spacing: -0.28px;
+}
