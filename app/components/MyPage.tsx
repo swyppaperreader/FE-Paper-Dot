@@ -23,10 +23,23 @@ export default function MyPage() {
   // ⭐ 상태 관리
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const [showLogoutModal, setShowLogoutModal] = useState(false); // ⭐ 로그아웃 팝업
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-  // 페이지네이션 상태 추가 ⭐
+  // 페이지네이션 상태
   const [currentPage, setCurrentPage] = useState(1);
+
+  // ⭐ 탈퇴 사유 관련 상태 (한 화면에서 모두 처리)
+  const [selectedReason, setSelectedReason] = useState<string>("");
+  const [customReason, setCustomReason] = useState<string>("");
+  const [agreeToDelete, setAgreeToDelete] = useState(false);
+
+  const deleteReasons = [
+    "더 이상 사용할 일이 없어서",
+    "필요한 기능이 없어서 (하이라이트, 단어장 등)",
+    "다른 서비스(번역기, ai)를 이용해서",
+    "번역 품질이 기대에 미치지 못해서",
+    "기타(직접입력)",
+  ];
 
   const mockUser = {
     id: "12345",
@@ -63,7 +76,7 @@ export default function MyPage() {
   const handleMyDocuments = () => {
     setActiveTab("documents");
     closeProfileMenu();
-    setCurrentPage(1); // 페이지 초기화 ⭐
+    setCurrentPage(1);
   };
 
   // ⭐ 내 계정 버튼 핸들러
@@ -82,14 +95,10 @@ export default function MyPage() {
     try {
       console.log("로그아웃 진행 중...");
 
-      // 여기에 실제 로그아웃 로직 추가
-      // await logout();
-
       setTimeout(() => {
         alert("로그아웃되었습니다.");
         setShowLogoutModal(false);
         closeProfileMenu();
-        // 로그아웃 후 로그인 페이지로 이동
         router.push("/login");
       }, 500);
     } catch (error) {
@@ -104,26 +113,138 @@ export default function MyPage() {
     setShowLogoutModal(false);
   };
 
-  // 회원탈퇴 핸들러
-  const handleDeleteAccount = async () => {
-    if (!showDeleteModal) {
-      setShowDeleteModal(true);
+  // ⭐ 탈퇴하기 버튼 클릭 (한 화면 모달 표시)
+  const handleDeleteAccountClick = () => {
+    setShowDeleteModal(true);
+    setSelectedReason("");
+    setCustomReason("");
+    setAgreeToDelete(false);
+  };
+
+  // ⭐ 탈퇴 확인
+  const handleConfirmDelete = async () => {
+    if (!agreeToDelete) {
+      alert("약관에 동의해주세요.");
+      return;
+    }
+    if (!selectedReason) {
+      alert("탈퇴 사유를 선택해주세요.");
+      return;
+    }
+    if (selectedReason === "기타(직접입력)" && !customReason.trim()) {
+      alert("탈퇴 사유를 입력해주세요.");
       return;
     }
 
     try {
-      console.log("회원탈퇴 진행 중...");
-      setTimeout(() => {
-        alert("회원탈퇴가 완료되었습니다.");
-      }, 1000);
+      const reason =
+        selectedReason === "기타(직접입력)" ? customReason : selectedReason;
 
+      console.log("탈퇴 사유:", reason);
+
+      // API 호출
+      // await fetch('/api/user/delete', {
+      //   method: 'DELETE',
+      //   body: JSON.stringify({ reason })
+      // });
+
+      alert("회원탈퇴가 완료되었습니다.");
       setShowDeleteModal(false);
+      router.push("/login");
     } catch (error) {
-      console.error("회원탈퇴 실패:", error);
-      alert("회원탈퇴 중 오류가 발생했습니다.");
-      setShowDeleteModal(false);
+      console.error("탈퇴 실패:", error);
+      alert("탈퇴 중 오류가 발생했습니다.");
     }
   };
+
+  // ⭐ 모달 닫기
+  const handleCloseModal = () => {
+    setShowDeleteModal(false);
+    setSelectedReason("");
+    setCustomReason("");
+    setAgreeToDelete(false);
+  };
+
+  // ⭐ 한 화면 통합 탈퇴 모달
+  const renderDeleteModal = () => (
+    <div className={styles.deleteModal}>
+      <div className={styles.deleteModalContent}>
+        {/* 제목 */}
+        <h2 className={styles.deleteModalTitle}>계정삭제</h2>
+
+        {/* 설명 텍스트 */}
+        <p className={styles.deleteModalDescription}>
+          탈퇴 시 번역 기록, 내정보를 포함한 모든 데이터가 삭제되며 복구할 수
+          없습니다.
+        </p>
+
+        {/* 동의 체크박스 */}
+        <div className={styles.agreeCheckbox}>
+          <input
+            type="checkbox"
+            id="agreeDelete"
+            checked={agreeToDelete}
+            onChange={(e) => setAgreeToDelete(e.target.checked)}
+            className={styles.checkboxInput}
+          />
+          <label htmlFor="agreeDelete" className={styles.checkboxLabel}>
+            동의합니다
+          </label>
+        </div>
+
+        {/* 구분선 */}
+        <div className={styles.deleteModalDivider} />
+
+        {/* 탈퇴 사유 섹션 */}
+        <div className={styles.deleteReasonSection}>
+          <label className={styles.deleteReasonLabel}>계정 삭제 사유</label>
+
+          {/* 선택 박스 */}
+          <div className={styles.selectWrapper}>
+            <select
+              value={selectedReason}
+              onChange={(e) => setSelectedReason(e.target.value)}
+              className={styles.deleteReasonSelect}
+              disabled={!agreeToDelete}>
+              <option value="">계정 삭제 이유를 선택해주세요</option>
+              {deleteReasons.map((reason) => (
+                <option key={reason} value={reason}>
+                  {reason}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* 기타 선택 시 텍스트 입력 */}
+          {selectedReason === "기타(직접입력)" && agreeToDelete && (
+            <textarea
+              value={customReason}
+              onChange={(e) => setCustomReason(e.target.value)}
+              placeholder="탈퇴 사유를 작성해주세요"
+              className={styles.customReasonTextarea}
+              maxLength={500}
+            />
+          )}
+        </div>
+
+        {/* 하단 버튼 */}
+        <div className={styles.deleteModalButtons}>
+          <button
+            onClick={handleCloseModal}
+            className={styles.deleteModalCancelBtn}>
+            취소
+          </button>
+          <button
+            onClick={handleConfirmDelete}
+            disabled={!agreeToDelete}
+            className={`${styles.deleteModalConfirmBtn} ${!agreeToDelete ? styles.deleteModalConfirmBtnDisabled : ""
+              }`}>
+            계정삭제
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 
   // ⭐ 문서함 렌더 함수 (페이지네이션 적용)
   const renderDocuments = () => (
@@ -207,7 +328,7 @@ export default function MyPage() {
               </tbody>
             </table>
 
-            {/* 페이지네이션 ⭐ */}
+            {/* 페이지네이션 */}
             {totalPages > 1 && (
               <div className={styles.pagination}>
                 <button
@@ -243,7 +364,7 @@ export default function MyPage() {
     </div>
   );
 
-  // ⭐ 계정 정보 렌더 함수 (그대로)
+  // ⭐ 계정 정보 렌더 함수
   const renderAccountInfo = () => (
     <div className={styles.section}>
       <div className={styles.accountHeader}>
@@ -255,7 +376,9 @@ export default function MyPage() {
           <div className={styles.accountProfileImageSmall}></div>
           <h2 className={styles.accountProfileNameSmall}>{mockUser.name}</h2>
         </div>
-        <button className={styles.accountLogoutBtnTop} onClick={handleLogoutClick}>
+        <button
+          className={styles.accountLogoutBtnTop}
+          onClick={handleLogoutClick}>
           로그아웃
         </button>
       </div>
@@ -292,36 +415,14 @@ export default function MyPage() {
       <div className={styles.accountDivider} />
 
       <div className={styles.accountManagementSection}>
-
-
-        <button onClick={handleDeleteAccount} className={styles.deleteAccountLink}>
+        <button
+          onClick={handleDeleteAccountClick}
+          className={styles.deleteAccountLink}>
           탈퇴하기
         </button>
 
-        {showDeleteModal && (
-          <div className={styles.deleteModal}>
-            <div className={styles.deleteModalContent}>
-              <h2 className={styles.deleteModalTitle}>회원탈퇴</h2>
-              <p className={styles.deleteModalMessage}>
-                정말로 회원탈퇴 하시겠습니까?
-                <br />
-                탈퇴 후 계정은 복구할 수 없습니다.
-              </p>
-              <div className={styles.deleteModalButtons}>
-                <button
-                  onClick={() => setShowDeleteModal(false)}
-                  className={styles.deleteModalCancelBtn}>
-                  취소
-                </button>
-                <button
-                  onClick={handleDeleteAccount}
-                  className={styles.deleteModalConfirmBtn}>
-                  탈퇴하기
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* ⭐ 한 화면 통합 탈퇴 모달 */}
+        {showDeleteModal && renderDeleteModal()}
       </div>
     </div>
   );
@@ -347,7 +448,9 @@ export default function MyPage() {
         <div className={styles.headerCenter} />
 
         <div className={styles.headerRight}>
-          <button className={styles.headerButton} onClick={handleStartNewDocument}>
+          <button
+            className={styles.headerButton}
+            onClick={handleStartNewDocument}>
             새 문서 만들기
           </button>
 
@@ -378,20 +481,28 @@ export default function MyPage() {
                 {/* 드롭다운 (배경 위) */}
                 <div className={styles.profileDropdown}>
                   <div className={styles.profileDropdownHeader}>
-                    <h3 className={styles.profileDropdownName}>{mockUser.name}</h3>
+                    <h3 className={styles.profileDropdownName}>
+                      {mockUser.name}
+                    </h3>
                   </div>
                   <div className={styles.profileDropdownDivider} />
                   {/* 내 문서함 버튼 */}
-                  <button className={styles.profileDropdownItem} onClick={handleMyDocuments}>
+                  <button
+                    className={styles.profileDropdownItem}
+                    onClick={handleMyDocuments}>
                     내 문서함
                   </button>
                   {/* 내 계정 버튼 */}
-                  <button className={styles.profileDropdownItem} onClick={handleMyAccount}>
+                  <button
+                    className={styles.profileDropdownItem}
+                    onClick={handleMyAccount}>
                     내 계정
                   </button>
                   <div className={styles.profileDropdownDivider} />
                   {/* 로그아웃 버튼 */}
-                  <button className={styles.profileDropdownLogout} onClick={handleLogoutClick}>
+                  <button
+                    className={styles.profileDropdownLogout}
+                    onClick={handleLogoutClick}>
                     로그아웃
                   </button>
                 </div>
@@ -400,6 +511,7 @@ export default function MyPage() {
           </div>
         </div>
       </header>
+
       {/* ==================== 로그아웃 확인 팝업 ==================== */}
       {showLogoutModal && (
         <div className={styles.logoutModal}>
@@ -409,10 +521,14 @@ export default function MyPage() {
               정말로 로그아웃 하시겠습니까?
             </p>
             <div className={styles.logoutModalButtons}>
-              <button onClick={handleLogoutCancel} className={styles.logoutModalCancelBtn}>
+              <button
+                onClick={handleLogoutCancel}
+                className={styles.logoutModalCancelBtn}>
                 취소
               </button>
-              <button onClick={handleLogoutConfirm} className={styles.logoutModalConfirmBtn}>
+              <button
+                onClick={handleLogoutConfirm}
+                className={styles.logoutModalConfirmBtn}>
                 로그아웃
               </button>
             </div>
@@ -423,6 +539,7 @@ export default function MyPage() {
           />
         </div>
       )}
+
       {/* ==================== 콘텐츠 영역 ==================== */}
       <div className={styles.contentWrapper}>
         {/* 사이드바 */}
@@ -478,6 +595,7 @@ export default function MyPage() {
           {activeTab === "account" && renderAccountInfo()}
         </div>
       </div>
+
       {/* 푸터 */}
       <Footer />
     </div>
