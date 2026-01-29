@@ -1,6 +1,8 @@
 "use client";
 
+import Button from "@/app/components/button/Button";
 import styles from "@/app/components/mypage/ui/MyPage.module.css";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -13,7 +15,15 @@ interface Document {
 }
 
 export default function MyDocument() {
-  const [documents, setDocuments] = useState<Document[]>([]);
+  const [documents] = useState<Document[]>([
+    {
+      id: "1",
+      name: "testestestestestestestestestestestestestestestestestestestes.pdf",
+      type: "pdf",
+      date: "2026-01-29",
+      size: "100KB",
+    },
+  ]);
   const router = useRouter();
 
   const handleStartNewDocument = () => {
@@ -32,7 +42,7 @@ export default function MyDocument() {
               <p className={styles.emptyStatePromptText}>
                 업로드 된 파일이 없습니다.
                 <br />
-                파일을 번역하고 관리해보세요
+                텍스트 또는 파일을 번역하고 관리해보세요
               </p>
               <button
                 className={styles.emptyStatePromptButton}
@@ -52,7 +62,22 @@ export default function MyDocument() {
       ) : (
         <>
           <div className={styles.recentDocumentPrompt}>
-            <p className={styles.recentDocumentPromptText}>안녕하세요</p>
+            <p className={styles.recentDocumentPromptText}>
+              김유저님, [위대한 개츠비]를 이어서 볼까요?
+            </p>
+          </div>
+
+          <div className={styles.documentInfo}>
+            <div className={styles.documentInfoContent}>
+              <Image src="/pdf.png" alt="pdf" width={22} height={25} />
+              <p className={styles.documentInfoImageText}>위대한 개츠비</p>
+              <Button className={styles.documentInfoButton}>이어서 보기</Button>
+            </div>
+            <div className={styles.documentInfoProgressContainer}>
+              <p className={styles.documentInfoProgressText}>진행율</p>
+              <div className={styles.documentInfoProgressValue}></div>
+              <p className={styles.progressPercent}>50%</p>
+            </div>
           </div>
 
           <h2 className={styles.recentDocumentsTitle}>최근 읽은 문서</h2>
@@ -62,15 +87,19 @@ export default function MyDocument() {
                 <th className={styles.tableHeaderCell} style={{ width: "40%" }}>
                   파일명
                 </th>
-                <th className={styles.tableHeaderCell} style={{ width: "20%" }}>
+                <th
+                  className={styles.tableLastHeaderCell}
+                  style={{ width: "20%" }}>
                   날짜
                 </th>
-                <th className={styles.tableHeaderCell} style={{ width: "20%" }}>
+                <th
+                  className={styles.tableLastHeaderCell}
+                  style={{ width: "20%" }}>
                   용량
                 </th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className={styles.tableBodyContainer}>
               {documents.map((doc) => (
                 <tr key={doc.id} className={styles.tableRow}>
                   <td className={styles.tableCell}>
@@ -80,19 +109,24 @@ export default function MyDocument() {
                         alignItems: "center",
                         gap: "12px",
                       }}>
-                      <span
-                        className={`${styles.fileBadge} ${
-                          doc.type === "pdf"
-                            ? styles.fileBadgePdf
-                            : styles.fileBadgeTxt
-                        }`}>
-                        {doc.type.toUpperCase()}
-                      </span>
-                      <span>{doc.name}</span>
+                      <Image src="/pdf.png" alt="pdf" width={16} height={19} />
+                      <span className={styles.tableCellText}>{doc.name}</span>
                     </div>
                   </td>
-                  <td className={styles.tableCell}>{doc.date}</td>
-                  <td className={styles.tableCell}>{doc.size}</td>
+                  <td className={styles.tableCellInfo}>
+                    <span className={styles.tableCellInfoText}>{doc.date}</span>
+                  </td>
+                  <td className={styles.tableCellInfo}>
+                    <span className={styles.tableCellInfoText}>{doc.size}</span>
+                  </td>
+                  <td className={styles.tableCellIcon}>
+                    <Image
+                      src="/trash.svg"
+                      alt="trash"
+                      width={20}
+                      height={20}
+                    />
+                  </td>
                 </tr>
               ))}
             </tbody>

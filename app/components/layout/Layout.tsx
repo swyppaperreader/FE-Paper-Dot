@@ -10,22 +10,21 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   const isMypage =
-    pathname === "/" ||
-    pathname === "/mypage/mydocument" ||
-    pathname === "/mypage/account";
+    pathname === "/mypage/mydocument" || pathname === "/mypage/account";
+  const showHeaderFooter = pathname === "/" || isMypage;
 
   return (
     <>
-      {isMypage && <Header />}
+      {showHeaderFooter && <Header />}
       {isMypage ? (
         <div style={{ display: "flex", width: "100%", height: "100vh" }}>
           <Sidebar />
           {children}
         </div>
       ) : (
-        children
+        <>{children}</>
       )}
-      {isMypage && <Footer />}
+      {showHeaderFooter && <Footer />}
     </>
   );
 }

@@ -1,57 +1,52 @@
-import React, { useState } from "react";
+"use client";
+
+import React from "react";
 import styles from "@/app/components/mypage/ui/MyPage.module.css";
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+const sidebarItems = [
+  {
+    label: "내 문서함",
+    icon: "/file-inactive.png",
+    activeIcon: "/file-active.png",
+    href: "/mypage/mydocument",
+  },
+  {
+    label: "내 계정",
+    icon: "/account-inactive.png",
+    activeIcon: "/account-active.png",
+    href: "/mypage/account",
+  },
+];
 
 export default function Sidebar() {
-  const [activeTab, setActiveTab] = useState<"documents" | "account">(
-    "documents"
-  );
+  const pathname = usePathname();
+
   return (
     <>
       {/* 사이드바 */}
       <div className={styles.sidebar}>
         <div className={styles.buttonGroup}>
-          <button
-            onClick={() => setActiveTab("documents")}
-            className={`${styles.tabButton} ${
-              activeTab === "documents"
-                ? styles.tabButtonActive
-                : styles.tabButtonInactive
-            }`}>
-            <Image
-              src={
-                activeTab === "documents"
-                  ? "/file-active.png"
-                  : "/file-inactive.png"
-              }
-              alt="문서함"
-              width={20}
-              height={20}
-              style={{ marginRight: "8px" }}
-            />
-            내 문서함
-          </button>
-
-          <button
-            onClick={() => setActiveTab("account")}
-            className={`${styles.tabButton} ${
-              activeTab === "account"
-                ? styles.tabButtonActive
-                : styles.tabButtonInactive
-            }`}>
-            <Image
-              src={
-                activeTab === "account"
-                  ? "/account-active.png"
-                  : "/account-inactive.png"
-              }
-              alt="계정"
-              width={20}
-              height={20}
-              style={{ marginRight: "8px" }}
-            />
-            내 계정
-          </button>
+          {sidebarItems.map((item) => (
+            <div className={styles.tabButtonContainer} key={item.label}>
+              <Link
+                href={item.href}
+                className={`${styles.tabButton} ${
+                  pathname === item.href ? styles.tabButtonActive : ""
+                }`}>
+                <Image
+                  src={pathname === item.href ? item.activeIcon : item.icon}
+                  alt={item.label}
+                  width={20}
+                  height={20}
+                  className={styles.tabButtonIcon}
+                />
+                {item.label}
+              </Link>
+            </div>
+          ))}
         </div>
       </div>
     </>

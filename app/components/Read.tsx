@@ -19,13 +19,14 @@ interface ReadProps {
 export default function Read({ fileName = "file_title" }: ReadProps) {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
-  const [filterMode, setFilterMode] = useState<"all" | "korean" | "english">("all");
+  const [filterMode, setFilterMode] = useState<"all" | "korean" | "english">(
+    "all"
+  );
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showSidebar, setShowSidebar] = useState(true);
   const contentBoxRef = useRef<HTMLDivElement>(null);
   const pageStartRefs = useRef<Map<number, HTMLDivElement>>(new Map());
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-
 
   const mockUser = {
     id: "12345",
@@ -97,16 +98,17 @@ By combining the best of both traditional and digital methods, we can create mor
   // 모든 텍스트를 한 곳에 합쳐서 표시 (페이지 구분 없음)
   const getAllText = () => {
     if (filterMode === "all") {
-      let allSentences: Array<{ eng: string; kor: string; pageNum: number }> = [];
+      const allSentences: Array<{ eng: string; kor: string; pageNum: number }> =
+        [];
 
       mockPages.forEach((page) => {
-        const lines = page.fullText.split("\n").filter(line => line.trim());
+        const lines = page.fullText.split("\n").filter((line) => line.trim());
         for (let i = 0; i < lines.length; i += 2) {
           if (lines[i] && lines[i + 1]) {
             allSentences.push({
               eng: lines[i].trim(),
               kor: lines[i + 1].trim(),
-              pageNum: page.pageNumber
+              pageNum: page.pageNumber,
             });
           }
         }
@@ -114,28 +116,34 @@ By combining the best of both traditional and digital methods, we can create mor
 
       return allSentences;
     } else if (filterMode === "english") {
-      let allEnglish: Array<{ text: string; pageNum: number }> = [];
+      const allEnglish: Array<{ text: string; pageNum: number }> = [];
 
       mockPages.forEach((page) => {
-        page.englishText.split("\n").filter(line => line.trim()).forEach((sentence) => {
-          allEnglish.push({
-            text: sentence.trim(),
-            pageNum: page.pageNumber
+        page.englishText
+          .split("\n")
+          .filter((line) => line.trim())
+          .forEach((sentence) => {
+            allEnglish.push({
+              text: sentence.trim(),
+              pageNum: page.pageNumber,
+            });
           });
-        });
       });
 
       return allEnglish;
     } else {
-      let allKorean: Array<{ text: string; pageNum: number }> = [];
+      const allKorean: Array<{ text: string; pageNum: number }> = [];
 
       mockPages.forEach((page) => {
-        page.koreanText.split("\n").filter(line => line.trim()).forEach((sentence) => {
-          allKorean.push({
-            text: sentence.trim(),
-            pageNum: page.pageNumber
+        page.koreanText
+          .split("\n")
+          .filter((line) => line.trim())
+          .forEach((sentence) => {
+            allKorean.push({
+              text: sentence.trim(),
+              pageNum: page.pageNumber,
+            });
           });
-        });
       });
 
       return allKorean;
@@ -148,7 +156,11 @@ By combining the best of both traditional and digital methods, we can create mor
     let firstPageSentenceIndex = -1;
 
     if (filterMode === "all") {
-      const pairs = allText as Array<{ eng: string; kor: string; pageNum: number }>;
+      const pairs = allText as Array<{
+        eng: string;
+        kor: string;
+        pageNum: number;
+      }>;
       return (
         <div>
           {pairs.map((pair, index) => {
@@ -161,7 +173,11 @@ By combining the best of both traditional and digital methods, we can create mor
                 key={index}
                 className={styles.sentencePair}
                 ref={(el) => {
-                  if (el && pair.pageNum === currentPage && firstPageSentenceIndex === -1) {
+                  if (
+                    el &&
+                    pair.pageNum === currentPage &&
+                    firstPageSentenceIndex === -1
+                  ) {
                     pageStartRefs.current.set(currentPage, el);
                   }
                   if (el && pair.pageNum === currentPage && index === 0) {
@@ -189,7 +205,11 @@ By combining the best of both traditional and digital methods, we can create mor
                 key={index}
                 className={styles.sentencePair}
                 ref={(el) => {
-                  if (el && item.pageNum === currentPage && firstPageSentenceIndex === -1) {
+                  if (
+                    el &&
+                    item.pageNum === currentPage &&
+                    firstPageSentenceIndex === -1
+                  ) {
                     pageStartRefs.current.set(currentPage, el);
                   }
                   if (el && item.pageNum === currentPage && index === 0) {
@@ -216,7 +236,11 @@ By combining the best of both traditional and digital methods, we can create mor
                 key={index}
                 className={styles.sentencePair}
                 ref={(el) => {
-                  if (el && item.pageNum === currentPage && firstPageSentenceIndex === -1) {
+                  if (
+                    el &&
+                    item.pageNum === currentPage &&
+                    firstPageSentenceIndex === -1
+                  ) {
                     pageStartRefs.current.set(currentPage, el);
                   }
                   if (el && item.pageNum === currentPage && index === 0) {
@@ -292,7 +316,9 @@ By combining the best of both traditional and digital methods, we can create mor
         <div className={styles.headerLeftCenter}>
           <div className={styles.sidebarToggleWrapper}>
             <button
-              className={`${styles.sidebarToggleBtn} ${showSidebar ? styles.sidebarToggleBtnActive : ""}`}
+              className={`${styles.sidebarToggleBtn} ${
+                showSidebar ? styles.sidebarToggleBtnActive : ""
+              }`}
               onClick={handleSidebarToggle}
               title={showSidebar ? "사이드바 숨기기" : "사이드바 보이기"}>
               <Image
@@ -334,17 +360,23 @@ By combining the best of both traditional and digital methods, we can create mor
         <div className={styles.headerRightCenter}>
           <div className={styles.filterButtons}>
             <button
-              className={`${styles.filterBtn} ${filterMode === "all" ? styles.filterBtnActive : ""}`}
+              className={`${styles.filterBtn} ${
+                filterMode === "all" ? styles.filterBtnActive : ""
+              }`}
               onClick={() => handleFilterClick("all")}>
               전체
             </button>
             <button
-              className={`${styles.filterBtn} ${filterMode === "korean" ? styles.filterBtnActive : ""}`}
+              className={`${styles.filterBtn} ${
+                filterMode === "korean" ? styles.filterBtnActive : ""
+              }`}
               onClick={() => handleFilterClick("korean")}>
               한글
             </button>
             <button
-              className={`${styles.filterBtn} ${filterMode === "english" ? styles.filterBtnActive : ""}`}
+              className={`${styles.filterBtn} ${
+                filterMode === "english" ? styles.filterBtnActive : ""
+              }`}
               onClick={() => handleFilterClick("english")}>
               영어
             </button>
@@ -376,8 +408,12 @@ By combining the best of both traditional and digital methods, we can create mor
                 />
                 <div className={styles.profileDropdown}>
                   <div className={styles.profileDropdownHeader}>
-                    <h3 className={styles.profileDropdownName}>{mockUser.name}</h3>
-                    <p className={styles.profileDropdownEmail}>{mockUser.email}</p>
+                    <h3 className={styles.profileDropdownName}>
+                      {mockUser.name}
+                    </h3>
+                    <p className={styles.profileDropdownEmail}>
+                      {mockUser.email}
+                    </p>
                   </div>
                   <div className={styles.profileDropdownDivider} />
 
@@ -446,8 +482,6 @@ By combining the best of both traditional and digital methods, we can create mor
                 />
               </div>
             )}
-
-
           </div>
         </div>
       </header>
@@ -461,11 +495,16 @@ By combining the best of both traditional and digital methods, we can create mor
               {mockPages.map((page) => (
                 <button
                   key={page.pageNumber}
-                  className={`${styles.pageThumb} ${currentPage === page.pageNumber ? styles.pageThumbActive : ""
-                    }`}
+                  className={`${styles.pageThumb} ${
+                    currentPage === page.pageNumber
+                      ? styles.pageThumbActive
+                      : ""
+                  }`}
                   onClick={() => handlePageChange(page.pageNumber)}>
                   <div className={styles.pageThumbPreview}></div>
-                  <span className={styles.pageThumbNumber}>{page.pageNumber}</span>
+                  <span className={styles.pageThumbNumber}>
+                    {page.pageNumber}
+                  </span>
                 </button>
               ))}
             </div>

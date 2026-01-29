@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import styles from "@/app/components/mypage/ui/MyPage.module.css";
 import Image from "next/image";
+import Button from "@/app/components/button/Button";
 
 export default function MyAccount() {
   const mockUser = {
@@ -11,46 +12,82 @@ export default function MyAccount() {
   };
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleLogoutClick = () => {
     console.log("로그아웃");
   };
 
   const handleDeleteAccount = () => {
-    console.log("회원탈퇴");
+    setShowDeleteModal(true);
   };
 
-  const handleShowDeleteModal = () => {
-    console.log("회원탈퇴 모달 표시");
+  const handleChangeProfileImage = () => {
+    fileInputRef.current?.click();
   };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    console.log(file);
+    if (file) {
+      console.log("선택된 파일:", file.name);
+      setProfileImage(URL.createObjectURL(file));
+    }
+  };
+
+  console.log(profileImage);
 
   return (
-    <div className={styles.section}>
-      <div className={styles.accountHeader}>
-        <h1 className={styles.accountTitle}>계정 정보 확인</h1>
-      </div>
-
+    <div className={styles.accountSection}>
       <div className={styles.accountTopBar}>
         <div className={styles.accountProfileBar}>
-          <div className={styles.accountProfileImageSmall}></div>
+          <div className={styles.accountProfileImageSmallContainer}>
+            {profileImage && (
+              <Image
+                src={profileImage}
+                alt="userImage"
+                width={80}
+                height={80}
+              />
+            )}
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept="image/*"
+              className={styles.hiddenFileInput}
+            />
+            <Button
+              className={styles.accountProfileImageSmall}
+              onClick={handleChangeProfileImage}>
+              <Image
+                src="/cameraIcon.svg"
+                alt="cameraIcon"
+                width={12}
+                height={12}
+                className={styles.cameraIcon}
+              />
+            </Button>
+          </div>
           <h2 className={styles.accountProfileNameSmall}>{mockUser.name}</h2>
         </div>
-        <button
+        <Button
           className={styles.accountLogoutBtnTop}
           onClick={handleLogoutClick}>
           로그아웃
-        </button>
+        </Button>
       </div>
 
       <div className={styles.accountFormSection}>
         <div className={styles.accountFormRow}>
-          <label className={styles.accountFormLabel}>소셜 로그인</label>
+          <p className={styles.accountFormLabel}>소셜 로그인</p>
           <div className={styles.accountSocialLoginRight}>
             <Image
-              src="/kakaoLogo.svg"
+              src="/kakaoIcon.svg"
               alt="카카오"
-              width={45}
-              height={45}
+              width={32}
+              height={32}
               style={{ borderRadius: "8px" }}
               priority
             />
@@ -61,36 +98,19 @@ export default function MyAccount() {
         </div>
 
         <div className={styles.accountFormRow}>
-          <label className={styles.accountFormLabel}>이름</label>
-          <input
-            type="text"
-            defaultValue={mockUser.name}
-            className={styles.accountInput}
-            placeholder="이름 입력"
-          />
-        </div>
-
-        <div className={styles.accountFormRow}>
-          <label className={styles.accountFormLabel}>이메일</label>
-          <input
-            type="email"
-            defaultValue={mockUser.email}
-            className={`${styles.accountInput} ${styles.accountInputDisabled}`}
-            disabled
-          />
+          <p className={styles.accountFormLabel}>이름</p>
+          <div className={styles.accountInputContainer}>
+            <p className={styles.accountInputText}>{mockUser.name}</p>
+          </div>
         </div>
       </div>
 
-      <div className={styles.accountDivider} />
-
       <div className={styles.accountManagementSection}>
-        <h3 className={styles.accountManagementTitle}>계정관리</h3>
-
-        <button
-          onClick={handleDeleteAccount}
+        <Button
+          onClick={() => setShowDeleteModal(true)}
           className={styles.deleteAccountLink}>
-          회원탈퇴
-        </button>
+          <p className={styles.deleteAccountLinkText}>탈퇴하기</p>
+        </Button>
 
         {showDeleteModal && (
           <div className={styles.deleteModal}>
@@ -108,7 +128,10 @@ export default function MyAccount() {
                   취소
                 </button>
                 <button
-                  onClick={handleDeleteAccount}
+                  onClick={() => {
+                    handleDeleteAccount();
+                    setShowDeleteModal(false);
+                  }}
                   className={styles.deleteModalConfirmBtn}>
                   탈퇴하기
                 </button>
