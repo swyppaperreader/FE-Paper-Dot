@@ -27,7 +27,6 @@ export default function MainTopScreenUi() {
                 alt="메인 이미지"
                 width={216}
                 height={180}
-                loading="lazy"
               />
             </div>
           </div>
