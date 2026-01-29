@@ -603,6 +603,7 @@
   justify-content: center;
   border-radius: 50%;
   cursor: pointer;
+
   &:hover {
     opacity: 0.5;
   }
@@ -898,38 +899,45 @@
   background-color: #ffffff;
   border-radius: 12px;
   padding: 32px 28px;
-  /* ← 좌우 28px로 늘려서 내부 여백 균형 */
   width: 438px;
+  height: 400px;
+  height: auto;
   max-width: 90vw;
   max-height: 90vh;
-  overflow-y: auto;
+  overflow-y: hidden;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   animation: slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
 .deleteModalTitle {
   font-size: 20px;
   font-weight: 700;
-  color: #1a1a1a;
-  margin: 0 0 16px 0;
+  color: #21232a;
+  margin: 0 0 20px 0;
+  line-height: 1.4;
 }
 
-.deleteModalDescription {
-  font-size: 14px;
-  color: #626c71;
-  line-height: 1.6;
-  margin: 0 0 24px 0;
+.deleteModalMessage {
+  font-size: 16px;
+  font-weight: 400;
+  color: #4b4d55;
+  line-height: 1.55;
+  margin: 0 0 28px 0;
+  letter-spacing: -0.32px;
+  white-space: nowrap;
 }
 
 .agreeCheckbox {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 16px;
-  background-color: #f9f9f9;
-  border-radius: 6px;
-  margin-bottom: 24px;
-  border: 1px solid #e5e7eb;
+  padding: 0;
+  margin: 0 0 36px 0;
+  background-color: transparent;
+  border: none;
 }
 
 .checkboxInput {
@@ -941,130 +949,90 @@
 }
 
 .checkboxLabel {
-  font-size: 13px;
-  color: #1a1a1a;
+  font-size: 16px;
+  color: #21232a;
   cursor: pointer;
   line-height: 1.5;
+  font-weight: 500;
   margin: 0;
   flex: 1;
-}
-
-.deleteModalDivider {
-  width: 100%;
-  height: 1px;
-  background-color: #e5e7eb;
-  margin: 24px 0;
+  letter-spacing: -0.32px;
 }
 
 .deleteReasonSection {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 24px;
-  padding: 0;
-  /* 미세 조정용 좌우 여백 */
+  margin-top: 0;
+  margin-bottom: 32px;
 }
 
 .deleteReasonLabel {
-  font-size: 14px;
-  font-weight: 600;
-  color: #1a1a1a;
-  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: #21232a;
+  margin: 0 0 12px 0;
+
+  letter-spacing: -0.32px;
 }
 
 .selectWrapper {
   position: relative;
+  width: 390px;
+  max-width: 100%;
+  margin-top: 12px;
 }
 
 .deleteReasonSelect {
-  width: 100%;
-  /* 풀폭 */
-  padding: 12px 40px 12px 16px;
-  /* 화살표 공간 확보하면서 좌우 패딩 */
+  width: 390px;
+  height: 48px;
+  padding: 0 40px 0 16px;
   border: 1px solid #e1e1e1;
   border-radius: 6px;
-  font-size: 13px;
-  color: #1a1a1a;
+  font-size: 15px;
+  color: #474952;
   background-color: #ffffff;
   cursor: pointer;
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23626c71' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 12px center;
+  background-position: right 16px center;
   background-size: 16px;
-  transition: border-color 0.3s;
   box-sizing: border-box;
-  /* 패딩/보더 포함 */
+  line-height: 48px;
 }
 
 .deleteReasonSelect:focus {
   outline: none;
   border-color: #4787ff;
-}
-
-.deleteReasonSelect:disabled {
-  background-color: #f5f5f5;
-  color: #999;
-  cursor: not-allowed;
-}
-
-/* 탈퇴 사유 작성 박스 (textarea) */
-.customReasonTextarea {
-  width: 100%;
-  /* 풀폭 */
-  margin: 8px 0 0 0;
-  /* auto 제거 → 좌우 0 */
-  height: 96px;
-  min-height: 96px;
-  max-height: 180px;
-  padding: 12px 16px;
-  border: 1px solid #e1e1e1;
-  border-radius: 6px;
-  font-size: 13px;
-  color: #1a1a1a;
-  font-family: "Roboto", sans-serif;
-  resize: vertical;
-  background-color: #ffffff;
-  line-height: 1.5;
-  box-sizing: border-box;
-  /* 패딩/보더 포함 */
-}
-
-.customReasonTextarea:focus {
-  outline: none;
-  border-color: #4787ff;
-}
-
-.customReasonTextarea::placeholder {
-  color: #9ca3af;
+  box-shadow: 0 0 0 3px rgba(71, 135, 255, 0.1);
 }
 
 .deleteModalButtons {
   display: flex;
   gap: 12px;
   justify-content: flex-end;
-  padding: 32px 20px;
+  margin-top: auto;
+  padding-top: 16px;
 }
 
 .deleteModalCancelBtn {
-  padding: 10px 20px;
+  width: 94px;
+  height: 48px;
+  padding: 0;
   background-color: #f3f4f6;
-  color: #1f2937;
+  color: #21232a;
   border: none;
   border-radius: 6px;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s;
-  flex: 1;
-}
-
-.deleteModalCancelBtn:hover {
-  background-color: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .deleteModalConfirmBtn {
-  padding: 10px 20px;
+  width: 122px;
+  height: 48px;
+  padding: 0;
   background-color: #4787ff;
   color: white;
   border: none;
@@ -1072,8 +1040,13 @@
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
-  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deleteModalCancelBtn:hover {
+  background-color: #e5e7eb;
 }
 
 .deleteModalConfirmBtn:hover:not(:disabled) {
@@ -1083,6 +1056,62 @@
 .deleteModalConfirmBtn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.customReasonTextarea {
+  width: 390px;
+  height: 96px;
+  margin: 0 0 0 0;
+  padding: 12px 16px;
+  border: 1px solid #e1e1e1;
+  font-weight: 400;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #21232a;
+  line-height: 1.5;
+  resize: none;
+  background-color: #ffffff;
+  box-sizing: border-box;
+}
+
+/* 포커스 시 강조 */
+.customReasonTextarea:focus {
+  outline: none;
+  border-color: #4787ff;
+  box-shadow: 0 0 0 3px rgba(71, 135, 255, 0.1);
+}
+
+/* placeholder 스타일 */
+.customReasonTextarea::placeholder {
+  color: #737a82;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: -0.32px;
+}
+
+/* 기타 입력 wrapper (기존 유지) */
+.customReasonWrapper {
+  width: 390px;
+  margin-top: 12px;
+}
+
+/* 글자 수를 textarea 바로 아래에 배치하는 컨테이너 */
+.charCountWrapper {
+  margin-top: 6px;
+  /* textarea 아래 6px 띄움 (조정 가능) */
+  font-size: 13px;
+  color: #9ca3af;
+  text-align: right;
+  /* 오른쪽 정렬 */
+  width: 100%;
+  /* 전체 너비 */
+  height: 20px;
+  line-height: 20px;
+}
+
+/* 현재 글자 수 (0 부분)만 파란색 */
+.charCountCurrent {
+  color: #4787ff;
 }
 
 /* ==================== 애니메이션 ==================== */
