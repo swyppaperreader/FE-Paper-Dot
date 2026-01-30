@@ -33,10 +33,9 @@ export async function POST(req: NextRequest) {
         { status: response.status || 500 }
       );
     }
-  } catch (error: any) {
-    console.error("문서 업로드 에러:", error);
+  } catch (error) {
     return NextResponse.json(
-      { error: error.message || "서버 오류가 발생했습니다." },
+      { error: (error as Error).message || "서버 오류가 발생했습니다." },
       { status: 500 }
     );
   }

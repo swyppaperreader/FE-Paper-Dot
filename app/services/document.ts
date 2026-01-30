@@ -11,6 +11,6 @@ export const postDocuments = async (formData: FormData) => {
     const data = await response.json();
     return data;
   } catch (error) {
-    throw new Error("파일 업로드에 실패했습니다!");
+    throw new Error((error as Error).message || "파일 업로드에 실패했습니다!");
   }
 };

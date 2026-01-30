@@ -5,7 +5,6 @@ import Footer from "../footer/Footer";
 import Header from "../header/Header";
 import Sidebar from "@/app/mypage/sidebar/page";
 import { usePathname } from "next/navigation";
-import ReadHeader from "../header/ReadHeader";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

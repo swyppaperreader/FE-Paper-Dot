@@ -1,9 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import Image from "next/image";
 import styles from "./read.module.css";
-import { useRouter } from "next/navigation";
 import ReadHeader from "./header/ReadHeader";
 
 interface PageContent {
@@ -80,8 +78,6 @@ The key is to maintain a thoughtful approach to its implementation in educationa
 By combining the best of both traditional and digital methods, we can create more effective and inclusive learning environments.`,
     },
   ];
-
-  const totalPages = mockPages.length;
 
   // 모든 텍스트를 한 곳에 합쳐서 표시 (페이지 구분 없음)
   const getAllText = () => {
