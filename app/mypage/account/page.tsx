@@ -14,6 +14,9 @@ export default function MyAccount() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [agreeChecked, setAgreeChecked] = useState(false);
+  const [deleteReason, setDeleteReason] = useState("");
+  const [customReason, setCustomReason] = useState("");
 
   const handleLogoutClick = () => {
     console.log("로그아웃");
@@ -112,27 +115,78 @@ export default function MyAccount() {
           <p className={styles.deleteAccountLinkText}>탈퇴하기</p>
         </Button>
 
+
+
         {showDeleteModal && (
           <div className={styles.deleteModal}>
             <div className={styles.deleteModalContent}>
               <h2 className={styles.deleteModalTitle}>회원탈퇴</h2>
+
               <p className={styles.deleteModalMessage}>
-                정말로 회원탈퇴 하시겠습니까?
-                <br />
-                탈퇴 후 계정은 복구할 수 없습니다.
+                탈퇴 시 번역 기록, 내정보를 포함한 모든 데이터가 삭제되며 <br />
+                복구할 수 없습니다.
               </p>
+
+              <label className={styles.agreeCheckbox}>
+                <input
+                  type="checkbox"
+                  checked={agreeChecked}
+                  onChange={(e) => setAgreeChecked(e.target.checked)}
+                  className={styles.checkboxInput}
+                />
+                <span className={styles.checkboxLabel}>동의합니다.</span>
+              </label>
+
+              <div className={styles.deleteReasonSection}>
+                <label className={styles.deleteReasonLabel}>
+                  계정 삭제 이유를 알려주세요
+                </label>
+                <div className={styles.selectWrapper}>
+                  <select
+                    value={deleteReason}
+                    onChange={(e) => setDeleteReason(e.target.value)}
+                    className={styles.deleteReasonSelect}
+                    disabled={!agreeChecked}
+                  >
+                    <option value="">선택해주세요</option>
+                    <option value="service_not_needed">더 이상 사용할 일이 없어서</option>
+                    <option value="privacy_concern">필요한 기능이 없어서(하이라이트, 단어장 등)</option>
+                    <option value="too_many_ads">다른 서비스(번역기, ai)를 사용해서</option>
+                    <option value="quality_not_good">번역 품질이 기대에 미치지 못해서</option>
+                    <option value="etc">기타(직접입력)</option>
+                  </select>
+                </div>
+
+                {/* 기타 선택 시 textarea 나타나게 하려면 아래처럼 조건부 렌더링 */}
+                {deleteReason === "etc" && (
+                  <div className={styles.customReasonWrapper}>
+                    <textarea
+                      placeholder="직접 입력해주세요"
+                      value={customReason}
+                      onChange={(e) => setCustomReason(e.target.value)}
+                      className={styles.customReasonTextarea}
+                      disabled={!agreeChecked}
+                      maxLength={80}
+                    />
+                    <div className={styles.charCountWrapper}>
+                      <span className={styles.charCountCurrent}>{customReason.length}</span> / 80
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <div className={styles.deleteModalButtons}>
                 <button
                   onClick={() => setShowDeleteModal(false)}
-                  className={styles.deleteModalCancelBtn}>
+                  className={styles.deleteModalCancelBtn}
+                >
                   취소
                 </button>
                 <button
-                  onClick={() => {
-                    handleDeleteAccount();
-                    setShowDeleteModal(false);
-                  }}
-                  className={styles.deleteModalConfirmBtn}>
+                  onClick={handleDeleteAccount}
+                  className={styles.deleteModalConfirmBtn}
+                  disabled={!agreeChecked || deleteReason === ""}
+                >
                   탈퇴하기
                 </button>
               </div>
