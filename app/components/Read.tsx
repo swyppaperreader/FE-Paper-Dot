@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import styles from "./Read.module.css";
+import styles from "./read.module.css";
 import { useRouter } from "next/navigation";
 
 interface PageContent {
