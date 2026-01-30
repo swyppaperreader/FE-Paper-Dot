@@ -31,9 +31,9 @@ export default function MyDocument() {
   };
 
   return (
-    <div className={styles.section}>
+    <main className={styles.section}>
       {documents.length === 0 ? (
-        <>
+        <section className={styles.emptyStateSection}>
           <div className={styles.emptyStatePrompt}>
             <p className={styles.emptyStatePromptTitle}>
               읽은 문서가 생기면 이곳에 자동으로 모여요.
@@ -58,7 +58,7 @@ export default function MyDocument() {
               최근 읽은 문서가 없습니다.
             </p>
           </div>
-        </>
+        </section>
       ) : (
         <>
           <div className={styles.recentDocumentPrompt}>
@@ -106,7 +106,6 @@ export default function MyDocument() {
                     <div
                       style={{
                         display: "flex",
-                        alignItems: "center",
                         gap: "12px",
                       }}>
                       <Image src="/pdf.png" alt="pdf" width={16} height={19} />
@@ -125,6 +124,7 @@ export default function MyDocument() {
                       alt="trash"
                       width={20}
                       height={20}
+                      className={styles.tableCellIconImage}
                     />
                   </td>
                 </tr>
@@ -133,6 +133,6 @@ export default function MyDocument() {
           </table>
         </>
       )}
-    </div>
+    </main>
   );
 }
