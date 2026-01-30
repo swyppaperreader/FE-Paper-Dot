@@ -27,7 +27,7 @@ export default function Sidebar() {
   return (
     <>
       {/* 사이드바 */}
-      <div className={styles.sidebar}>
+      <aside className={styles.sidebar}>
         <div className={styles.buttonGroup}>
           {sidebarItems.map((item) => (
             <div className={styles.tabButtonContainer} key={item.label}>
@@ -48,7 +48,7 @@ export default function Sidebar() {
             </div>
           ))}
         </div>
-      </div>
+      </aside>
     </>
   );
 }
