@@ -20,8 +20,7 @@ function LoginContent() {
   };
 
   const handleKakaoLogin = () => {
-    const kakaoRedirectUri = getRedirectUri();
-    const url = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${client_id}&redirect_uri=${kakaoRedirectUri}`;
+    const url = `https://be-paper-dot.store/oauth2/authorization/kakao`;
     window.location.href = url;
   };
 

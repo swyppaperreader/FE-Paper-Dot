@@ -3,13 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 8080",
+    "dev": "next dev --turbo -p 8080",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
-    "next": "15.5.9",
+    "next": "^15.5.11",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "zustand": "^5.0.10"

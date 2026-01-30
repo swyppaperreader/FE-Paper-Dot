@@ -106,8 +106,6 @@ export default function NewDocumentPage() {
 
   return (
     <div className={styles.container}>
-      <Header />
-
       <main className={styles.main}>
         <div className={styles.content}>
           <div className={styles.pageHeader}>

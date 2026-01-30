@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Roboto } from "next/font/google";
+import Layout from "./components/layout/Layout";
 
 const roboto = Roboto({
   weight: ["300", "400", "500", "700"],
@@ -51,7 +52,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className={`${roboto.variable} font-sans`}>{children}</body>
+      <body className={`${roboto.variable} font-sans`}>
+        <Layout>{children}</Layout>
+      </body>
     </html>
   );
 }
