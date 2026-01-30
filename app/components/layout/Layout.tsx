@@ -11,11 +11,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   const isMypage =
     pathname === "/mypage/mydocument" || pathname === "/mypage/account";
+
   const showHeaderFooter = pathname === "/" || isMypage;
+  const showHeaderOnly = pathname === "/newdocument";
 
   return (
     <>
-      {showHeaderFooter && <Header />}
+      {(showHeaderFooter || showHeaderOnly) && <Header />}
       {isMypage ? (
         <div style={{ display: "flex", width: "100%", height: "100vh" }}>
           <Sidebar />

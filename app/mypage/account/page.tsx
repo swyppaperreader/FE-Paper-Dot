@@ -42,8 +42,8 @@ export default function MyAccount() {
   console.log(profileImage);
 
   return (
-    <div className={styles.accountSection}>
-      <div className={styles.accountTopBar}>
+    <main className={styles.accountSection}>
+      <section className={styles.accountTopBar}>
         <div className={styles.accountProfileBar}>
           <div className={styles.accountProfileImageSmallContainer}>
             {profileImage && (
@@ -80,7 +80,7 @@ export default function MyAccount() {
           onClick={handleLogoutClick}>
           로그아웃
         </Button>
-      </div>
+      </section>
 
       <div className={styles.accountFormSection}>
         <div className={styles.accountFormRow}>
@@ -108,14 +108,12 @@ export default function MyAccount() {
         </div>
       </div>
 
-      <div className={styles.accountManagementSection}>
+      <section className={styles.accountManagementSection}>
         <Button
           onClick={() => setShowDeleteModal(true)}
           className={styles.deleteAccountLink}>
           <p className={styles.deleteAccountLinkText}>탈퇴하기</p>
         </Button>
-
-
 
         {showDeleteModal && (
           <div className={styles.deleteModal}>
@@ -146,13 +144,20 @@ export default function MyAccount() {
                     value={deleteReason}
                     onChange={(e) => setDeleteReason(e.target.value)}
                     className={styles.deleteReasonSelect}
-                    disabled={!agreeChecked}
-                  >
+                    disabled={!agreeChecked}>
                     <option value="">선택해주세요</option>
-                    <option value="service_not_needed">더 이상 사용할 일이 없어서</option>
-                    <option value="privacy_concern">필요한 기능이 없어서(하이라이트, 단어장 등)</option>
-                    <option value="too_many_ads">다른 서비스(번역기, ai)를 사용해서</option>
-                    <option value="quality_not_good">번역 품질이 기대에 미치지 못해서</option>
+                    <option value="service_not_needed">
+                      더 이상 사용할 일이 없어서
+                    </option>
+                    <option value="privacy_concern">
+                      필요한 기능이 없어서(하이라이트, 단어장 등)
+                    </option>
+                    <option value="too_many_ads">
+                      다른 서비스(번역기, ai)를 사용해서
+                    </option>
+                    <option value="quality_not_good">
+                      번역 품질이 기대에 미치지 못해서
+                    </option>
                     <option value="etc">기타(직접입력)</option>
                   </select>
                 </div>
@@ -169,7 +174,10 @@ export default function MyAccount() {
                       maxLength={80}
                     />
                     <div className={styles.charCountWrapper}>
-                      <span className={styles.charCountCurrent}>{customReason.length}</span> / 80
+                      <span className={styles.charCountCurrent}>
+                        {customReason.length}
+                      </span>{" "}
+                      / 80
                     </div>
                   </div>
                 )}
@@ -178,22 +186,20 @@ export default function MyAccount() {
               <div className={styles.deleteModalButtons}>
                 <button
                   onClick={() => setShowDeleteModal(false)}
-                  className={styles.deleteModalCancelBtn}
-                >
+                  className={styles.deleteModalCancelBtn}>
                   취소
                 </button>
                 <button
                   onClick={handleDeleteAccount}
                   className={styles.deleteModalConfirmBtn}
-                  disabled={!agreeChecked || deleteReason === ""}
-                >
+                  disabled={!agreeChecked || deleteReason === ""}>
                   탈퇴하기
                 </button>
               </div>
             </div>
           </div>
         )}
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }

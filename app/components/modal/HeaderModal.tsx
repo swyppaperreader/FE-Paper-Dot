@@ -5,13 +5,15 @@ import styles from "./headerModal.module.css";
 import Button from "../button/Button";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function HeaderModal() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const pathname = usePathname();
   const modalRef = useRef<HTMLDivElement>(null);
   const prevPathnameRef = useRef<string>(pathname);
+
+  const router = useRouter();
 
   // 경로 변경 시 모달 닫기
   useEffect(() => {
@@ -45,7 +47,11 @@ export default function HeaderModal() {
   return (
     <div className={styles.headerModalContainer} ref={modalRef}>
       <div className={styles.myPageButtonContainer}>
-        <Button className={styles.newDocumentButton}>새 문서 만들기</Button>
+        <Button
+          className={styles.newDocumentButton}
+          onClick={() => router.push("/newdocument")}>
+          새 문서 만들기
+        </Button>
         <Button
           className={styles.userImageButton}
           onClick={() => setIsOpen(!isOpen)}>
