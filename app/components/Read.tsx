@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import styles from "./read.module.css";
 import { useRouter } from "next/navigation";
+import ReadHeader from "./header/ReadHeader";
 
 interface PageContent {
   pageNumber: number;
@@ -12,12 +13,7 @@ interface PageContent {
   englishText: string;
 }
 
-interface ReadProps {
-  fileName?: string;
-}
-
-export default function Read({ fileName = "file_title" }: ReadProps) {
-  const router = useRouter();
+export default function Read() {
   const [currentPage, setCurrentPage] = useState(1);
   const [filterMode, setFilterMode] = useState<"all" | "korean" | "english">(
     "all"
@@ -26,14 +22,6 @@ export default function Read({ fileName = "file_title" }: ReadProps) {
   const [showSidebar, setShowSidebar] = useState(true);
   const contentBoxRef = useRef<HTMLDivElement>(null);
   const pageStartRefs = useRef<Map<number, HTMLDivElement>>(new Map());
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
-
-  const mockUser = {
-    id: "12345",
-    name: "김유저",
-    email: "testid@kakao.com",
-    profileImage: "/user-default.png",
-  };
 
   // 더미 데이터: 모든 텍스트를 한 곳에 저장
   const mockPages: PageContent[] = [
@@ -284,208 +272,9 @@ By combining the best of both traditional and digital methods, we can create mor
     setCurrentPage(page);
   };
 
-  // 필터 버튼 클릭
-  const handleFilterClick = (mode: "all" | "korean" | "english") => {
-    setFilterMode(mode);
-  };
-
-  // 사이드바 토글
-  const handleSidebarToggle = () => {
-    setShowSidebar(!showSidebar);
-  };
-
   return (
     <div className={styles.container}>
-      {/* ==================== 헤더 ==================== */}
-      <header className={styles.header}>
-        {/* 왼쪽: 로고 */}
-        <div className={styles.headerLeft}>
-          <div className={styles.logoContainer}>
-            <Image
-              src="/Paperdot.logo.png"
-              alt="Paperdot 로고"
-              width={100}
-              height={32}
-              className={styles.logoImage}
-              priority
-            />
-          </div>
-        </div>
-
-        {/* 왼중앙: 사이드바 토글 + 페이지 표시 */}
-        <div className={styles.headerLeftCenter}>
-          <div className={styles.sidebarToggleWrapper}>
-            <button
-              className={`${styles.sidebarToggleBtn} ${
-                showSidebar ? styles.sidebarToggleBtnActive : ""
-              }`}
-              onClick={handleSidebarToggle}
-              title={showSidebar ? "사이드바 숨기기" : "사이드바 보이기"}>
-              <Image
-                src="/sidebar.png"
-                alt="사이드바 토글"
-                width={20}
-                height={20}
-                priority
-              />
-            </button>
-          </div>
-
-          {/* 현재 페이지 입력 필드 */}
-          <div className={styles.pageIndicator}>
-            <input
-              type="number"
-              min="1"
-              max={totalPages}
-              value={currentPage}
-              onChange={(e) => {
-                const page = parseInt(e.target.value, 10);
-                if (page >= 1 && page <= totalPages) {
-                  setCurrentPage(page);
-                }
-              }}
-              className={styles.pageIndicatorInput}
-            />
-            <span className={styles.pageIndicatorSeparator}>/</span>
-            <span className={styles.pageIndicatorTotal}>{totalPages}</span>
-          </div>
-        </div>
-
-        {/* 중앙: 파일명 (문서 제목) */}
-        <div className={styles.headerCenter}>
-          <div className={styles.fileName}>{fileName}</div>
-        </div>
-
-        {/* 오른중앙: 필터 버튼 */}
-        <div className={styles.headerRightCenter}>
-          <div className={styles.filterButtons}>
-            <button
-              className={`${styles.filterBtn} ${
-                filterMode === "all" ? styles.filterBtnActive : ""
-              }`}
-              onClick={() => handleFilterClick("all")}>
-              전체
-            </button>
-            <button
-              className={`${styles.filterBtn} ${
-                filterMode === "korean" ? styles.filterBtnActive : ""
-              }`}
-              onClick={() => handleFilterClick("korean")}>
-              한글
-            </button>
-            <button
-              className={`${styles.filterBtn} ${
-                filterMode === "english" ? styles.filterBtnActive : ""
-              }`}
-              onClick={() => handleFilterClick("english")}>
-              영어
-            </button>
-          </div>
-        </div>
-
-        {/* 오른쪽: 프로필 */}
-        <div className={styles.headerRight}>
-          <div className={styles.profileMenuWrapper}>
-            <button
-              className={styles.headerProfileImage}
-              onClick={handleProfileMenuToggle}>
-              <Image
-                src={mockUser.profileImage}
-                alt="프로필"
-                width={40}
-                height={40}
-                style={{ borderRadius: "50%", objectFit: "cover" }}
-                priority
-              />
-            </button>
-
-            {/* 프로필 드롭다운 메뉴 */}
-            {showProfileMenu && (
-              <>
-                <div
-                  className={styles.profileMenuBackdrop}
-                  onClick={closeProfileMenu}
-                />
-                <div className={styles.profileDropdown}>
-                  <div className={styles.profileDropdownHeader}>
-                    <h3 className={styles.profileDropdownName}>
-                      {mockUser.name}
-                    </h3>
-                    <p className={styles.profileDropdownEmail}>
-                      {mockUser.email}
-                    </p>
-                  </div>
-                  <div className={styles.profileDropdownDivider} />
-
-                  {/* 내 문서함 버튼 */}
-                  <button
-                    className={styles.profileDropdownItem}
-                    onClick={() => {
-                      closeProfileMenu();
-                      router.push("/mypage");
-                    }}>
-                    내 문서함
-                  </button>
-
-                  {/* 내 계정 버튼 */}
-                  <button
-                    className={styles.profileDropdownItem}
-                    onClick={() => {
-                      closeProfileMenu();
-                      router.push("/mypage");
-                    }}>
-                    내 계정
-                  </button>
-
-                  <div className={styles.profileDropdownDivider} />
-
-                  {/* 로그아웃 버튼 */}
-                  <button
-                    className={styles.profileDropdownLogout}
-                    onClick={() => {
-                      closeProfileMenu();
-                      setShowLogoutModal(true);
-                    }}>
-                    로그아웃
-                  </button>
-                </div>
-              </>
-            )}
-
-            {/* 로그아웃 모달 */}
-            {showLogoutModal && (
-              <div className={styles.logoutModal}>
-                <div className={styles.logoutModalContent}>
-                  <h2 className={styles.logoutModalTitle}>로그아웃</h2>
-                  <p className={styles.logoutModalMessage}>
-                    정말로 로그아웃 하시겠습니까?
-                  </p>
-                  <div className={styles.logoutModalButtons}>
-                    <button
-                      onClick={() => setShowLogoutModal(false)}
-                      className={styles.logoutModalCancelBtn}>
-                      취소
-                    </button>
-                    <button
-                      onClick={() => {
-                        setShowLogoutModal(false);
-                        router.push("/login");
-                      }}
-                      className={styles.logoutModalConfirmBtn}>
-                      로그아웃
-                    </button>
-                  </div>
-                </div>
-                <div
-                  className={styles.logoutModalBackdrop}
-                  onClick={() => setShowLogoutModal(false)}
-                />
-              </div>
-            )}
-          </div>
-        </div>
-      </header>
-
+      <ReadHeader />
       {/* ==================== 메인 콘텐츠 ==================== */}
       <div className={styles.contentWrapper}>
         {/* 왼쪽 사이드바: 페이지 썸네일 (토글 가능) */}
