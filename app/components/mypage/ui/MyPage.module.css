@@ -1096,14 +1096,7 @@ css .deleteReasonSelect {
   position: relative;
 }
 
-.customSelectValue:hover:not(.disabled) {
-  border-color: #4787ff;
-}
 
-.customSelectValue.open {
-  border-color: #4787ff;
-  box-shadow: 0 0 0 3px rgba(71, 135, 255, 0.1);
-}
 
 .customSelectValue.disabled {
   opacity: 0.5;
