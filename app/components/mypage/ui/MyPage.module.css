@@ -906,8 +906,8 @@
 .deleteModalContent {
   background-color: #ffffff;
   border-radius: 12px;
-  padding: 32px 24px;
-  /* 좌우 24px로 조정 (원본 느낌에 더 가까움) */
+  padding: 24px 24px;
+  /* 상단 여백 축소 */
   width: 438px;
   max-width: 90vw;
   max-height: 90vh;
@@ -917,7 +917,7 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  font-family: 'Roboto', sans-serif;
+  gap: 0;
 }
 
 /* 타이틀 */
@@ -928,8 +928,8 @@
   line-height: 150%;
   letter-spacing: -0.02em;
   color: #21232a;
-  margin: 0 0 20px 0;
-  text-transform: capitalize;
+  margin: 0 0 12px 0;
+  /* 여백 축소 */
 }
 
 /* 본문 메시지 */
@@ -939,20 +939,16 @@
   font-weight: 400;
   color: #4b4d55;
   line-height: 1.55;
-  margin: 0 0 20px 0;
-  letter-spacing: -0.32px;
+  margin: 0 0 16px 0;
+  /* 여백 축소 */
 }
 
-/* 동의 체크박스 */
+/* 체크박스 */
 .agreeCheckbox {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 0;
   margin: 0 0 32px 0;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
 }
 
 .checkboxInput {
@@ -967,122 +963,36 @@
   background-color: #ffffff;
 }
 
-.checkboxInput:checked {
-  border-color: #4787ff;
-}
-
-.checkboxInput:focus {
-  outline: none;
-  box-shadow: none;
-}
-
-.checkboxLabel {
-  font-family: 'Roboto', sans-serif;
-  font-size: 16px;
-  color: #21232a;
-  cursor: pointer;
-  line-height: 1.5;
-  font-weight: 500;
-  margin: 0;
-  flex: 1;
-  letter-spacing: -0.32px;
-}
-
-/* 계정 삭제 이유 섹션 */
+/* 이유 선택 섹션 */
 .deleteReasonSection {
-  margin: 0 0 32px 0;
+  margin-bottom: 16px;
+  /* 👈 12px → 16px */
+  /* 32px → 12px */
   display: flex;
   flex-direction: column;
   gap: 16px;
-  overflow: visible !important;
 }
 
 .deleteReasonLabel {
-  margin: 0;
-  font-family: 'Roboto', sans-serif;
-  font-size: 16px;
+  font-family: "Roboto", sans-serif;
   font-weight: 500;
-  color: #21232a;
-  letter-spacing: -0.32px;
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
 }
 
+/* 🔥 커스텀 드롭다운 (완벽 연결 효과) */
 .selectWrapper {
+  position: relative;
+  width: 390px;
   margin-top: 0;
 }
 
-css .deleteReasonSelect {
-  width: 100%;
-  height: 48px;
-  padding: 0 40px 0 16px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-family: 'Roboto', sans-serif;
-  font-weight: 400;
-  font-size: 15px;
-  color: #474952;
-  background-color: #ffffff;
-  cursor: pointer;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23626c71' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 16px center;
-  background-size: 16px;
-  box-sizing: border-box;
-  line-height: 48px;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  letter-spacing: -0.01em;
-}
-
-.deleteReasonSelect:focus {
-  outline: none;
-  border-color: #4787ff;
-  box-shadow: 0 0 0 3px rgba(71, 135, 255, 0.1);
-}
-
-/* 직접 입력 영역 */
-.customReasonWrapper {
-  width: 100%;
-  margin-top: 2px;
-}
-
-.customReasonTextarea {
-  width: 100%;
-  height: 96px;
-  padding: 12px 16px;
-  border: 1px solid #e1e1e1;
-  border-radius: 6px;
-  font-family: 'Roboto', sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  color: #21232a;
-  line-height: 1.5;
-  resize: none;
-  background-color: #ffffff;
-  box-sizing: border-box;
-  margin: 0;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.customReasonTextarea:focus {
-  outline: none;
-  border-color: #4787ff;
-  box-shadow: 0 0 0 3px rgba(71, 135, 255, 0.1);
-}
-
-.customReasonTextarea::placeholder {
-  color: #9ca3af;
-  font-size: 14px;
-  font-weight: 400;
-  letter-spacing: -0.32px;
-  opacity: 0.7;
-}
-
-/* 🔥 커스텀 드롭다운 */
 .customSelectValue {
   height: 48px;
-  padding: 0 40px 0 16px;
+  padding: 0 36px 0 16px;
   border: 1px solid #d1d5db;
-  border-radius: 6px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1094,9 +1004,9 @@ css .deleteReasonSelect {
   background-color: #ffffff;
   transition: all 0.2s;
   position: relative;
+  line-height: 48px;
+  letter-spacing: -0.01em;
 }
-
-
 
 .customSelectValue.disabled {
   opacity: 0.5;
@@ -1104,34 +1014,38 @@ css .deleteReasonSelect {
 }
 
 .dropdownIcon {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
   width: 16px;
   height: 16px;
   transition: transform 0.2s;
-  flex-shrink: 0;
 }
 
 .customSelectValue.open .dropdownIcon {
-  transform: rotate(180deg);
+  transform: translateY(-50%) rotate(180deg);
 }
 
-/* 🔥 "선택해주세요" 바로 아래 붙는 드롭다운 */
+/* 👈 드롭다운 연결 효과 */
+.customSelectValue.open {
+  border-bottom: none !important;
+  border-radius: 8px 8px 0 0 !important;
+  box-shadow: 0 4px 12px rgba(71, 135, 255, 0.15);
+}
+
 .customOptions {
   position: absolute;
-  overflow: visible;
   top: 100%;
-  /* ← "선택해주세요" 박스 바로 아래 */
   left: 0;
   right: 0;
   width: 390px;
-  /* ← 부모와 동일 너비 */
   max-height: 240px;
   border: 1px solid #d1d5db;
   border-top: none;
-  /* ← 상단 테두리 제거 */
-  border-radius: 0 0 6px 6px;
-  /* ← 상단 직선, 하단 둥근 */
+  border-radius: 0 0 8px 8px;
   background-color: #ffffff;
-  margin: 0;
+  margin-top: -1px;
   padding: 0;
   list-style: none;
   overflow-y: auto;
@@ -1161,45 +1075,94 @@ css .deleteReasonSelect {
   background-color: #F0F4FA !important;
 }
 
+.customOption:first-child {
+  border-top: none !important;
+}
+
+/* 직접 입력 textarea */
+.customReasonWrapper {
+  width: 100%;
+
+  margin: 2px 0 0 0 !important;
+  /* 👈 모든 margin 강제 제거 */
+}
 
 
-/* 선택값 컨테이너 */
-.selectWrapper {
-  position: relative;
-  /* ← 기준점 필수 */
+.customReasonTextarea {
   width: 390px;
-  overflow: visible !important;
+  height: 96px;
+  padding: 12px 16px;
+  border: 1px solid #DEE3EB;
+  border-radius: 8px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #21232a;
+  line-height: 1.5;
+  resize: none;
+  background-color: #ffffff;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  margin: 0 !important;
 }
 
-/* 모달 배경보다 높게 */
-.deleteModal {
-  z-index: 1000;
+.customReasonTextarea:focus {
+  outline: none;
+  border-color: #4787ff;
+  box-shadow: 0 0 0 3px rgba(71, 135, 255, 0.1);
 }
 
-/* 글자 수 */
+.customReasonTextarea::placeholder {
+  color: #737A82;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: -0.32px;
+  opacity: 0.7;
+}
+
+/* 👈 글자수 카운터 완벽 스타일 */
 .charCountWrapper {
-  margin-top: 4px;
+  margin: 4px 0 0 0 !important;
   font-size: 12px;
-  color: #9ca3af;
+  color: #4B4D55;
   text-align: right;
   width: 100%;
   line-height: 20px;
   font-family: 'Roboto', sans-serif;
   pointer-events: none;
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+  align-items: baseline;
 }
 
 .charCountCurrent {
-  color: #4787ff;
-  font-weight: 500;
+  font-family: 'Roboto', sans-serif !important;
+  font-weight: 400 !important;
+  font-size: 13px !important;
+  line-height: 150% !important;
+  letter-spacing: -2% !important;
+  text-align: center !important;
+  text-transform: capitalize !important;
+  font-style: normal !important;
+  color: #4B4D55 !important;
+  /* 고정 색상 */
 }
 
-/* 버튼 영역 */
 .deleteModalButtons {
+
+  padding-top: 24px;
+  margin: 0 !important;
   display: flex;
   gap: 12px;
   justify-content: flex-end;
-  margin-top: auto;
-  padding-top: 24px;
+}
+
+.charCountWrapper+.deleteModalButtons {
+  margin-top: 24px !important;
+  margin-bottom: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
 }
 
 .deleteModalCancelBtn {
@@ -1226,11 +1189,6 @@ css .deleteReasonSelect {
 .deleteModalCancelBtn:hover {
   background-color: #f8f9fa;
   border-color: #d1d5db;
-}
-
-.deleteModalCancelBtn:active {
-  background-color: #d1d5db;
-  transform: translateY(1px);
 }
 
 .deleteModalConfirmBtn {
@@ -1259,137 +1217,13 @@ css .deleteReasonSelect {
   box-shadow: 0 4px 12px rgba(71, 135, 255, 0.3);
 }
 
-.deleteModalConfirmBtn:active:not(:disabled) {
-  background-color: #2d56bf;
-  transform: translateY(1px);
-}
-
 .deleteModalConfirmBtn:disabled {
-  opacity: 0.5;
+  background-color: #F0F4FA;
+  color: #C7CDD4;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
-.selectWrapper {
-  position: relative;
-  /* ← 기준점 필수 */
-  width: 390px;
-}
-
-/* 선택값 컨테이너 */
-.selectWrapper {
-  position: relative;
-  width: 390px;
-  /* ← 고정 너비 명시 */
-}
-
-/* 모달 배경보다 높게 */
-.deleteModal {
-  z-index: 1000;
-}
-
-.selectWrapper {
-  position: relative;
-  /* ← 필수! 드롭다운 기준점 */
-}
-
-/* 글자 수 */
-.charCountWrapper {
-  margin-top: 4px;
-  font-size: 12px;
-  color: #9ca3af;
-  text-align: right;
-  width: 100%;
-  line-height: 20px;
-  font-family: 'Roboto', sans-serif;
-  pointer-events: none;
-}
-
-.charCountCurrent {
-  color: #4787ff;
-  font-weight: 500;
-}
-
-/* 버튼 영역 */
-.deleteModalButtons {
-  display: flex;
-  gap: 12px;
-  justify-content: flex-end;
-  margin-top: auto;
-  padding-top: 24px;
-}
-
-.deleteModalCancelBtn {
-  width: 94px;
-  height: 52px;
-  background-color: #ffffff;
-  color: #21232a;
-  border: 1px solid #e1e1e1;
-  border-radius: 6px;
-  font-family: 'Roboto', sans-serif;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 150%;
-  letter-spacing: -0.02em;
-  text-align: center;
-  padding: 0 20px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-}
-
-/* 호버/액티브 상태도 흰색 기반으로 자연스럽게 */
-.deleteModalCancelBtn:hover {
-  background-color: #f8f9fa;
-  border-color: #d1d5db;
-}
-
-.deleteModalCancelBtn:active {
-  background-color: #f0f2f5;
-  transform: translateY(1px);
-}
-
-.deleteModalCancelBtn:active {
-  background-color: #d1d5db;
-  transform: translateY(1px);
-}
-
-.deleteModalConfirmBtn {
-  width: 122px;
-  height: 52px;
-  background-color: #4787ff;
-  color: #ffffff;
-  border: none;
-  border-radius: 6px;
-  font-family: 'Roboto', sans-serif;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 150%;
-  letter-spacing: -0.02em;
-  text-align: center;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-  padding: 0 20px;
-}
-
-.deleteModalConfirmBtn:hover:not(:disabled) {
-  background-color: #4787ff;
-  box-shadow: 0 4px 12px rgba(71, 135, 255, 0.3);
-}
-
-.deleteModalConfirmBtn:active:not(:disabled) {
-  background-color: #4787ff;
-  transform: translateY(1px);
-}
-
-.deleteModalConfirmBtn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
 
 /* ==================== 애니메이션 ==================== */
 @keyframes slideInUp {

@@ -144,7 +144,7 @@ export default function MyAccount() {
         {showDeleteModal && (
           <div className={styles.deleteModal}>
             <div className={styles.deleteModalContent}>
-              <h2 className={styles.deleteModalTitle}>회원탈퇴</h2>
+              <h2 className={styles.deleteModalTitle}>회원 탈퇴</h2>
 
               <p className={styles.deleteModalMessage}>
                 탈퇴 시 번역 기록, 내정보를 포함한 모든 데이터가 삭제되며 <br />
@@ -234,7 +234,12 @@ export default function MyAccount() {
                 <button
                   onClick={handleDeleteAccount}
                   className={styles.deleteModalConfirmBtn}
-                  disabled={!agreeChecked || deleteReason === ""}>
+                  disabled={
+                    !agreeChecked ||
+                    deleteReason === "" ||
+                    (deleteReason === "etc" && customReason.trim() === "")  // ← 추가
+                  }
+                >
                   탈퇴하기
                 </button>
               </div>
