@@ -69,7 +69,7 @@ export default function MyDocument() {
 
           <div className={styles.documentInfo}>
             <div className={styles.documentInfoContent}>
-              <Image src="/pdf.png" alt="pdf" width={22} height={25} />
+              <Image src="/pdf.svg" alt="pdf" width={22} height={25} />
               <p className={styles.documentInfoImageText}>위대한 개츠비</p>
               <Button className={styles.documentInfoButton}>이어서 보기</Button>
             </div>
@@ -108,7 +108,7 @@ export default function MyDocument() {
                         display: "flex",
                         gap: "12px",
                       }}>
-                      <Image src="/pdf.png" alt="pdf" width={16} height={19} />
+                      <Image src="/pdf.svg" alt="pdf" width={16} height={19} />
                       <span className={styles.tableCellText}>{doc.name}</span>
                     </div>
                   </td>

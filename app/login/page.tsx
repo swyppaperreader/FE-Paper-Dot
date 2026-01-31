@@ -9,7 +9,6 @@ function LoginContent() {
   const searchParams = useSearchParams();
   const code = searchParams.get("code");
   const hasProcessedCode = useRef(false);
-  const client_id = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID;
 
   // 클라이언트 사이드에서만 redirect_uri 결정
   const getRedirectUri = () => {

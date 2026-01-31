@@ -1,6 +1,6 @@
 import Image from "next/image";
 import styles from "./mainTopScreen.module.css";
-import Button from "../button/Button";
+import Button from "@/app/components/button/Button";
 
 export default function MainTopScreenUi() {
   return (

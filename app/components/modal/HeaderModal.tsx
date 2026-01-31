@@ -7,7 +7,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
-export default function HeaderModal() {
+export default function HeaderModal({
+  isReadHeader,
+  className,
+}: {
+  isReadHeader?: boolean;
+  className?: string;
+}) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const pathname = usePathname();
   const modalRef = useRef<HTMLDivElement>(null);
@@ -45,13 +51,17 @@ export default function HeaderModal() {
   }, [isOpen]);
 
   return (
-    <div className={styles.headerModalContainer} ref={modalRef}>
+    <div
+      className={className ? className : styles.headerModalContainer}
+      ref={modalRef}>
       <div className={styles.myPageButtonContainer}>
-        <Button
-          className={styles.newDocumentButton}
-          onClick={() => router.push("/newdocument")}>
-          새 문서 만들기
-        </Button>
+        {!isReadHeader && (
+          <Button
+            className={styles.newDocumentButton}
+            onClick={() => router.push("/newdocument")}>
+            새 문서 만들기
+          </Button>
+        )}
         <Button
           className={styles.userImageButton}
           onClick={() => setIsOpen(!isOpen)}>
