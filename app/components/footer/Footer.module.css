@@ -13,14 +13,12 @@
 }
 
 /* 로고 섹션 */
-/* 로고 섹션 */
 .logoSection {
   display: flex;
   align-items: center;
   justify-content: flex-start;
   margin-bottom: 24px;
   padding-bottom: 20px;
-  border-bottom: 1px solid #e5e7eb;
   border-bottom: none;
 }
 
@@ -38,13 +36,23 @@
   letter-spacing: -0.02em;
 }
 
+/* 모든 텍스트 공통 스타일 (요청하신 스타일 적용) */
+.contentSection,
+.contentSection * {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 1.5;
+  letter-spacing: -2%;
+  text-transform: capitalize;
+}
+
 /* 콘텐츠 섹션 */
 .contentSection {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  font-size: 14px;
-  color: #6b7280;
+  color: #737A82;
 }
 
 /* 링크 그룹 */
@@ -55,10 +63,10 @@
 }
 
 .link {
-  color: #6b7280;
+  color: #737A82;
   text-decoration: none;
-  font-weight: 500;
   transition: color 200ms ease;
+  /* font-weight: 400; ← 이미 상위에서 적용됨 */
 }
 
 .link:hover {
@@ -79,7 +87,7 @@
 .copyright {
   margin: 0;
   color: #9ca3af;
-  font-size: 12px;
+  /* font-size: 13px; ← 이미 상위에서 적용됨 */
 }
 
 /* 이메일 섹션 */
@@ -89,11 +97,11 @@
 }
 
 .email {
-  color: #6b7280;
+  color: #737A82;
   text-decoration: none;
-  font-weight: 500;
   transition: color 200ms ease;
   word-break: break-all;
+  /* font-weight: 400; ← 이미 상위에서 적용됨 */
 }
 
 .email:hover {
