@@ -39,8 +39,6 @@ export default function MyAccount() {
     }
   };
 
-  console.log(profileImage);
-
   return (
     <main className={styles.accountSection}>
       <section className={styles.accountTopBar}>

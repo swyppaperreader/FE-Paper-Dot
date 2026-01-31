@@ -4,14 +4,7 @@
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #dee3eb;
-}
-
-.container {
-  width: 100%;
-  padding: 0.47rem 1rem; /* 모바일: 7.5px 16px */
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  height: 60px;
 }
 
 .link {
@@ -22,6 +15,23 @@
   line-height: 150%;
   letter-spacing: -0.4px;
   text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.logo {
+  width: 20px;
+  height: 20px;
+  background-color: #dee3eb;
+}
+
+.container {
+  width: 100%;
+  padding: 10px 36px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .button {

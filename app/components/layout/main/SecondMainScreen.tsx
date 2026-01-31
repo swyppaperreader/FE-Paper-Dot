@@ -1,4 +1,4 @@
-import Button from "../button/Button";
+import Button from "@/app/components/button/Button";
 import styles from "./secondMainScreen.module.css";
 
 export default function SecondMainScreen() {

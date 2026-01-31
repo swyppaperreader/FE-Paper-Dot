@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import Header from "@/app/components/header/Header";
 
 import styles from "./NewDocument.module.css";
 import { formatFileSize } from "@/app/utils/useFormatFileSize";
+import { postDocuments } from "@/app/services/document";
+
 interface UploadingFile {
   id: string;
   file: File;
@@ -31,10 +32,18 @@ export default function NewDocumentPage() {
     e.preventDefault();
     setIsDragging(false);
     const files = e.dataTransfer.files;
-    if (files.length > 0) {
+    if (files && files.length > 0) {
       const file = files[0];
       if (file.type === "application/pdf") {
-        handleFileUpload(file);
+        setUploadingFiles((prev) => [
+          ...prev,
+          {
+            id: `${file.name}-${Date.now()}`,
+            file,
+            progress: 0,
+            status: "uploading",
+          },
+        ]);
       } else {
         alert("PDF 파일만 업로드 가능합니다.");
       }
@@ -46,67 +55,79 @@ export default function NewDocumentPage() {
     if (files && files.length > 0) {
       const file = files[0];
       if (file.type === "application/pdf") {
-        handleFileUpload(file);
+        setUploadingFiles((prev) => [
+          ...prev,
+          {
+            id: `${file.name}-${Date.now()}`,
+            file,
+            progress: 0,
+            status: "uploading",
+          },
+        ]);
       } else {
         alert("PDF 파일만 업로드 가능합니다.");
       }
     }
-  };
-
-  const handleFileUpload = (file: File) => {
-    const fileId = window.crypto.randomUUID();
-
-    setUploadingFiles((prev) => [
-      ...prev,
-      {
-        id: fileId,
-        file,
-        progress: 0,
-        status: "uploading",
-      },
-    ]);
-
-    simulateUpload(fileId, file);
-  };
-
-  const simulateUpload = (fileId: string, file: File) => {
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += Math.random() * 30;
-      if (progress > 100) progress = 100;
-
-      setUploadingFiles((prev) =>
-        prev.map((f) =>
-          f.id === fileId
-            ? {
-                ...f,
-                progress,
-                status: progress === 100 ? "completed" : "uploading",
-              }
-            : f
-        )
-      );
-
-      if (progress >= 100) {
-        clearInterval(interval);
-        setTimeout(() => {
-          console.log("✅ 업로드 완료:", file.name);
-        }, 1000);
-      }
-    }, 300);
-  };
-
-  const handleRemoveFile = (fileId: string) => {
-    setUploadingFiles((prev) => prev.filter((f) => f.id !== fileId));
+    // 같은 파일을 다시 선택할 수 있도록 input 값 초기화
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   const handleClick = () => {
     fileInputRef.current?.click();
   };
 
+  const handleRemoveFile = () => {
+    setUploadingFiles([]);
+  };
+
+  // 파일이 추가되면 자동으로 업로드 시작
+  useEffect(() => {
+    const currentFile = uploadingFiles.find(
+      (file) => file.status === "uploading" && file.progress === 0
+    );
+
+    if (!currentFile) {
+      return;
+    }
+
+    const uploadFile = async () => {
+      try {
+        const formData = new FormData();
+
+        formData.append("ownerId", "1");
+        formData.append("title", currentFile?.file?.name);
+        formData.append("languageSrc", "ko");
+        formData.append("languageTgt", "en");
+        formData.append("file", currentFile?.file);
+
+        await postDocuments(formData);
+
+        setUploadingFiles((prev) =>
+          prev.map((file) =>
+            file.id === currentFile?.id
+              ? { ...file, status: "completed", progress: 100 }
+              : file
+          )
+        );
+      } catch (error) {
+        setUploadingFiles((prev) =>
+          prev.map((file) =>
+            file.id === currentFile.id
+              ? { ...file, progress: 0, status: "error" }
+              : file
+          )
+        );
+      }
+    };
+
+    uploadFile();
+  }, [uploadingFiles.length]);
+
   return (
-    <div className={styles.container}>
-      <main className={styles.main}>
+    <main className={styles.container}>
+      <section className={styles.main}>
         <div className={styles.content}>
           <div className={styles.pageHeader}>
             <h1 className={styles.pageTitle}>새 문서 만들기</h1>
@@ -117,7 +138,7 @@ export default function NewDocumentPage() {
 
           {uploadingFiles.length > 0 && (
             <div className={styles.uploadingFilesWrapper}>
-              <Image src="/pdf.png" alt="file icon" width={27} height={32} />
+              <Image src="/pdf.svg" alt="file icon" width={27} height={32} />
               <div className={styles.uploadingItem}>
                 <p className={styles.fileName}>{uploadingFiles[0].file.name}</p>
                 <div className={styles.fileInfo}>
@@ -150,7 +171,7 @@ export default function NewDocumentPage() {
                 }
                 onClick={() =>
                   uploadingFiles[0]?.progress === 100
-                    ? handleRemoveFile(uploadingFiles[0].id)
+                    ? handleRemoveFile()
                     : null
                 }
               />
@@ -159,9 +180,7 @@ export default function NewDocumentPage() {
 
           {uploadingFiles.length === 0 && (
             <div
-              className={`${styles.uploadArea} ${
-                isDragging ? styles.uploadAreaDragging : ""
-              }`}
+              className={styles.uploadArea}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
@@ -196,7 +215,7 @@ export default function NewDocumentPage() {
             className={styles.hiddenFileInput}
           />
         </div>
-      </main>
-    </div>
+      </section>
+    </main>
   );
 }

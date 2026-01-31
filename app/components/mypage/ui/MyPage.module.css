@@ -266,7 +266,6 @@
   display: flex;
   width: 100%;
   flex-direction: column;
-  padding-inline: 7.8125rem;
   padding-top: 60px;
 }
 
@@ -362,6 +361,14 @@
   padding: 20px 0;
   vertical-align: middle;
   padding-right: 25px;
+}
+
+.tableCellIconImage {
+  cursor: pointer;
+}
+
+.tableCellIconImage:hover {
+  opacity: 0.5;
 }
 
 .fileBadge {
@@ -577,6 +584,7 @@
   align-items: center;
   padding-bottom: 32px;
   margin-bottom: 32px;
+  padding-inline: 7.8125rem;
 }
 
 .accountProfileBar {
@@ -655,6 +663,7 @@
   display: flex;
   gap: 24px;
   flex-direction: column;
+  padding-inline: 7.8125rem;
 }
 
 .accountFormRow {
@@ -716,6 +725,7 @@
   margin-top: 150px;
   display: flex;
   justify-content: flex-end;
+  padding-right: 7.8125rem;
 }
 
 .deleteAccountLink {

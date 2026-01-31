@@ -1,6 +1,5 @@
 /* ==================== 기본 스타일 ==================== */
 
-
 /* ==================== 컨테이너 ==================== */
 .container {
   display: flex;
@@ -591,7 +590,7 @@
 .logoutModalTitle {
   font-size: 16px;
   font-weight: 700;
-  color: #1A1A1A;
+  color: #1a1a1a;
   margin: 0 0 12px 0;
   text-align: center;
 }
@@ -621,7 +620,7 @@
   border-radius: 8px;
   cursor: pointer;
   transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
 .logoutModalCancelBtn:hover {
@@ -640,7 +639,7 @@
   border-radius: 8px;
   cursor: pointer;
   transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
 .logoutModalConfirmBtn:hover {
