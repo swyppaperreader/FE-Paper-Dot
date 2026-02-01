@@ -30,58 +30,34 @@ export default function HowToUse() {
   return (
     <section className={styles.section}>
       <div className={styles.container}>
-        {/* 헤더 섹션 */}
+        {/* 헤더 */}
         <div className={styles.header}>
           <h2 className={styles.mainTitle}>사용 방법</h2>
-          <p className={styles.subtitle}>간단한 3단계로 시작하세요</p>
+          {/* subtitle이 원래 코드에 없었지만, 필요하면 추가 */}
+          {/* <p className={styles.subtitle}>3단계로 간단하게 시작하세요</p> */}
         </div>
 
-        {/* ========== 최상단: STEP 1, 2, 3 텍스트 ========== */}
-        <div className={styles.stepLabelsRow}>
+        {/* 타임라인 전체 컨테이너 */}
+        <div className={styles.timelineContainer}>
           {steps.map((step) => (
-            <div key={`label-${step.id}`} className={styles.stepLabelWrapper}>
-              <span className={styles.stepLabelText}>STEP {step.id}</span>
-            </div>
-          ))}
-        </div>
+            <div key={step.id} className={styles.stepItem}>
+              {/* STEP 라벨 */}
+              <div className={styles.stepLabel}>STEP {step.id}</div>
 
-        {/* ========== 두 번째: 점과 점선 ========== */}
-        <div className={styles.stepDotsRow}>
-          {/* 첫 번째 점에서 마지막 이미지 오른쪽 끝까지 연결하는 점선 */}
-          <div className={styles.stepLineConnector} />
+              {/* 굵은 점 – 여기서 생성해야 .stepItem 기준으로 위치 잡힘 */}
+              <div className={styles.stepDotCircle} />
 
-          {steps.map((step) => (
-            <div key={`dot-${step.id}`} className={styles.stepDotWrapper}>
-              {/* 굵은 점 */}
-              <div className={styles.stepDot} />
-            </div>
-          ))}
-        </div>
-
-        {/* ========== 세 번째: 이미지 3개 가로 배치 ========== */}
-        <div className={styles.imagesRow}>
-          {steps.map((step) => (
-            <div key={`image-${step.id}`} className={styles.imageWrapper}>
+              {/* 이미지 */}
               <div className={styles.stepImage}>
-                <div className={styles.imagePlaceholder}>
-                  <div className={styles.iconArea}>
-                    <div className={styles.iconCircle}>
-                      <span className={styles.icon} aria-hidden="true">
-                        {step.icon}
-                      </span>
-                    </div>
-                  </div>
+                <div className={styles.iconCircle}>
+                  <span className={styles.icon}>{step.icon}</span>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
 
-        {/* ========== 하단: 설명 3개 가로 배치 ========== */}
-        <div className={styles.descriptionsRow}>
-          {steps.map((step) => (
-            <div key={`desc-${step.id}`} className={styles.descriptionCard}>
-              <p className={styles.stepDescription}>{step.description}</p>
+              {/* 설명 */}
+              <div className={styles.descriptionCard}>
+                <p className={styles.stepDescription}>{step.description}</p>
+              </div>
             </div>
           ))}
         </div>
