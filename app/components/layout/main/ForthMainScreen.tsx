@@ -1,3 +1,4 @@
+import React from "react";
 import styles from "./forthMainScreen.module.css";
 import MainforthFirst from "@/public/mainforth-first.svg";
 import MainforthSecond from "@/public/mainforth-second.svg";

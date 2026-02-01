@@ -4,7 +4,7 @@ import TextIcon from "@/public/text.svg";
 import BgImage from "@/public/bg.svg";
 import BackgroundSecondImage from "@/public/backgroundSecond.svg";
 
-export default async function MainTopScreenUi() {
+export default function MainTopScreenUi() {
   return (
     <section className={styles.container}>
       <div className={styles.content}>

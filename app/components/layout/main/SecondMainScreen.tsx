@@ -1,4 +1,3 @@
-import React from "react";
 import Button from "@/app/components/button/Button";
 import styles from "./secondMainScreen.module.css";
 import SecondMainScreenImage from "@/public/backgroundSecondImage.svg";
