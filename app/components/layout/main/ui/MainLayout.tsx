@@ -1,4 +1,3 @@
-import React from "react";
 import SecondMainScreen from "../SecondMainScreen";
 import MainTopScreenUi from "../MainTopScreenUi";
 import ThirdMainScreen from "../ThirdMainScreen";

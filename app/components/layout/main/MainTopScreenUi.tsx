@@ -1,12 +1,10 @@
-import Image from "next/image";
 import styles from "./mainTopScreen.module.css";
 import Button from "@/app/components/button/Button";
-import { getToken } from "@/app/utils/getToken";
+import TextIcon from "@/public/text.svg";
+import BgImage from "@/public/bg.svg";
+import BackgroundSecondImage from "@/public/backgroundSecond.svg";
 
-export default async function MainTopScreenUi() {
-  const token = await getToken();
-  console.log(token);
-
+export default function MainTopScreenUi() {
   return (
     <section className={styles.container}>
       <div className={styles.content}>
@@ -19,24 +17,17 @@ export default async function MainTopScreenUi() {
         </p>
         <Button>지금 시작하기</Button>
         <div className={styles.textButton}>
-          <Image src="/text.svg" alt="번역" width={20} height={20} />
+          <TextIcon />
           <span>텍스트 번역</span>
         </div>
-        <div className={styles.backgroundImageContainer}>
-          <div className={styles.bgImageWrapper}>
-            <Image src="/bg.svg" alt="배경 이미지" priority fill />
-            <div className={styles.backgroundSecondImageContainer}>
-              <Image
-                src="/backgroundSecond.svg"
-                alt="메인 이미지"
-                width={216}
-                height={180}
-              />
-            </div>
-          </div>
-          <div className={styles.overLay} />
+      </div>
+      <div className={styles.bgImageWrapper}>
+        <BgImage />
+        <div className={styles.backgroundSecondImageContainer}>
+          <BackgroundSecondImage />
         </div>
       </div>
+      <div className={styles.overLay} />
     </section>
   );
 }

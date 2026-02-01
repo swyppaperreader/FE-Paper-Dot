@@ -1,21 +1,20 @@
 import Link from "next/link";
 import styles from "./readHeader.module.css";
 import HeaderModal from "../modal/HeaderModal";
-import Image from "next/image";
+import HeaderLogo from "@/public/Logo.svg";
 import Button from "@/app/components/button/Button";
 import HeaderToggle from "./toggle/headerToggle";
+import SlideIcon from "@/public/slide.svg";
 
 export default function ReadHeader() {
   return (
     <header className={styles.header}>
       <div className={styles.container}>
         <Link href={"/"} className={styles.link}>
-          {/* 로고 이미지 자리 */}
-          <div className={styles.logo}></div>
-          Paperdot.
+          <HeaderLogo />
         </Link>
         <Button className={styles.readHeaderUserImageButton} onClick={() => {}}>
-          <Image src="/slide.svg" alt="slider" width={24} height={24} />
+          <SlideIcon />
         </Button>
         <div className={styles.readHeaderPageNumber}>
           <div className={styles.readHeaderPageNumberPageContainer}>

@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./headerModal.module.css";
 import Button from "../button/Button";
-import Image from "next/image";
+import UserImage from "@/public/userImage.svg";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -65,7 +65,7 @@ export default function HeaderModal({
         <Button
           className={styles.userImageButton}
           onClick={() => setIsOpen(!isOpen)}>
-          <Image src="/userImage.svg" alt="userImage" width={24} height={24} />
+          <UserImage />
         </Button>
       </div>
       {isOpen && (

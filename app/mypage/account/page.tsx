@@ -2,8 +2,10 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import styles from "@/app/components/mypage/ui/MyPage.module.css";
-import Image from "next/image";
 import Button from "@/app/components/button/Button";
+import UserImage from "@/public/userImage.svg";
+import CameraIcon from "@/public/cameraIcon.svg";
+import KakaoIcon from "@/public/kakaoIcon.svg";
 
 export default function MyAccount() {
   const mockUser = {
@@ -23,7 +25,10 @@ export default function MyAccount() {
   // 드롭다운 외부 클릭 시 닫기
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsDropdownOpen(false);
       }
     };
@@ -33,9 +38,11 @@ export default function MyAccount() {
   }, []);
 
   const deleteReasonOptions = [
-
     { value: "service_not_needed", label: "더 이상 사용할 일이 없어서" },
-    { value: "privacy_concern", label: "필요한 기능이 없어서(하이라이트, 단어장 등)" },
+    {
+      value: "privacy_concern",
+      label: "필요한 기능이 없어서(하이라이트, 단어장 등)",
+    },
     { value: "too_many_ads", label: "다른 서비스(번역기, ai)를 사용해서" },
     { value: "quality_not_good", label: "번역 품질이 기대에 미치지 못해서" },
     { value: "etc", label: "기타(직접입력)" },
@@ -72,14 +79,7 @@ export default function MyAccount() {
       <section className={styles.accountTopBar}>
         <div className={styles.accountProfileBar}>
           <div className={styles.accountProfileImageSmallContainer}>
-            {profileImage && (
-              <Image
-                src={profileImage}
-                alt="userImage"
-                width={80}
-                height={80}
-              />
-            )}
+            {profileImage && <UserImage />}
             <input
               type="file"
               ref={fileInputRef}
@@ -90,13 +90,7 @@ export default function MyAccount() {
             <Button
               className={styles.accountProfileImageSmall}
               onClick={handleChangeProfileImage}>
-              <Image
-                src="/cameraIcon.svg"
-                alt="cameraIcon"
-                width={12}
-                height={12}
-                className={styles.cameraIcon}
-              />
+              <CameraIcon className={styles.cameraIcon} />
             </Button>
           </div>
           <h2 className={styles.accountProfileNameSmall}>{mockUser.name}</h2>
@@ -112,14 +106,7 @@ export default function MyAccount() {
         <div className={styles.accountFormRow}>
           <p className={styles.accountFormLabel}>소셜 로그인</p>
           <div className={styles.accountSocialLoginRight}>
-            <Image
-              src="/kakaoIcon.svg"
-              alt="카카오"
-              width={32}
-              height={32}
-              style={{ borderRadius: "8px" }}
-              priority
-            />
+            <KakaoIcon />
             <p className={styles.accountSocialLoginText}>
               카카오톡 연동 로그인
             </p>
@@ -168,23 +155,29 @@ export default function MyAccount() {
 
                 {/* 🔥 커스텀 드롭다운 */}
                 <div
-                  className={`${styles.selectWrapper} ${!agreeChecked ? styles.disabled : ''}`}
-                  ref={dropdownRef}
-                >
+                  className={`${styles.selectWrapper} ${
+                    !agreeChecked ? styles.disabled : ""
+                  }`}
+                  ref={dropdownRef}>
                   <div
-                    className={`${styles.customSelectValue} ${isDropdownOpen ? styles.open : ''}`}
-                    onClick={() => agreeChecked && setIsDropdownOpen(!isDropdownOpen)}
-                  >
+                    className={`${styles.customSelectValue} ${
+                      isDropdownOpen ? styles.open : ""
+                    }`}
+                    onClick={() =>
+                      agreeChecked && setIsDropdownOpen(!isDropdownOpen)
+                    }>
                     {deleteReason
-                      ? deleteReasonOptions.find(opt => opt.value === deleteReason)?.label
-                      : "선택해주세요"}  {/* ← 이렇게 변경 */}
+                      ? deleteReasonOptions.find(
+                          (opt) => opt.value === deleteReason
+                        )?.label
+                      : "선택해주세요"}{" "}
+                    {/* ← 이렇게 변경 */}
                     <svg
                       className={styles.dropdownIcon}
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="#626c71"
-                      strokeWidth="2"
-                    >
+                      strokeWidth="2">
                       <polyline points="6 9 12 15 18 9" />
                     </svg>
                   </div>
@@ -195,8 +188,7 @@ export default function MyAccount() {
                         <li
                           key={option.value}
                           className={styles.customOption}
-                          onClick={() => handleSelectReason(option.value)}
-                        >
+                          onClick={() => handleSelectReason(option.value)}>
                           {option.label}
                         </li>
                       ))}
@@ -237,9 +229,8 @@ export default function MyAccount() {
                   disabled={
                     !agreeChecked ||
                     deleteReason === "" ||
-                    (deleteReason === "etc" && customReason.trim() === "")  // ← 추가
-                  }
-                >
+                    (deleteReason === "etc" && customReason.trim() === "") // ← 추가
+                  }>
                   탈퇴하기
                 </button>
               </div>

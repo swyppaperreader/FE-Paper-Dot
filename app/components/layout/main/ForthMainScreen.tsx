@@ -1,12 +1,15 @@
-"use client";
-
+import React from "react";
 import styles from "./forthMainScreen.module.css";
+import MainforthFirst from "@/public/mainforth-first.svg";
+import MainforthSecond from "@/public/mainforth-second.svg";
+import MainforthThird from "@/public/mainforth-third.svg";
 
 interface TargetUser {
   id: string;
   title: string;
   description: string;
   bulletPoints: string[];
+  ImageComponent: React.ComponentType<React.SVGProps<SVGSVGElement>>;
 }
 
 const targetUsers: TargetUser[] = [
@@ -19,6 +22,7 @@ const targetUsers: TargetUser[] = [
       "매번 파일을 다시 열고 위치를 찾는 것이 번거로운 사람",
       '"어디까지 읽었지?" 하며 같은 문장을 두 번, 세 번 다시 찾는 경험이 있는 사람',
     ],
+    ImageComponent: MainforthFirst,
   },
   {
     id: "highschool",
@@ -29,6 +33,7 @@ const targetUsers: TargetUser[] = [
       "매번 파일을 다시 열고 위치를 찾는 것이 번거로운 사람",
       '"어디까지 읽었지?" 하며 같은 문장을 두 번, 세 번 다시 찾는 경험이 있는 사람',
     ],
+    ImageComponent: MainforthSecond,
   },
   {
     id: "professional",
@@ -39,6 +44,7 @@ const targetUsers: TargetUser[] = [
       "매번 파일을 다시 열고 위치를 찾는 것이 번거로운 사람",
       '"어디까지 읽었지?" 하며 같은 문장을 두 번, 세 번 다시 찾는 경험이 있는 사람',
     ],
+    ImageComponent: MainforthThird,
   },
 ];
 
@@ -57,18 +63,9 @@ export default function CheckSection() {
         <div className={styles.cardsGrid}>
           {targetUsers.map((user) => (
             <div key={user.id} className={styles.cardWrapper}>
-              {/* 이미지 영역 */}
+              {/* 회색 정사각형 영역 */}
               <div className={styles.imageArea}>
-                <div className={styles.iconPlaceholder}>
-                  {/* 여기에 일러스트 이미지 삽입 */}
-                  {/* <Image
-                    src={`/images/${user.id}.png`}
-                    alt={user.title}
-                    className={styles.illustration}
-                    width={300}
-                    height={300}
-                  /> */}
-                </div>
+                <user.ImageComponent />
               </div>
 
               {/* 텍스트 영역 */}
@@ -81,8 +78,6 @@ export default function CheckSection() {
                     </li>
                   ))}
                 </ul>
-
-                {/* 중간 카드에만 버튼 표시 */}
               </div>
             </div>
           ))}

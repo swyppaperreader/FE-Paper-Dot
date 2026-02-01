@@ -2,9 +2,11 @@
 
 import Button from "@/app/components/button/Button";
 import styles from "@/app/components/mypage/ui/MyPage.module.css";
-import Image from "next/image";
+import PdfIcon from "@/public/pdfLogo.svg";
+import SmallPdfIcon from "@/public/smallPdfIcon.svg";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import TrashIcon from "@/public/trash.svg";
 
 interface Document {
   id: string;
@@ -69,7 +71,7 @@ export default function MyDocument() {
 
           <div className={styles.documentInfo}>
             <div className={styles.documentInfoContent}>
-              <Image src="/pdf.svg" alt="pdf" width={22} height={25} />
+              <PdfIcon />
               <p className={styles.documentInfoImageText}>위대한 개츠비</p>
               <Button className={styles.documentInfoButton}>이어서 보기</Button>
             </div>
@@ -108,7 +110,7 @@ export default function MyDocument() {
                         display: "flex",
                         gap: "12px",
                       }}>
-                      <Image src="/pdf.svg" alt="pdf" width={16} height={19} />
+                      <SmallPdfIcon />
                       <span className={styles.tableCellText}>{doc.name}</span>
                     </div>
                   </td>
@@ -119,13 +121,7 @@ export default function MyDocument() {
                     <span className={styles.tableCellInfoText}>{doc.size}</span>
                   </td>
                   <td className={styles.tableCellIcon}>
-                    <Image
-                      src="/trash.svg"
-                      alt="trash"
-                      width={20}
-                      height={20}
-                      className={styles.tableCellIconImage}
-                    />
+                    <TrashIcon />
                   </td>
                 </tr>
               ))}
