@@ -1,20 +1,19 @@
 import Link from "next/link";
-import Image from "next/image"; // ← 여기서 가져와야 함
+import Image from "next/image";
 import styles from "./header.module.css";
 import HeaderModal from "../modal/HeaderModal";
-import { useEffect, useState } from "react";
-import { getToken } from "@/app/api/users/route";
+import { useEffect } from "react";
 
 export default function Header() {
   const isLogin = false;
-  const [token, setToken] = useState<string | null>(null);
+
+  const getToken = async () => {
+    const token = await getToken();
+    console.log(token);
+  };
 
   useEffect(() => {
-    const fetchToken = async () => {
-      const result = await getToken();
-      console.log(result);
-    };
-    fetchToken();
+    getToken();
   }, []);
 
   return (
