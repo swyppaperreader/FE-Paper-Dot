@@ -1,20 +1,20 @@
 "use client";
 
-import React, { Suspense } from "react";
+import React from "react";
 import Image from "next/image";
 import styles from "./login.module.css";
 
 export default function LoginPage() {
-  const REST_API_KEY = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID;
-  const REDIRECT_URI = process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI_DEV;
+  // const REST_API_KEY = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID;
+  // const REDIRECT_URI = process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI;
 
   const handleKakaoLogin = () => {
-    const url = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&scope=profile_nickname&prompt=consent`;
+    const url = ` https://be-paper-dot.store/oauth2/authorization/kakao`;
     window.location.href = url;
   };
 
   const handleGoogleLogin = () => {
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/oauth2/authorization/google`;
+    const url = `https://be-paper-dot.store/oauth2/authorization/google`;
 
     window.location.href = url;
   };
