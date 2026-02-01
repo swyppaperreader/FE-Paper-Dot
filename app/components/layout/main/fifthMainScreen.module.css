@@ -12,132 +12,112 @@
 /* ========== 2. 헤더 ========== */
 .header {
   text-align: center;
-  margin-bottom: 60px;
+  margin-bottom: 80px;
 }
 
 .mainTitle {
   font-size: 36px;
   font-weight: 700;
-  color: #1a1a1a;
-  margin: 0 0 12px 0;
+  color: #21232A;
+  margin: 0 0 8px 0;
   letter-spacing: -0.5px;
 }
 
-.subtitle {
-  font-size: 16px;
-  color: #666;
-  margin: 0;
-  font-weight: 400;
-}
-
-/* ========== 3. 최상단: STEP 텍스트 행 ========== */
-.stepLabelsRow {
+/* 타임라인 컨테이너 - 배경 white 유지, 테두리/그림자 그대로 */
+.timelineContainer {
+  width: 1208px;
+  max-width: 100%;
+  height: 578px;
+  margin: 40px auto;
+  border-radius: 20px;
+  border: none !important;
+  /* 테두리 없애기 */
+  box-shadow: none !important;
+  /* 그림자 없애기 */
+  background: #ffffff;
+  /* 배경 투명으로 (필요 시 white 유지) */
+  padding: 40px;
+  box-sizing: border-box;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-  margin-bottom: 20px;
-}
-
-.stepLabelWrapper {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-}
-
-.stepLabelText {
-  font-size: 14px;
-  font-weight: 700;
-  color: #1a1a1a;
-  letter-spacing: 0.5px;
-}
-
-/* ========== 4. 두 번째: 점과 점선 행 ========== */
-.stepDotsRow {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-  margin-bottom: 40px;
-  align-items: flex-start;
+  gap: 10px;
+  overflow: visible !important;
   position: relative;
 }
 
-.stepDotWrapper {
-  display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
-  position: relative;
-  height: 20px;
-}
-
-/* 굵은 검은 점 */
-.stepDot {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background-color: #1a1a1a;
-  position: relative;
-  z-index: 2;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  flex-shrink: 0;
-}
-
-/* 점선 연결 (가로) - 첫 번째 점에서 마지막 이미지 오른쪽 끝까지 */
-.stepLineConnector {
+/* 점선 - STEP에 더 가깝게 (top 값 줄임) */
+/* 점선 - STEP 아래에 위치 (기존 유지하거나 95px → 100px로 살짝 내림) */
+.timelineContainer::before {
+  content: "";
   position: absolute;
-  top: 8px;
-  left: 8px;
-  right: 0;
+  top: 100px;
+  /* 점선 위치를 조금 더 아래로 (점 아래에 오게) */
+  left: 60px;
+  right: 60px;
   height: 2px;
   border-top: 2px dashed #d1d5db;
   z-index: 1;
   pointer-events: none;
 }
 
-/* ========== 5. 이미지 행 (3개 가로 배치) ========== */
-.imagesRow {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-  margin-bottom: 40px;
+/* 굵은 점 - STEP 바로 아래 + 점선 위에 딱 */
+.stepDotCircle {
+  position: absolute;
+  left: 20px;
+  top: 53px;
+  width: 16px;
+  height: 16px;
+  background: #474952;
+  border-radius: 50%;
+  z-index: 9999;
+  pointer-events: none;
 }
 
-.imageWrapper {
+/* STEP 라벨 - 점선과 가까워지도록 margin-bottom 줄임 */
+.stepLabel {
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+  text-transform: capitalize;
+  color: #21232A;
+  margin: 0 0 8px 0;
+  /* 기존 24px → 8px로 줄여 STEP과 점선 거리 좁힘 */
+  text-align: left;
+  position: relative;
+  z-index: 4;
+}
+
+.stepItem {
+  position: relative;
+  padding-left: 20px;
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
-  gap: 0;
 }
 
-/* ========== 6. 이미지 영역 ========== */
+/* 이미지 - 점선 아래에 여유 있게 */
 .stepImage {
-  width: 100%;
-  background: linear-gradient(135deg, #e8f0ff 0%, #f0f4fa 100%);
-  padding: 40px 30px;
-  min-height: 200px;
+  width: 320px;
+  height: 320px;
+  margin: 50px 0 0 0;
+  /* ← auto 제거 → 왼쪽 정렬로 변경 */
+  margin-left: 0;
+  position: relative;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 12px;
-  flex: 1;
+
+  z-index: 2;
 }
 
-.imagePlaceholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.iconArea {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
+/* 아이콘 */
 .iconCircle {
-  width: 100px;
-  height: 100px;
-  background: rgba(85, 138, 240, 0.25);
+  width: 140px;
+  height: 140px;
+  background: rgba(85, 138, 240, 0.18);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -145,155 +125,29 @@
 }
 
 .icon {
-  font-size: 50px;
-  display: block;
+  font-size: 72px;
 }
 
-/* ========== 7. 설명 행 (3개 가로 배치) ========== */
-.descriptionsRow {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-}
-
-/* ========== 8. 설명 카드 ========== */
+/* 설명 텍스트 */
 .descriptionCard {
-  background: white;
-  border-radius: 8px;
-  padding: 24px 20px;
-  border: 1px solid #e5e7eb;
-  text-align: center;
-  transition: all 300ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.descriptionCard:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  border-color: #558af0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 16px 0 0 0;
+  margin-top: 16px;
+  width: 100%;
+  text-align: left;
 }
 
 .stepDescription {
-  font-size: 13px;
-  color: #000;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+  color: #4B4D55;
   margin: 0;
-  line-height: 1.6;
+  text-align: left;
   word-break: keep-all;
-}
-
-/* ========== 9. 반응형 - 태블릿 (1024px) ========== */
-@media (max-width: 1024px) {
-  .stepLabelsRow {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-  }
-
-  .stepDotsRow {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-  }
-
-  .imagesRow {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-  }
-
-  .stepImage {
-    min-height: 180px;
-    padding: 30px 20px;
-  }
-
-  .iconCircle {
-    width: 80px;
-    height: 80px;
-  }
-
-  .icon {
-    font-size: 40px;
-  }
-}
-
-/* ========== 10. 반응형 - 모바일 (768px) ========== */
-@media (max-width: 768px) {
-  .section {
-    padding: 40px 20px;
-  }
-
-  .header {
-    margin-bottom: 40px;
-  }
-
-  .mainTitle {
-    font-size: 28px;
-  }
-
-  .subtitle {
-    font-size: 14px;
-  }
-
-  /* 텍스트 행 */
-  .stepLabelsRow {
-    grid-template-columns: 1fr;
-    gap: 16px;
-    margin-bottom: 16px;
-  }
-
-  .stepLabelText {
-    font-size: 12px;
-  }
-
-  /* 점 행 */
-  .stepDotsRow {
-    grid-template-columns: 1fr;
-    gap: 16px;
-    margin-bottom: 30px;
-  }
-
-  .stepDotWrapper {
-    height: 16px;
-  }
-
-  .stepDot {
-    width: 14px;
-    height: 14px;
-  }
-
-  .stepLineConnector {
-    display: none;
-  }
-
-  /* 이미지 행 */
-  .imagesRow {
-    grid-template-columns: 1fr;
-    gap: 16px;
-    margin-bottom: 30px;
-  }
-
-  .stepImage {
-    min-height: 160px;
-    padding: 30px 20px;
-  }
-
-  .iconCircle {
-    width: 80px;
-    height: 80px;
-  }
-
-  .icon {
-    font-size: 40px;
-  }
-
-  /* 설명 행 */
-  .descriptionsRow {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  .stepDescription {
-    font-size: 12px;
-  }
-
-  .descriptionCard {
-    padding: 16px;
-  }
 }
 
 /* ========== 11. 반응형 - 초소형 (480px) ========== */
