@@ -1,18 +1,8 @@
-import dynamic from "next/dynamic";
+import SecondMainScreen from "../SecondMainScreen";
 import MainTopScreenUi from "../MainTopScreenUi";
-
-const SecondMainScreen = dynamic(() => import("../SecondMainScreen"), {
-  ssr: true,
-});
-const ThirdMainScreen = dynamic(() => import("../ThirdMainScreen"), {
-  ssr: true,
-});
-const ForthMainScreen = dynamic(() => import("../ForthMainScreen"), {
-  ssr: true,
-});
-const FifthMainScreen = dynamic(() => import("../FifthMainScreen"), {
-  ssr: true,
-});
+import ThirdMainScreen from "../ThirdMainScreen";
+import ForthMainScreen from "../ForthMainScreen";
+import FifthMainScreen from "../FifthMainScreen";
 
 export default function MainLayout() {
   return (

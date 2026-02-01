@@ -65,7 +65,7 @@ export default function CheckSection() {
             <div key={user.id} className={styles.cardWrapper}>
               {/* 회색 정사각형 영역 */}
               <div className={styles.imageArea}>
-                <user.ImageComponent className={styles.illustration} />
+                <user.ImageComponent />
               </div>
 
               {/* 텍스트 영역 */}
