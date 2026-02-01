@@ -1,9 +1,6 @@
 import { NextResponse } from "next/server";
-import { getToken } from "@/app/utils/getToken";
 
 export async function GET() {
-  const token = await getToken();
-  console.log(token);
   try {
     const response = await fetch("https://be-paper-dot.store/users/me");
     const data = await response.json();
