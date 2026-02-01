@@ -8,9 +8,14 @@ export default function LoginPage() {
   // const REST_API_KEY = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID;
   // const REDIRECT_URI = process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI;
 
-  const handleKakaoLogin = () => {
-    const url = ` https://be-paper-dot.store/oauth2/authorization/kakao`;
-    window.location.href = url;
+  const handleKakaoLogin = async () => {
+    // credentials(쿠키)를 백엔드에 먼저 전달한 뒤 리다이렉트
+    await fetch("/api/auth/kakao", {
+      method: "POST",
+      credentials: "include",
+    });
+    window.location.href =
+      "https://be-paper-dot.store/oauth2/authorization/kakao";
   };
 
   const handleGoogleLogin = () => {
