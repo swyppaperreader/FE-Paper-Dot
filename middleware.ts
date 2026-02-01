@@ -1,7 +1,7 @@
 // middleware.ts
 import { NextRequest, NextResponse } from "next/server";
 
-export function middleware(req: NextRequest) {
+export default function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
 
   // API 라우트, 정적 파일, 메인 페이지는 제외
