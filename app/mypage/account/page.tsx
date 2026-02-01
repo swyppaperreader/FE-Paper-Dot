@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styles from "@/app/components/mypage/ui/MyPage.module.css";
 import Image from "next/image";
 import Button from "@/app/components/button/Button";
@@ -17,6 +17,29 @@ export default function MyAccount() {
   const [agreeChecked, setAgreeChecked] = useState(false);
   const [deleteReason, setDeleteReason] = useState("");
   const [customReason, setCustomReason] = useState("");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // 드롭다운 외부 클릭 시 닫기
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const deleteReasonOptions = [
+
+    { value: "service_not_needed", label: "더 이상 사용할 일이 없어서" },
+    { value: "privacy_concern", label: "필요한 기능이 없어서(하이라이트, 단어장 등)" },
+    { value: "too_many_ads", label: "다른 서비스(번역기, ai)를 사용해서" },
+    { value: "quality_not_good", label: "번역 품질이 기대에 미치지 못해서" },
+    { value: "etc", label: "기타(직접입력)" },
+  ];
 
   const handleLogoutClick = () => {
     console.log("로그아웃");
@@ -37,6 +60,11 @@ export default function MyAccount() {
       console.log("선택된 파일:", file.name);
       setProfileImage(URL.createObjectURL(file));
     }
+  };
+
+  const handleSelectReason = (value: string) => {
+    setDeleteReason(value);
+    setIsDropdownOpen(false);
   };
 
   return (
@@ -116,7 +144,7 @@ export default function MyAccount() {
         {showDeleteModal && (
           <div className={styles.deleteModal}>
             <div className={styles.deleteModalContent}>
-              <h2 className={styles.deleteModalTitle}>회원탈퇴</h2>
+              <h2 className={styles.deleteModalTitle}>회원 탈퇴</h2>
 
               <p className={styles.deleteModalMessage}>
                 탈퇴 시 번역 기록, 내정보를 포함한 모든 데이터가 삭제되며 <br />
@@ -137,30 +165,46 @@ export default function MyAccount() {
                 <label className={styles.deleteReasonLabel}>
                   계정 삭제 이유를 알려주세요
                 </label>
-                <div className={styles.selectWrapper}>
-                  <select
-                    value={deleteReason}
-                    onChange={(e) => setDeleteReason(e.target.value)}
-                    className={styles.deleteReasonSelect}
-                    disabled={!agreeChecked}>
-                    <option value="">선택해주세요</option>
-                    <option value="service_not_needed">
-                      더 이상 사용할 일이 없어서
-                    </option>
-                    <option value="privacy_concern">
-                      필요한 기능이 없어서(하이라이트, 단어장 등)
-                    </option>
-                    <option value="too_many_ads">
-                      다른 서비스(번역기, ai)를 사용해서
-                    </option>
-                    <option value="quality_not_good">
-                      번역 품질이 기대에 미치지 못해서
-                    </option>
-                    <option value="etc">기타(직접입력)</option>
-                  </select>
+
+                {/* 🔥 커스텀 드롭다운 */}
+                <div
+                  className={`${styles.selectWrapper} ${!agreeChecked ? styles.disabled : ''}`}
+                  ref={dropdownRef}
+                >
+                  <div
+                    className={`${styles.customSelectValue} ${isDropdownOpen ? styles.open : ''}`}
+                    onClick={() => agreeChecked && setIsDropdownOpen(!isDropdownOpen)}
+                  >
+                    {deleteReason
+                      ? deleteReasonOptions.find(opt => opt.value === deleteReason)?.label
+                      : "선택해주세요"}  {/* ← 이렇게 변경 */}
+                    <svg
+                      className={styles.dropdownIcon}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#626c71"
+                      strokeWidth="2"
+                    >
+                      <polyline points="6 9 12 15 18 9" />
+                    </svg>
+                  </div>
+
+                  {isDropdownOpen && (
+                    <ul className={styles.customOptions}>
+                      {deleteReasonOptions.map((option) => (
+                        <li
+                          key={option.value}
+                          className={styles.customOption}
+                          onClick={() => handleSelectReason(option.value)}
+                        >
+                          {option.label}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
 
-                {/* 기타 선택 시 textarea 나타나게 하려면 아래처럼 조건부 렌더링 */}
+                {/* 기타 선택 시 textarea */}
                 {deleteReason === "etc" && (
                   <div className={styles.customReasonWrapper}>
                     <textarea
@@ -190,7 +234,12 @@ export default function MyAccount() {
                 <button
                   onClick={handleDeleteAccount}
                   className={styles.deleteModalConfirmBtn}
-                  disabled={!agreeChecked || deleteReason === ""}>
+                  disabled={
+                    !agreeChecked ||
+                    deleteReason === "" ||
+                    (deleteReason === "etc" && customReason.trim() === "")  // ← 추가
+                  }
+                >
                   탈퇴하기
                 </button>
               </div>
