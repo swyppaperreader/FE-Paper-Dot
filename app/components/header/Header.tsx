@@ -12,9 +12,7 @@ export default function Header() {
   useEffect(() => {
     const fetchToken = async () => {
       const result = await getToken();
-      if (result !== null) {
-        setToken(result);
-      }
+      console.log(result);
     };
     fetchToken();
   }, []);
