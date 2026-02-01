@@ -1,6 +1,6 @@
 // Footer.tsx
 import Link from "next/link";
-import Image from "next/image";
+import FooterLogo from "@/public/footerLogo.svg";
 import styles from "./Footer.module.css";
 
 export default function Footer() {
@@ -9,14 +9,7 @@ export default function Footer() {
       <div className={styles.container}>
         {/* 1줄: 로고 */}
         <div className={styles.logoSection}>
-          <Image
-            src="/footerLogo.svg"
-            alt="Paperdot 로고"
-            width={212}
-            height={80}
-            className={styles.logoImage}
-            priority
-          />
+          <FooterLogo className={styles.logoImage} />
         </div>
 
         {/* 2줄: 링크 | 저작권 | 이메일 */}

@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import Image from "next/image";
-
+import UploadIcon from "@/public/uploadIcon.svg";
+import PdfLogo from "@/public/pdf.svg";
+import CloseIcon from "@/public/close.svg";
 import styles from "./NewDocument.module.css";
 import { formatFileSize } from "@/app/utils/useFormatFileSize";
 import { postDocuments } from "@/app/services/document";
@@ -102,7 +103,8 @@ export default function NewDocumentPage() {
         formData.append("languageTgt", "en");
         formData.append("file", currentFile?.file);
 
-        await postDocuments(formData);
+        const response = await postDocuments(formData);
+        console.log(response);
 
         setUploadingFiles((prev) =>
           prev.map((file) =>
@@ -138,7 +140,7 @@ export default function NewDocumentPage() {
 
           {uploadingFiles.length > 0 && (
             <div className={styles.uploadingFilesWrapper}>
-              <Image src="/pdf.svg" alt="file icon" width={27} height={32} />
+              <PdfLogo />
               <div className={styles.uploadingItem}>
                 <p className={styles.fileName}>{uploadingFiles[0].file.name}</p>
                 <div className={styles.fileInfo}>
@@ -158,21 +160,15 @@ export default function NewDocumentPage() {
                   </p>
                 </div>
               </div>
-              <Image
-                src="/close.svg"
-                alt="close icon"
+              <CloseIcon
+                className={styles.closeIcon}
                 width={12}
                 height={12}
-                className={styles.closeIcon}
+                onClick={() => handleRemoveFile()}
                 style={
                   uploadingFiles[0]?.progress === 100
                     ? { cursor: "pointer" }
                     : { cursor: "not-allowed" }
-                }
-                onClick={() =>
-                  uploadingFiles[0]?.progress === 100
-                    ? handleRemoveFile()
-                    : null
                 }
               />
             </div>
@@ -186,12 +182,10 @@ export default function NewDocumentPage() {
               onDrop={handleDrop}
               onClick={handleClick}>
               <div className={styles.uploadIconWrapper}>
-                <Image
-                  src="/uploadIcon.svg"
-                  alt="업로드 아이콘"
+                <UploadIcon
+                  className={styles.uploadIconImage}
                   width={32}
                   height={32}
-                  className={styles.uploadIconImage}
                 />
                 <div className={styles.uploadText}>
                   <p className={styles.uploadMainText}>
