@@ -42,9 +42,6 @@
 .logoImage {
   width: 212px;
   height: 80px;
-  object-fit: contain;
-  opacity: 1;
-  transform: rotate(0deg);
 }
 
 /* 콘텐츠 섹션 */

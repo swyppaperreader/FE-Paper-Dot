@@ -1,6 +1,4 @@
-'use client';
-
-import styles from './fifthMainScreen.module.css';
+import styles from "./fifthMainScreen.module.css";
 
 interface Step {
   id: number;
@@ -11,18 +9,19 @@ interface Step {
 const steps: Step[] = [
   {
     id: 1,
-    description: '읽고 싶은 영어 PDF를 업로드하거나, 텍스트를 불러옵니다.',
-    icon: '📄',
+    description: "읽고 싶은 영어 PDF를 업로드하거나, 텍스트를 불러옵니다.",
+    icon: "📄",
   },
   {
     id: 2,
-    description: '문장별로 번역된 텍스트를 읽습니다.',
-    icon: '⚡',
+    description: "문장별로 번역된 텍스트를 읽습니다.",
+    icon: "⚡",
   },
   {
     id: 3,
-    description: '다 읽지 못한 문서는 내 문서함에 저장되어, 마지막 위치부터 이어 읽을 수 있습니다.',
-    icon: '✅',
+    description:
+      "다 읽지 못한 문서는 내 문서함에 저장되어, 마지막 위치부터 이어 읽을 수 있습니다.",
+    icon: "✅",
   },
 ];
 

@@ -64,28 +64,26 @@
   line-height: 1.1;
 }
 
-.backgroundImageContainer {
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  margin-top: 3%;
-}
-
 .overLay {
   position: absolute;
-  top: 100%;
+  top: 60%;
   left: 50%;
   transform: translateX(-50%);
   width: 60%;
   height: 100%;
   z-index: -1;
   background: linear-gradient(270deg, #b1cfff 0%, #c6c1ff 100%);
-  filter: blur(120px);
+  filter: blur(130px);
 }
 
 .bgImageWrapper {
   position: absolute;
-  height: 100%;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
   width: 100%;
 }
 

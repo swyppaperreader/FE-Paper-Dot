@@ -16,8 +16,6 @@ export default function HeaderToggle() {
     setToggle(mode);
   };
 
-  console.log(toggle);
-
   return (
     <div className={styles.readHeaderFileNameContainer}>
       {buttonList.map((item) => (

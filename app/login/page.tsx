@@ -4,14 +4,17 @@ import React, { Suspense } from "react";
 import Image from "next/image";
 import styles from "./login.module.css";
 
-function LoginContent() {
+export default function LoginPage() {
+  const REST_API_KEY = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID;
+  const REDIRECT_URI = process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI_DEV;
+
   const handleKakaoLogin = () => {
-    const url = `https://be-paper-dot.store/oauth2/authorization/kakao`;
+    const url = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&scope=profile_nickname&prompt=consent`;
     window.location.href = url;
   };
 
   const handleGoogleLogin = () => {
-    const url = `https://be-paper-dot.store/oauth2/authorization/google`;
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/oauth2/authorization/google`;
 
     window.location.href = url;
   };
@@ -32,13 +35,5 @@ function LoginContent() {
         </div>
       </div>
     </div>
-  );
-}
-
-export default function LoginPage() {
-  return (
-    <Suspense fallback={<div className={styles.container}>로딩중...</div>}>
-      <LoginContent />
-    </Suspense>
   );
 }
