@@ -1,5 +1,6 @@
 import Button from "@/app/components/button/Button";
 import styles from "./secondMainScreen.module.css";
+import SecondMainScreenImage from "@/public/backgroundSecondImage.svg";
 
 export default function SecondMainScreen() {
   return (
@@ -18,8 +19,8 @@ export default function SecondMainScreen() {
           </p>
         </div>
         <div className={styles.contentRightContainer}>
+          <SecondMainScreenImage className={styles.secondMainScreenImage} />
           <div className={styles.overlay} />
-          <div className={styles.rectangle} />
         </div>
       </div>
     </section>
