@@ -2,19 +2,9 @@ import Link from "next/link";
 import Image from "next/image";
 import styles from "./header.module.css";
 import HeaderModal from "../modal/HeaderModal";
-import { useEffect } from "react";
 
 export default function Header() {
   const isLogin = false;
-
-  const getToken = async () => {
-    const token = await getToken();
-    console.log(token);
-  };
-
-  useEffect(() => {
-    getToken();
-  }, []);
 
   return (
     <header className={styles.header}>

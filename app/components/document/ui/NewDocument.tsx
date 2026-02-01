@@ -111,7 +111,7 @@ export default function NewDocumentPage() {
               : file
           )
         );
-      } catch (error) {
+      } catch {
         setUploadingFiles((prev) =>
           prev.map((file) =>
             file.id === currentFile.id
