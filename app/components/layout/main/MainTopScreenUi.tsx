@@ -1,8 +1,12 @@
 import Image from "next/image";
 import styles from "./mainTopScreen.module.css";
 import Button from "@/app/components/button/Button";
+import { getToken } from "@/app/utils/getToken";
 
-export default function MainTopScreenUi() {
+export default async function MainTopScreenUi() {
+  const token = await getToken();
+  console.log(token);
+
   return (
     <section className={styles.container}>
       <div className={styles.content}>
