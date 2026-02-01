@@ -14,7 +14,7 @@
 /* 모든 텍스트 공통 스타일 (상속) */
 .contentSection,
 .contentSection * {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-weight: 400;
   font-size: 13px;
   line-height: 1.5;
@@ -64,9 +64,13 @@
 
 .link,
 .email {
+  word-break: break-all;
+  color: #737a82;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 150%;
+  letter-spacing: -0.26px;
   text-decoration: none;
-  color: #6b7280;
-  transition: color 200ms ease;
 }
 
 .link:hover,
@@ -87,7 +91,11 @@
 
 .copyright {
   margin: 0;
-  color: #9ca3af;
+  color: #737a82;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 150%;
+  letter-spacing: -0.26px;
 }
 
 .emailSection {
@@ -97,6 +105,11 @@
 
 .email {
   word-break: break-all;
+  color: #737a82;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 150%;
+  letter-spacing: -0.26px;
 }
 
 /* 📱 반응형: sm (640px 이상) */
