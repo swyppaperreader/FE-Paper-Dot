@@ -8,34 +8,43 @@
 /* 컨테이너 */
 .container {
   max-width: 80rem;
-  /* max-w-7xl */
   margin: 0 auto;
+}
+
+/* 모든 텍스트 공통 스타일 (상속) */
+.contentSection,
+.contentSection * {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 1.5;
+  letter-spacing: -2%;
+  text-transform: capitalize;
 }
 
 /* 로고 섹션 */
 /* 로고 섹션 */
 .logoSection {
   display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  margin-bottom: 24px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #e5e7eb;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  margin-bottom: 28px;
+  padding: 10px 0;
+  /* padding-top: 10px + padding-bottom: 10px */
   border-bottom: none;
+  gap: 8px;
+  /* gap: 8px */
+  width: 100%;
 }
 
+/* 로고 이미지 */
 .logoImage {
-  height: auto;
-  width: auto;
-  max-height: 60px;
+  width: 212px;
+  height: 80px;
   object-fit: contain;
-}
-
-.companyName {
-  font-weight: bold;
-  color: #111827;
-  font-size: 18px;
-  letter-spacing: -0.02em;
+  opacity: 1;
+  transform: rotate(0deg);
 }
 
 /* 콘텐츠 섹션 */
@@ -43,7 +52,6 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
-  font-size: 14px;
   color: #6b7280;
 }
 
@@ -54,14 +62,15 @@
   order: 1;
 }
 
-.link {
-  color: #6b7280;
+.link,
+.email {
   text-decoration: none;
-  font-weight: 500;
+  color: #6b7280;
   transition: color 200ms ease;
 }
 
-.link:hover {
+.link:hover,
+.email:hover {
   color: #111827;
 }
 
@@ -70,7 +79,7 @@
   color: #d1d5db;
 }
 
-/* Copyright 섹션 */
+/* Copyright & Email */
 .copyrightSection {
   text-align: center;
   order: 3;
@@ -79,25 +88,15 @@
 .copyright {
   margin: 0;
   color: #9ca3af;
-  font-size: 12px;
 }
 
-/* 이메일 섹션 */
 .emailSection {
   text-align: left;
   order: 2;
 }
 
 .email {
-  color: #6b7280;
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 200ms ease;
   word-break: break-all;
-}
-
-.email:hover {
-  color: #111827;
 }
 
 /* 📱 반응형: sm (640px 이상) */
