@@ -1,10 +1,19 @@
+"use client";
+
 import Link from "next/link";
 import styles from "./header.module.css";
 import HeaderModal from "../modal/HeaderModal";
 import HeaderLogo from "@/public/Logo.svg";
+import { useEffect } from "react";
 
 export default function Header() {
   const isLogin = false;
+
+  useEffect(() => {
+    fetch("https://be-paper-dot.store/users/me", {
+      credentials: "include",
+    });
+  }, []);
 
   return (
     <header className={styles.header}>
