@@ -1,25 +1,32 @@
 import Link from "next/link";
-import Image from "next/image";               // ← 여기서 가져와야 함
+import Image from "next/image";
 import styles from "./header.module.css";
 import HeaderModal from "../modal/HeaderModal";
+import { useEffect } from "react";
 
 export default function Header() {
   const isLogin = false;
+
+  const getToken = async () => {
+    const token = await getToken();
+    console.log(token);
+  };
+
+  useEffect(() => {
+    getToken();
+  }, []);
 
   return (
     <header className={styles.header}>
       <div className={styles.container}>
         <Link href="/" className={styles.link}>
-          <div className={styles.logo}>
-            <Image
-              src="/paperdotlogo-S.png"       // public 바로 아래 → 이렇게
-              alt="Paperdot 로고"
-              width={106}
-              height={40}
-              priority                        // 좋음 (LCP 개선에 도움)
-            />
-          </div>
-
+          <Image
+            src="/Logo.svg"
+            alt="Paperdot 로고"
+            width={106}
+            height={40}
+            priority
+          />
         </Link>
 
         {isLogin ? (

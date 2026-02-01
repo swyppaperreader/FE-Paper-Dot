@@ -10,7 +10,7 @@ export default function Footer() {
         {/* 1줄: 로고 */}
         <div className={styles.logoSection}>
           <Image
-            src="/paperdotlogo-M.png"          // ← 실제 파일명에 맞게 수정
+            src="/footerLogo.svg"
             alt="Paperdot 로고"
             width={212}
             height={80}
