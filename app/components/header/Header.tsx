@@ -1,10 +1,10 @@
 import Link from "next/link";
 import styles from "./header.module.css";
 import HeaderLogo from "@/public/Logo.svg";
-import IsLoginHeader from "@/app/components/header/isLogin/IsLoginHeader";
+import IsLoginHeaderComponent from "@/app/components/header/isLogin/IsLoginHeader";
 
 export default function Header() {
-  const isLogin = false;
+  const isLogin = true;
 
   return (
     <header className={styles.header}>
@@ -14,7 +14,7 @@ export default function Header() {
         </Link>
 
         {isLogin ? (
-          <IsLoginHeader />
+          <IsLoginHeaderComponent />
         ) : (
           <Link href="/login" className={styles.button}>
             로그인/회원가입

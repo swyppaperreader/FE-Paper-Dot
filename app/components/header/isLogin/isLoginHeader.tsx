@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 
-export default function IsLoginHeader() {
+export default function IsLoginHeaderComponent() {
   const [isLogin, setIsLogin] = useState(false);
 
   useEffect(() => {
@@ -15,7 +15,7 @@ export default function IsLoginHeader() {
       setIsLogin(data);
     };
     fetchUserInfo();
-  }, [isLogin]);
+  }, []);
 
   console.log(isLogin);
 
