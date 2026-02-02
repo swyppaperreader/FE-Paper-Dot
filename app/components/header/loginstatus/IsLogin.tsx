@@ -9,7 +9,7 @@ export default function IsLogin() {
 
   useEffect(() => {
     const fetchUserInfo = async () => {
-      const response = await fetch("/api/users", {
+      const response = await fetch("https://be-paper-dot.store/users/me", {
         method: "POST",
         credentials: "include",
       });
