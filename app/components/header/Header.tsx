@@ -1,7 +1,7 @@
 import Link from "next/link";
 import styles from "./header.module.css";
 import HeaderLogo from "@/public/Logo.svg";
-import IsLoginHeader from "./isLogin/isLoginHeader";
+import IsLoginHeader from "./isLogin/IsLoginHeader";
 
 export default function Header() {
   const isLogin = false;

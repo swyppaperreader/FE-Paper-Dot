@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 
-export default function isLoginHeader() {
+export default function IsLoginHeader() {
   const [isLogin, setIsLogin] = useState(false);
 
   useEffect(() => {
