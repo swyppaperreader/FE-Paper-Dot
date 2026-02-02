@@ -9,11 +9,6 @@ export default function LoginPage() {
   // const REDIRECT_URI = process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI;
 
   const handleKakaoLogin = async () => {
-    // credentials(쿠키)를 백엔드에 먼저 전달한 뒤 리다이렉트
-    await fetch("/api/auth/kakao", {
-      method: "POST",
-      credentials: "include",
-    });
     window.location.href =
       "https://be-paper-dot.store/oauth2/authorization/kakao";
   };
