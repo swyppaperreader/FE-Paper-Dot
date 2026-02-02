@@ -4,7 +4,7 @@ import HeaderLogo from "@/public/Logo.svg";
 import IsLogin from "@/app/components/header/loginstatus/IsLogin";
 
 export default function Header() {
-  const isLogin = true;
+  // const isLogin = true;
 
   return (
     <header className={styles.header}>
@@ -13,13 +13,7 @@ export default function Header() {
           <HeaderLogo />
         </Link>
 
-        {isLogin ? (
-          <IsLogin />
-        ) : (
-          <Link href="/login" className={styles.button}>
-            로그인/회원가입
-          </Link>
-        )}
+        <IsLogin />
       </div>
     </header>
   );
