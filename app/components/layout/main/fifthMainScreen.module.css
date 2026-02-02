@@ -117,7 +117,7 @@
 }
 
 .stepItem:nth-child(4) .stepDotCircle {
-  left: -10px;
+  left: -17px;
 }
 
 .stepItem:nth-child(4) .descriptionCard {
@@ -125,7 +125,7 @@
   margin-left: 0px;
   text-align: left;
   position: relative;
-  left: -4px;
+  left: -11px;
 }
 
 /* STEP 2는 기본 위치 유지 */
@@ -150,7 +150,7 @@
   padding-left: 0;
   text-align: left;
   position: relative;
-  left: -10px;
+  left: -17px;
 }
 
 .stepItem:nth-child(4) .stepLabel,
