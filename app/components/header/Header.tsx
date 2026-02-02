@@ -4,8 +4,6 @@ import HeaderLogo from "@/public/Logo.svg";
 import IsLogin from "@/app/components/header/loginstatus/IsLogin";
 
 export default function Header() {
-  // const isLogin = true;
-
   return (
     <header className={styles.header}>
       <div className={styles.container}>
