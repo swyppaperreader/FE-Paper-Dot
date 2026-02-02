@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import HeaderModal from "../../modal/HeaderModal";
+import Link from "next/link";
 
 export default function IsLogin() {
   const [isLogin, setIsLogin] = useState(false);
@@ -19,5 +21,5 @@ export default function IsLogin() {
 
   console.log(isLogin);
 
-  return <div>isLoginHeader</div>;
+  return <>{isLogin ? <HeaderModal /> : <Link href="/login">로그인</Link>}</>;
 }
