@@ -1,19 +1,10 @@
-"use client";
-
 import Link from "next/link";
 import styles from "./header.module.css";
-import HeaderModal from "../modal/HeaderModal";
 import HeaderLogo from "@/public/Logo.svg";
-import { useEffect } from "react";
+import IsLoginHeader from "./isLogin/IsLoginHeader";
 
 export default function Header() {
   const isLogin = false;
-
-  useEffect(() => {
-    fetch("https://be-paper-dot.store/users/me", {
-      credentials: "include",
-    });
-  }, []);
 
   return (
     <header className={styles.header}>
@@ -23,7 +14,7 @@ export default function Header() {
         </Link>
 
         {isLogin ? (
-          <HeaderModal />
+          <IsLoginHeader />
         ) : (
           <Link href="/login" className={styles.button}>
             로그인/회원가입
