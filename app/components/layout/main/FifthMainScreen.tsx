@@ -1,27 +1,24 @@
 import styles from "./fifthMainScreen.module.css";
+import Image from "next/image";   // ← Next.js라면 추천 (없으면 그냥 img 써도 됨)
 
 interface Step {
   id: number;
   description: string;
-  icon: string;
 }
 
 const steps: Step[] = [
   {
     id: 1,
     description: "읽고 싶은 영어 PDF를 업로드하거나, 텍스트를 불러옵니다.",
-    icon: "📄",
   },
   {
     id: 2,
     description: "문장별로 번역된 텍스트를 읽습니다.",
-    icon: "⚡",
   },
   {
     id: 3,
     description:
       "다 읽지 못한 문서는 내 문서함에 저장되어, 마지막 위치부터 이어 읽을 수 있습니다.",
-    icon: "✅",
   },
 ];
 
@@ -29,31 +26,29 @@ export default function HowToUse() {
   return (
     <section className={styles.section}>
       <div className={styles.container}>
-        {/* 헤더 */}
         <div className={styles.header}>
           <h2 className={styles.mainTitle}>사용 방법</h2>
-          {/* subtitle이 원래 코드에 없었지만, 필요하면 추가 */}
-          {/* <p className={styles.subtitle}>3단계로 간단하게 시작하세요</p> */}
         </div>
 
-        {/* 타임라인 전체 컨테이너 */}
         <div className={styles.timelineContainer}>
+          {/* 이미지는 여기 한 번만 배치 */}
+          <div className={styles.mainIllustrationWrapper}>
+            <Image
+              src="/mainfifth-image.svg"          // 경로 맞는지 꼭 확인 (public 폴더 기준)
+              // src="/images/mainfifth-image.svg"   ← 폴더 구조에 따라 선택
+              alt="사용 방법 일러스트"
+              width={1000}
+              height={320}
+              className={styles.mainIllustration}
+              priority
+            />
+          </div>
+
           {steps.map((step) => (
             <div key={step.id} className={styles.stepItem}>
-              {/* STEP 라벨 */}
               <div className={styles.stepLabel}>STEP {step.id}</div>
-
-              {/* 굵은 점 – 여기서 생성해야 .stepItem 기준으로 위치 잡힘 */}
               <div className={styles.stepDotCircle} />
-
-              {/* 이미지 */}
-              <div className={styles.stepImage}>
-                <div className={styles.iconCircle}>
-                  <span className={styles.icon}>{step.icon}</span>
-                </div>
-              </div>
-
-              {/* 설명 */}
+              {/* .stepImage div 자체를 삭제하거나 비워둠 */}
               <div className={styles.descriptionCard}>
                 <p className={styles.stepDescription}>{step.description}</p>
               </div>
