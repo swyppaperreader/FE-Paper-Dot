@@ -37,8 +37,8 @@ export default function Footer() {
           </div>
 
           <div className={styles.emailSection}>
-            <a href="mailto:olola9791@gmail.com" className={styles.email}>
-              문의: olola9791@gmail.com
+            <a href="contact.paperdot@gmail.com" className={styles.email}>
+              문의: contact.paperdot@gmail.com
             </a>
           </div>
         </div>

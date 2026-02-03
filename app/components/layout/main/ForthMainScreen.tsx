@@ -16,9 +16,7 @@ const targetUsers: TargetUser[] = [
     title: "논문을 읽는\n대학생 또는 연구자",
     description: "",
     bulletPoints: [
-      "PDF와 번역기를 왔다 갔다 하느라 시간 낭비를 체감하는 사람",
-      "매번 파일을 다시 열고 위치를 찾는 것이 번거로운 사람",
-      '"어디까지 읽었지?" 하며 같은 문장을 두 번, 세 번 다시 찾는 경험이 있는 사람',
+      "“어디까지 읽었지?” 하며 같은 문장을 반복해서 찾아야 하는 사람"
     ],
     imageSrc: "/mainforth-first.svg",
   },
@@ -27,9 +25,7 @@ const targetUsers: TargetUser[] = [
     title: "수능 영어 지문을\n분석하고 싶은 고3",
     description: "",
     bulletPoints: [
-      "PDF와 번역기를 왔다 갔다 하느라 시간 낭비를 체감하는 사람",
-      "매번 파일을 다시 열고 위치를 찾는 것이 번거로운 사람",
-      '"어디까지 읽었지?" 하며 같은 문장을 두 번, 세 번 다시 찾는 경험이 있는 사람',
+      "긴 영어 지문을 볼 때마다 번역과 교재를 번갈아 보느라 집중이 자주 끊기는 학생"
     ],
     imageSrc: "/mainforth-second.svg",
   },
@@ -38,9 +34,7 @@ const targetUsers: TargetUser[] = [
     title: "영어 텍스트를\n소비하는 실무자",
     description: "",
     bulletPoints: [
-      "PDF와 번역기를 왔다 갔다 하느라 시간 낭비를 체감하는 사람",
-      "매번 파일을 다시 열고 위치를 찾는 것이 번거로운 사람",
-      '"어디까지 읽었지?" 하며 같은 문장을 두 번, 세 번 다시 찾는 경험이 있는 사람',
+      "리포트, 매뉴얼, 뉴스레터, 리서치 아티클 등 영어 텍스트를 자주 읽는 직장인, 취준생"
     ],
     imageSrc: "/mainforth-third.svg",
   },
