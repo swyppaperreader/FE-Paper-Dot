@@ -3,22 +3,29 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./headerModal.module.css";
 import Button from "../button/Button";
-import UserImage from "@/public/userImage.svg";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import Image from "next/image";
+import { useAccessTokenStore, useLoginStore } from "@/app/store/useLogin";
+import { logout } from "@/app/services/logout";
 
 export default function HeaderModal({
   isReadHeader,
   className,
+  onLogout,
 }: {
   isReadHeader?: boolean;
   className?: string;
+  accessToken?: string;
+  onLogout?: () => void;
 }) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const pathname = usePathname();
   const modalRef = useRef<HTMLDivElement>(null);
   const prevPathnameRef = useRef<string>(pathname);
-
+  const userInfo = useLoginStore((state) => state.userInfo);
+  const accessToken = useAccessTokenStore((state) => state.accessToken);
+  const setAccessToken = useAccessTokenStore((state) => state.setAccessToken);
   const router = useRouter();
 
   // 경로 변경 시 모달 닫기
@@ -50,6 +57,15 @@ export default function HeaderModal({
     };
   }, [isOpen]);
 
+  const handleLogoutClick = async () => {
+    try {
+      await logout(accessToken as string);
+      setAccessToken(null);
+    } finally {
+      onLogout?.();
+    }
+  };
+
   return (
     <div
       className={className ? className : styles.headerModalContainer}
@@ -65,14 +81,34 @@ export default function HeaderModal({
         <Button
           className={styles.userImageButton}
           onClick={() => setIsOpen(!isOpen)}>
-          <UserImage />
+          {userInfo?.profileImageUrl ? (
+            <Image
+              src={userInfo?.profileImageUrl}
+              alt="user image"
+              width={40}
+              height={40}
+              className={styles.userImage}
+            />
+          ) : (
+            <Image
+              src="/userImage.svg"
+              alt="user"
+              width={40}
+              height={40}
+              className={styles.userImage}
+            />
+          )}
         </Button>
       </div>
       {isOpen && (
         <div className={styles.headerModalWrapper}>
           <div className={styles.headerModal}>
-            <p className={styles.headerModalName}>김유저</p>
-            <p className={styles.headerModalEmail}>testid@naver.com</p>
+            <p className={styles.headerModalName}>
+              {userInfo?.nickname || "김유저"}
+            </p>
+            <p className={styles.headerModalEmail}>
+              {userInfo?.email || "testid@naver.com"}
+            </p>
           </div>
           <div className={styles.headerMiddleTitleContainer}>
             <Link
@@ -88,9 +124,11 @@ export default function HeaderModal({
               내 계정
             </Link>
           </div>
-          <div className={styles.headerModalLogoutButton}>
+          <Button
+            className={styles.headerModalLogoutButton}
+            onClick={handleLogoutClick}>
             <p className={styles.headerModalEmail}>로그아웃</p>
-          </div>
+          </Button>
         </div>
       )}
     </div>

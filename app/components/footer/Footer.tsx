@@ -1,6 +1,6 @@
 // Footer.tsx
 import Link from "next/link";
-import FooterLogo from "@/public/footerLogo.svg";
+import Image from "next/image";
 import styles from "./Footer.module.css";
 
 export default function Footer() {
@@ -9,7 +9,13 @@ export default function Footer() {
       <div className={styles.container}>
         {/* 1줄: 로고 */}
         <div className={styles.logoSection}>
-          <FooterLogo className={styles.logoImage} />
+          <Image
+            src="/footerLogo.svg"
+            alt="Paperdot"
+            width={120}
+            height={40}
+            className={styles.logoImage}
+          />
         </div>
 
         {/* 2줄: 링크 | 저작권 | 이메일 */}
@@ -31,8 +37,8 @@ export default function Footer() {
           </div>
 
           <div className={styles.emailSection}>
-            <a href="mailto:olola9791@gmail.com" className={styles.email}>
-              문의: olola9791@gmail.com
+            <a href="contact.paperdot@gmail.com" className={styles.email}>
+              문의: contact.paperdot@gmail.com
             </a>
           </div>
         </div>
