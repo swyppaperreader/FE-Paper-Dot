@@ -5,6 +5,7 @@ import Image from "next/image";
 import styles from "./NewDocument.module.css";
 import { formatFileSize } from "@/app/utils/useFormatFileSize";
 import { postDocuments } from "@/app/services/document";
+import { useLoginStore } from "@/app/store/useLogin";
 
 interface UploadingFile {
   id: string;
@@ -17,6 +18,7 @@ export default function NewDocumentPage() {
   const [isDragging, setIsDragging] = useState(false);
   const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const userInfo = useLoginStore((state) => state.userInfo);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -94,8 +96,7 @@ export default function NewDocumentPage() {
     const uploadFile = async () => {
       try {
         const formData = new FormData();
-
-        formData.append("ownerId", "1");
+        formData.append("ownerId", userInfo?.userId as string);
         formData.append("title", currentFile?.file?.name);
         formData.append("languageSrc", "ko");
         formData.append("languageTgt", "en");

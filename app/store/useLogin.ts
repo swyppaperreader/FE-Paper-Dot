@@ -3,6 +3,7 @@ import { create } from "zustand";
 interface LoginState {
   login: boolean;
   userInfo: {
+    userId?: string;
     profileImageUrl: string;
     nickname: string;
     email?: string;
@@ -10,6 +11,7 @@ interface LoginState {
 
   setLogin: (login: boolean) => void;
   setUserInfo: (userInfo: {
+    userId?: string;
     profileImageUrl: string;
     nickname: string;
     email?: string;
@@ -20,6 +22,7 @@ export const useLoginStore = create<LoginState>((set) => ({
   login: false,
   userInfo: null,
   setUserInfo: (userInfo: {
+    userId?: string;
     profileImageUrl: string;
     nickname: string;
     email?: string;
