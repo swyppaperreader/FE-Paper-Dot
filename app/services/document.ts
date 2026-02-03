@@ -1,6 +1,6 @@
 export const postDocuments = async (formData: FormData) => {
   try {
-    const response = await fetch("/api/documents", {
+    const response = await fetch("https://be-paper-dot.store/api/documents", {
       method: "POST",
       body: formData,
     });

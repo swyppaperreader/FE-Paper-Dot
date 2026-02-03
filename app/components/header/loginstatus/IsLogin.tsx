@@ -25,18 +25,21 @@ export default function IsLogin() {
   }, []);
 
   useEffect(() => {
-    const fetchUserInfo = async () => {
-      const response = await fetch("https://be-paper-dot.store/users/me", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${isLogin?.accessToken as string}`,
-        },
-      });
-      const data = await response.json();
-      setUserInfoState(data);
-    };
-    fetchUserInfo();
-  }, [isLogin]);
+    if (isLogin?.accessToken) {
+      const fetchUserInfo = async () => {
+        const response = await fetch("https://be-paper-dot.store/users/me", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${isLogin?.accessToken as string}`,
+          },
+        });
+        const data = await response.json();
+        console.log("data", data);
+        setUserInfoState(data);
+      };
+      fetchUserInfo();
+    }
+  }, [isLogin?.accessToken]);
 
   return (
     <>

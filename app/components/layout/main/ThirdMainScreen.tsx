@@ -1,6 +1,8 @@
 import React from "react";
 import styles from "./thirdMainScreen.module.css";
 
+import Image from "next/image";
+
 export default function ThirdMainScreen() {
   return (
     <section className={styles.container}>
@@ -14,12 +16,24 @@ export default function ThirdMainScreen() {
           </p>
         </div>
         <div className={styles.contentRight}>
-          <div className={styles.contentRightImage} />
+          <Image
+            src="/secondBackgroundImage1.svg"
+            alt=""
+            width={572}
+            height={394}
+            className={styles.contentRightImage}
+          />
         </div>
       </div>
       <div className={styles.content}>
         <div className={styles.contentRight}>
-          <div className={styles.contentRightImage} />
+          <Image
+            src="/secondBackgroundImage2.svg"
+            alt=""
+            width={572}
+            height={394}
+            className={styles.contentRightImage}
+          />
         </div>
         <div className={styles.contentRightCenter}>
           <h1 className={styles.title}>내 문서함에서 이어서 읽기</h1>
@@ -40,7 +54,13 @@ export default function ThirdMainScreen() {
           </p>
         </div>
         <div className={styles.contentRight}>
-          <div className={styles.contentRightImage} />
+          <Image
+            src="/secondBackgroundImage3.svg"
+            alt=""
+            width={572}
+            height={394}
+            className={styles.contentRightImage}
+          />
         </div>
       </div>
     </section>
