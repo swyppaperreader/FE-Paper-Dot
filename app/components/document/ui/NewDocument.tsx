@@ -1,9 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import UploadIcon from "@/public/uploadIcon.svg";
-import PdfLogo from "@/public/pdf.svg";
-import CloseIcon from "@/public/close.svg";
+import Image from "next/image";
 import styles from "./NewDocument.module.css";
 import { formatFileSize } from "@/app/utils/useFormatFileSize";
 import { postDocuments } from "@/app/services/document";
@@ -140,7 +138,7 @@ export default function NewDocumentPage() {
 
           {uploadingFiles.length > 0 && (
             <div className={styles.uploadingFilesWrapper}>
-              <PdfLogo />
+              <Image src="/pdf.svg" alt="pdf" width={40} height={40} />
               <div className={styles.uploadingItem}>
                 <p className={styles.fileName}>{uploadingFiles[0].file.name}</p>
                 <div className={styles.fileInfo}>
@@ -160,17 +158,18 @@ export default function NewDocumentPage() {
                   </p>
                 </div>
               </div>
-              <CloseIcon
+              <button
+                type="button"
                 className={styles.closeIcon}
-                width={12}
-                height={12}
                 onClick={() => handleRemoveFile()}
+                disabled={uploadingFiles[0]?.progress !== 100}
                 style={
                   uploadingFiles[0]?.progress === 100
                     ? { cursor: "pointer" }
                     : { cursor: "not-allowed" }
-                }
-              />
+                }>
+                <Image src="/close.svg" alt="close" width={12} height={12} />
+              </button>
             </div>
           )}
 
@@ -182,10 +181,12 @@ export default function NewDocumentPage() {
               onDrop={handleDrop}
               onClick={handleClick}>
               <div className={styles.uploadIconWrapper}>
-                <UploadIcon
-                  className={styles.uploadIconImage}
+                <Image
+                  src="/uploadIcon.svg"
+                  alt="upload"
                   width={32}
                   height={32}
+                  className={styles.uploadIconImage}
                 />
                 <div className={styles.uploadText}>
                   <p className={styles.uploadMainText}>

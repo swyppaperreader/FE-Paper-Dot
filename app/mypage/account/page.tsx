@@ -3,16 +3,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import styles from "@/app/components/mypage/ui/MyPage.module.css";
 import Button from "@/app/components/button/Button";
-import UserImage from "@/public/userImage.svg";
-import CameraIcon from "@/public/cameraIcon.svg";
-import KakaoIcon from "@/public/kakaoIcon.svg";
+import Image from "next/image";
+import { useAccessTokenStore, useLoginStore } from "@/app/store/useLogin";
+import { useRouter } from "next/navigation";
+import { logout } from "@/app/services/logout";
 
 export default function MyAccount() {
-  const mockUser = {
-    name: "김유저",
-    email: "testid@kakao.com",
-  };
-
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -21,6 +17,12 @@ export default function MyAccount() {
   const [customReason, setCustomReason] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const userInfo = useLoginStore((state) => state.userInfo);
+  const setUserInfoState = useLoginStore((state) => state.setUserInfo);
+  const accessToken = useAccessTokenStore((state) => state.accessToken);
+  const setAccessToken = useAccessTokenStore((state) => state.setAccessToken);
+
+  const router = useRouter();
 
   // 드롭다운 외부 클릭 시 닫기
   useEffect(() => {
@@ -48,8 +50,10 @@ export default function MyAccount() {
     { value: "etc", label: "기타(직접입력)" },
   ];
 
-  const handleLogoutClick = () => {
-    console.log("로그아웃");
+  const handleLogoutClick = async () => {
+    await logout(accessToken as string);
+    setAccessToken(null);
+    router.push("/");
   };
 
   const handleDeleteAccount = () => {
@@ -62,9 +66,7 @@ export default function MyAccount() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    console.log(file);
     if (file) {
-      console.log("선택된 파일:", file.name);
       setProfileImage(URL.createObjectURL(file));
     }
   };
@@ -79,7 +81,15 @@ export default function MyAccount() {
       <section className={styles.accountTopBar}>
         <div className={styles.accountProfileBar}>
           <div className={styles.accountProfileImageSmallContainer}>
-            {profileImage && <UserImage />}
+            <Image
+              src={userInfo?.profileImageUrl || "/userImage.svg"}
+              alt="profile"
+              width={80}
+              height={80}
+              className={
+                userInfo?.profileImageUrl ? styles.accountProfileImage : ""
+              }
+            />
             <input
               type="file"
               ref={fileInputRef}
@@ -90,10 +100,18 @@ export default function MyAccount() {
             <Button
               className={styles.accountProfileImageSmall}
               onClick={handleChangeProfileImage}>
-              <CameraIcon className={styles.cameraIcon} />
+              <Image
+                src="/cameraIcon.svg"
+                alt="camera"
+                width={24}
+                height={24}
+                className={styles.cameraIcon}
+              />
             </Button>
           </div>
-          <h2 className={styles.accountProfileNameSmall}>{mockUser.name}</h2>
+          <h2 className={styles.accountProfileNameSmall}>
+            {userInfo?.nickname || "김유저"}
+          </h2>
         </div>
         <Button
           className={styles.accountLogoutBtnTop}
@@ -106,7 +124,7 @@ export default function MyAccount() {
         <div className={styles.accountFormRow}>
           <p className={styles.accountFormLabel}>소셜 로그인</p>
           <div className={styles.accountSocialLoginRight}>
-            <KakaoIcon />
+            <Image src="/kakaoIcon.svg" alt="kakao" width={24} height={24} />
             <p className={styles.accountSocialLoginText}>
               카카오톡 연동 로그인
             </p>
@@ -116,7 +134,9 @@ export default function MyAccount() {
         <div className={styles.accountFormRow}>
           <p className={styles.accountFormLabel}>이름</p>
           <div className={styles.accountInputContainer}>
-            <p className={styles.accountInputText}>{mockUser.name}</p>
+            <p className={styles.accountInputText}>
+              {userInfo?.nickname || "김유저"}
+            </p>
           </div>
         </div>
       </div>

@@ -1,8 +1,6 @@
+import Image from "next/image";
 import styles from "./mainTopScreen.module.css";
 import Button from "@/app/components/button/Button";
-import TextIcon from "@/public/text.svg";
-import BgImage from "@/public/bg.svg";
-import BackgroundSecondImage from "@/public/backgroundSecond.svg";
 
 export default function MainTopScreenUi() {
   return (
@@ -17,14 +15,28 @@ export default function MainTopScreenUi() {
         </p>
         <Button>지금 시작하기</Button>
         <div className={styles.textButton}>
-          <TextIcon />
+          <Image src="/text.svg" alt="text" width={24} height={24} />
           <span>텍스트 번역</span>
         </div>
       </div>
       <div className={styles.bgImageWrapper}>
-        <BgImage />
+        <Image
+          src="/bg.svg"
+          alt=""
+          width={800}
+          height={380}
+          priority
+          className={styles.bgImage}
+        />
         <div className={styles.backgroundSecondImageContainer}>
-          <BackgroundSecondImage />
+          <Image
+            src="/backgroundSecond.svg"
+            alt=""
+            width={216}
+            height={180}
+            priority
+            className={styles.backgroundSecondImage}
+          />
         </div>
       </div>
       <div className={styles.overLay} />

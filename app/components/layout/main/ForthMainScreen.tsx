@@ -1,15 +1,13 @@
 import React from "react";
+import Image from "next/image";
 import styles from "./forthMainScreen.module.css";
-import MainforthFirst from "@/public/mainforth-first.svg";
-import MainforthSecond from "@/public/mainforth-second.svg";
-import MainforthThird from "@/public/mainforth-third.svg";
 
 interface TargetUser {
   id: string;
   title: string;
   description: string;
   bulletPoints: string[];
-  ImageComponent: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  imageSrc: string;
 }
 
 const targetUsers: TargetUser[] = [
@@ -22,7 +20,7 @@ const targetUsers: TargetUser[] = [
       "매번 파일을 다시 열고 위치를 찾는 것이 번거로운 사람",
       '"어디까지 읽었지?" 하며 같은 문장을 두 번, 세 번 다시 찾는 경험이 있는 사람',
     ],
-    ImageComponent: MainforthFirst,
+    imageSrc: "/mainforth-first.svg",
   },
   {
     id: "highschool",
@@ -33,7 +31,7 @@ const targetUsers: TargetUser[] = [
       "매번 파일을 다시 열고 위치를 찾는 것이 번거로운 사람",
       '"어디까지 읽었지?" 하며 같은 문장을 두 번, 세 번 다시 찾는 경험이 있는 사람',
     ],
-    ImageComponent: MainforthSecond,
+    imageSrc: "/mainforth-second.svg",
   },
   {
     id: "professional",
@@ -44,7 +42,7 @@ const targetUsers: TargetUser[] = [
       "매번 파일을 다시 열고 위치를 찾는 것이 번거로운 사람",
       '"어디까지 읽었지?" 하며 같은 문장을 두 번, 세 번 다시 찾는 경험이 있는 사람',
     ],
-    ImageComponent: MainforthThird,
+    imageSrc: "/mainforth-third.svg",
   },
 ];
 
@@ -65,7 +63,7 @@ export default function CheckSection() {
             <div key={user.id} className={styles.cardWrapper}>
               {/* 회색 정사각형 영역 */}
               <div className={styles.imageArea}>
-                <user.ImageComponent />
+                <Image src={user.imageSrc} alt={user.title} fill priority />
               </div>
 
               {/* 텍스트 영역 */}
