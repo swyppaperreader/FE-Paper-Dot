@@ -131,9 +131,9 @@ export default function NewDocumentPage() {
       <section className={styles.main}>
         <div className={styles.content}>
           <div className={styles.pageHeader}>
-            <h1 className={styles.pageTitle}>번역할 파일을 업로드 해주세요.</h1>
+            <h1 className={styles.pageTitle}>새 문서 만들기</h1>
             <p className={styles.pageSubtitle}>
-              페이퍼닷이 번역하고, 한 줄 한 줄 읽기 쉽게 정리해드릴게요.
+              PDF 파일을 업로드해서 시작하세요
             </p>
           </div>
 
