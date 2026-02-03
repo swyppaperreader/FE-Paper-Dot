@@ -1,6 +1,6 @@
 /* ========== 1. 기본 설정 ========== */
 .section {
-  background-color: #f8f9fa;
+  background-color: #f0f4fa;
   padding: 80px 40px;
 }
 
@@ -23,20 +23,15 @@
   letter-spacing: -0.5px;
 }
 
-/* 타임라인 컨테이너 - 배경 white 유지, 테두리/그림자 그대로 */
-/* 타임라인 컨테이너 높이 고정 해제 + 패딩 조정 */
+/* 타임라인 컨테이너 */
 .timelineContainer {
   width: 1208px;
   max-width: 100%;
   height: 578px;
-  /* ← 핵심! 578px 제거 */
-
-  /* 너무 짧아지지 않게 최소값 */
   margin: 40px auto;
   border-radius: 20px;
   background: #ffffff;
   padding: 40px 40px 80px;
-  /* 아래쪽 여유 더 줌 */
   box-sizing: border-box;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -46,12 +41,10 @@
 }
 
 /* 점선 - STEP에 더 가깝게 (top 값 줄임) */
-/* 점선 - STEP 아래에 위치 (기존 유지하거나 95px → 100px로 살짝 내림) */
 .timelineContainer::before {
   content: "";
   position: absolute;
   top: 100px;
-  /* 점선 위치를 조금 더 아래로 (점 아래에 오게) */
   left: 60px;
   right: 60px;
   height: 2px;
@@ -82,7 +75,6 @@
   text-transform: capitalize;
   color: #21232A;
   margin: 0 0 8px 0;
-  /* 기존 24px → 8px로 줄여 STEP과 점선 거리 좁힘 */
   text-align: left;
   position: relative;
   z-index: 4;
@@ -137,7 +129,7 @@
   left: 20px;
 }
 
-/* 라벨과 설명 텍스트도 점 위치에 맞춰 정렬 (선택사항이지만 추천) */
+/* 라벨과 설명 텍스트도 점 위치에 맞춰 정렬 */
 .stepItem:nth-child(2) .descriptionCard,
 .stepItem:nth-child(2) .stepLabel {
   padding-left: 50px;
@@ -176,7 +168,7 @@
 .mainIllustrationWrapper {
   grid-column: 1 / -1;
   position: absolute;
-  top: 120px;
+  top: 135px;
   left: 0;
   right: 0;
   height: 320px;
@@ -204,20 +196,6 @@
   object-position: center;
 }
 
-/* 아이콘 
-.iconCircle {
-  width: 140px;
-  height: 140px;
-  background: rgba(85, 138, 240, 0.18);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.icon {
-  font-size: 72px;
-}*/
 
 /* 설명 텍스트 */
 .descriptionCard {
@@ -225,7 +203,7 @@
   border: none;
   box-shadow: none;
   padding: 16px 0 0 0;
-  margin-top: 400px;
+  margin-top: 385px;
   padding-top: 12px;
   width: 100%;
   text-align: left;

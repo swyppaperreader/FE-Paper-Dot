@@ -1,15 +1,21 @@
 import styles from "./fifthMainScreen.module.css";
-import Image from "next/image";   // ← Next.js라면 추천 (없으면 그냥 img 써도 됨)
+import Image from "next/image";
 
 interface Step {
   id: number;
-  description: string;
+  description: React.ReactNode;  // string 대신 ReactNode로 변경
 }
 
 const steps: Step[] = [
   {
     id: 1,
-    description: "읽고 싶은 영어 PDF를 업로드하거나, 텍스트를 불러옵니다.",
+    description: (
+      <>
+        읽고 싶은 영어 PDF를 업로드하거나,
+        <br />
+        텍스트를 불러옵니다.
+      </>
+    ),
   },
   {
     id: 2,
@@ -34,8 +40,7 @@ export default function HowToUse() {
           {/* 이미지는 여기 한 번만 배치 */}
           <div className={styles.mainIllustrationWrapper}>
             <Image
-              src="/mainfifth-image.svg"          // 경로 맞는지 꼭 확인 (public 폴더 기준)
-              // src="/images/mainfifth-image.svg"   ← 폴더 구조에 따라 선택
+              src="/mainfifth-image.svg"
               alt="사용 방법 일러스트"
               width={1000}
               height={320}
@@ -48,7 +53,6 @@ export default function HowToUse() {
             <div key={step.id} className={styles.stepItem}>
               <div className={styles.stepLabel}>STEP {step.id}</div>
               <div className={styles.stepDotCircle} />
-              {/* .stepImage div 자체를 삭제하거나 비워둠 */}
               <div className={styles.descriptionCard}>
                 <p className={styles.stepDescription}>{step.description}</p>
               </div>
