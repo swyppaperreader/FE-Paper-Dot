@@ -24,25 +24,25 @@
 }
 
 /* 타임라인 컨테이너 - 배경 white 유지, 테두리/그림자 그대로 */
+/* 타임라인 컨테이너 높이 고정 해제 + 패딩 조정 */
 .timelineContainer {
   width: 1208px;
   max-width: 100%;
   height: 578px;
+  /* ← 핵심! 578px 제거 */
+
+  /* 너무 짧아지지 않게 최소값 */
   margin: 40px auto;
   border-radius: 20px;
-  border: none !important;
-  /* 테두리 없애기 */
-  box-shadow: none !important;
-  /* 그림자 없애기 */
   background: #ffffff;
-  /* 배경 투명으로 (필요 시 white 유지) */
-  padding: 40px;
+  padding: 40px 40px 80px;
+  /* 아래쪽 여유 더 줌 */
   box-sizing: border-box;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
-  overflow: visible !important;
   position: relative;
+  overflow: visible;
 }
 
 /* 점선 - STEP에 더 가깝게 (top 값 줄임) */
@@ -90,30 +90,121 @@
 
 .stepItem {
   position: relative;
+  padding-top: 0px;
   padding-left: 20px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
 }
 
-/* 이미지 - 점선 아래에 여유 있게 */
-.stepImage {
-  width: 320px;
-  height: 320px;
-  margin: 50px 0 0 0;
-  /* ← auto 제거 → 왼쪽 정렬로 변경 */
-  margin-left: 0;
-  position: relative;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 
-  z-index: 2;
+/* STEP 1 위치 조정 */
+.stepItem:nth-child(2) {
+  padding-left: 10px;
+
 }
 
-/* 아이콘 */
+.stepItem:nth-child(2) .stepDotCircle {
+  left: 60px;
+
+}
+
+/* STEP 3 위치 조정 */
+.stepItem:nth-child(4) {
+  padding: 0 30px 0 0;
+  text-align: left;
+  align-items: flex-start;
+}
+
+.stepItem:nth-child(4) .stepDotCircle {
+  left: -17px;
+}
+
+.stepItem:nth-child(4) .descriptionCard {
+  padding-left: 0px;
+  margin-left: 0px;
+  text-align: left;
+  position: relative;
+  left: -11px;
+}
+
+/* STEP 2는 기본 위치 유지 */
+.stepItem:nth-child(3) {
+  padding-left: 20px;
+}
+
+.stepItem:nth-child(3) .stepDotCircle {
+  left: 20px;
+}
+
+/* 라벨과 설명 텍스트도 점 위치에 맞춰 정렬 (선택사항이지만 추천) */
+.stepItem:nth-child(2) .descriptionCard,
+.stepItem:nth-child(2) .stepLabel {
+  padding-left: 50px;
+  text-align: left;
+}
+
+/* STEP 3의 라벨만 왼쪽으로 이동시켜 "S"가 점 위에 오도록 */
+.stepItem:nth-child(4) .stepLabel {
+  margin-left: -50px;
+  padding-left: 0;
+  text-align: left;
+  position: relative;
+  left: -17px;
+}
+
+.stepItem:nth-child(4) .stepLabel,
+.stepItem:nth-child(4) .descriptionCard {
+  text-align: left;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+/* 이미지 - 점선 아래에 여유 있게 */
+.stepImage {
+  width: 1000px;
+  height: 320px;
+  margin: 32px 0 40px 0;
+  position: relative;
+  background: none;
+  border-radius: 0;
+  display: block;
+  overflow: hidden;
+}
+
+/* 이미지 한 장을 위한 래퍼 (가운데 정렬 + 크기 제어) */
+.mainIllustrationWrapper {
+  grid-column: 1 / -1;
+  position: absolute;
+  top: 120px;
+  left: 0;
+  right: 0;
+  height: 320px;
+  pointer-events: none;
+  z-index: 0;
+  /* 점과 점선 아래로 */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* 실제 이미지 스타일 */
+.mainIllustration {
+  width: 1000px;
+  max-width: 100%;
+  height: 320px;
+  object-fit: contain;
+}
+
+/* SVG / img 자체 스타일 */
+.stepSvg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+/* 아이콘 
 .iconCircle {
   width: 140px;
   height: 140px;
@@ -126,7 +217,7 @@
 
 .icon {
   font-size: 72px;
-}
+}*/
 
 /* 설명 텍스트 */
 .descriptionCard {
@@ -134,10 +225,12 @@
   border: none;
   box-shadow: none;
   padding: 16px 0 0 0;
-  margin-top: 16px;
+  margin-top: 400px;
+  padding-top: 12px;
   width: 100%;
   text-align: left;
 }
+
 
 .stepDescription {
   font-weight: 500;
@@ -148,6 +241,15 @@
   margin: 0;
   text-align: left;
   word-break: keep-all;
+}
+
+/* 새 클래스 — SVG 자체 스타일 */
+.stepSvg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  /* 또는 cover / scale-down 테스트 */
+  object-position: center;
 }
 
 /* ========== 11. 반응형 - 초소형 (480px) ========== */
