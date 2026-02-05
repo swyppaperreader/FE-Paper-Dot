@@ -133,7 +133,7 @@ export default function MyAccount() {
           <div className={styles.accountSocialLoginRight}>
             <Image
               src={
-                userInfo?.userId === userInfo?.email?.includes("gmail")
+                userInfo?.email?.includes("gmail")
                   ? "/googleLogo.svg"
                   : "/kakaoIcon.svg"
               }
@@ -141,9 +141,7 @@ export default function MyAccount() {
               width={24}
               height={24}
               className={
-                userInfo?.userId === userInfo?.email?.includes("gmail")
-                  ? styles.googleLogo
-                  : ""
+                userInfo?.email?.includes("gmail") ? styles.googleLogo : ""
               }
             />
             <p className={styles.accountSocialLoginText}>
