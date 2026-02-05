@@ -80,15 +80,23 @@ export default function MyAccount() {
       <section className={styles.accountTopBar}>
         <div className={styles.accountProfileBar}>
           <div className={styles.accountProfileImageSmallContainer}>
-            <Image
-              src={userInfo?.profileImageUrl || "/userImage.svg"}
-              alt="profile"
-              width={80}
-              height={80}
-              className={
-                userInfo?.profileImageUrl ? styles.accountProfileImage : ""
-              }
-            />
+            {userInfo?.profileImageUrl?.includes("http") ? (
+              <img
+                src={userInfo?.profileImageUrl}
+                alt="profile"
+                width={80}
+                height={80}
+                className={styles.accountProfileImage}
+              />
+            ) : (
+              <Image
+                src={userInfo?.profileImageUrl || "/userImage.svg"}
+                alt="profile"
+                width={80}
+                height={80}
+                className={styles.accountProfileImage}
+              />
+            )}
             {/* <input
               type="file"
               ref={fileInputRef}
