@@ -89,7 +89,6 @@ export default function MyAccount() {
                 userInfo?.profileImageUrl ? styles.accountProfileImage : ""
               }
             />
-            // 추후 고도화 되면 추가
             {/* <input
               type="file"
               ref={fileInputRef}

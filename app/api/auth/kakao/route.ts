@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
       headers: cookieHeader ? { cookie: cookieHeader } : undefined,
       credentials: "include",
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "토큰 요청에 실패했습니다." },
       { status: 500 }

@@ -124,7 +124,7 @@ export default function NewDocumentPage() {
     };
 
     uploadFile();
-  }, [uploadingFiles.length]);
+  }, [uploadingFiles?.length, userInfo?.userId]);
 
   return (
     <main className={styles.container}>
