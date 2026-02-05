@@ -15,15 +15,7 @@ interface Document {
 }
 
 export default function MyDocument() {
-  const [documents] = useState<Document[]>([
-    {
-      id: "1",
-      name: "testestestestestestestestestestestestestestestestestestestes.pdf",
-      type: "pdf",
-      date: "2026-01-29",
-      size: "100KB",
-    },
-  ]);
+  const [documents] = useState<Document[]>([]);
   const router = useRouter();
 
   const handleStartNewDocument = () => {

@@ -24,6 +24,7 @@ export default function HeaderModal({
   const modalRef = useRef<HTMLDivElement>(null);
   const prevPathnameRef = useRef<string>(pathname);
   const userInfo = useLoginStore((state) => state.userInfo);
+
   const accessToken = useAccessTokenStore((state) => state.accessToken);
   const setAccessToken = useAccessTokenStore((state) => state.setAccessToken);
   const router = useRouter();
@@ -81,23 +82,16 @@ export default function HeaderModal({
         <Button
           className={styles.userImageButton}
           onClick={() => setIsOpen(!isOpen)}>
-          {userInfo?.profileImageUrl ? (
-            <Image
-              src={userInfo?.profileImageUrl}
-              alt="user image"
-              width={40}
-              height={40}
-              className={styles.userImage}
-            />
-          ) : (
-            <Image
-              src="/userImage.svg"
-              alt="user"
-              width={40}
-              height={40}
-              className={styles.userImage}
-            />
-          )}
+          <Image
+            src={
+              !userInfo?.profileImageUrl
+                ? "/userImage.svg"
+                : userInfo.profileImageUrl
+            }
+            alt="user image"
+            fill
+            className={styles.userImage}
+          />
         </Button>
       </div>
       {isOpen && (

@@ -20,13 +20,11 @@ export default function SecondMainScreen() {
         </div>
         <div className={styles.contentRightContainer}>
           <Image
-            src="/backgroundSecondImage.svg"
+            src="/mainSecondBg.svg"
             alt=""
-            width={636}
-            height={500}
+            fill
             className={styles.secondMainScreenImage}
           />
-          <div className={styles.overlay} />
         </div>
       </div>
     </section>
