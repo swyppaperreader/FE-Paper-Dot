@@ -89,7 +89,8 @@ export default function HeaderModal({
                 : userInfo.profileImageUrl
             }
             alt="user image"
-            fill
+            width={40}
+            height={40}
             className={styles.userImage}
           />
         </Button>
