@@ -82,17 +82,23 @@ export default function HeaderModal({
         <Button
           className={styles.userImageButton}
           onClick={() => setIsOpen(!isOpen)}>
-          <Image
-            src={
-              !userInfo?.profileImageUrl
-                ? "/userImage.svg"
-                : userInfo.profileImageUrl
-            }
-            alt="user image"
-            width={40}
-            height={40}
-            className={styles.userImage}
-          />
+          {userInfo?.profileImageUrl?.includes("http") ? (
+            <img
+              src={userInfo?.profileImageUrl}
+              alt="user image"
+              width={40}
+              height={40}
+              className={styles.userImage}
+            />
+          ) : (
+            <Image
+              src={userInfo?.profileImageUrl || "/userImage.svg"}
+              alt="user image"
+              width={40}
+              height={40}
+              className={styles.userImage}
+            />
+          )}
         </Button>
       </div>
       {isOpen && (
