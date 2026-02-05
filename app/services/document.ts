@@ -3,10 +3,6 @@ export const postDocuments = async (
   accessToken?: string | null
 ) => {
   try {
-    const headers: HeadersInit = {};
-    if (accessToken) {
-      headers.Authorization = `Bearer ${accessToken}`;
-    }
     const response = await fetch("https://be-paper-dot.store/api/documents", {
       method: "POST",
       headers,
