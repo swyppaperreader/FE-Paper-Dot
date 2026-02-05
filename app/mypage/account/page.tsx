@@ -147,7 +147,7 @@ export default function MyAccount() {
               }
             />
             <p className={styles.accountSocialLoginText}>
-              {userInfo?.userId === userInfo?.email?.includes("gmail")
+              {userInfo?.email?.includes("gmail.com")
                 ? "구글 연동 로그인"
                 : "카카오톡 연동 로그인"}
             </p>
