@@ -394,8 +394,6 @@
 
 .googleLogo {
   display: flex;
-  width: 32px;
-  height: 32px;
   padding: 4px;
   justify-content: center;
   align-items: center;
