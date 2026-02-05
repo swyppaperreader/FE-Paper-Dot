@@ -137,7 +137,7 @@ export default function MyAccount() {
                   ? "/googleLogo.svg"
                   : "/kakaoIcon.svg"
               }
-              alt="kakao"
+              alt={userInfo?.email?.includes("gmail") ? "google" : "kakao"}
               width={24}
               height={24}
               className={
