@@ -137,6 +137,8 @@
   right: 5%;
   top: 40%;
   cursor: pointer;
+  border: none;
+  background-color: transparent;
 }
 
 .uploadingItem {

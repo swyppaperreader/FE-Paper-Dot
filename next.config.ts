@@ -5,14 +5,12 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "http",
+        protocol: "https",
         hostname: "k.kakaocdn.net",
-        pathname: "/**",
       },
       {
         protocol: "https",
         hostname: "lh3.googleusercontent.com",
-        pathname: "/**",
       },
     ],
   },

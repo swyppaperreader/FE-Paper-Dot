@@ -10,15 +10,12 @@ import { logout } from "@/app/services/logout";
 
 export default function MyAccount() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [profileImage, setProfileImage] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [agreeChecked, setAgreeChecked] = useState(false);
   const [deleteReason, setDeleteReason] = useState("");
   const [customReason, setCustomReason] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const userInfo = useLoginStore((state) => state.userInfo);
-  const setUserInfoState = useLoginStore((state) => state.setUserInfo);
   const accessToken = useAccessTokenStore((state) => state.accessToken);
   const setAccessToken = useAccessTokenStore((state) => state.setAccessToken);
 
@@ -38,6 +35,8 @@ export default function MyAccount() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  console.log(userInfo?.userId === userInfo?.email?.includes("gmail"));
 
   const deleteReasonOptions = [
     { value: "service_not_needed", label: "더 이상 사용할 일이 없어서" },
@@ -60,16 +59,16 @@ export default function MyAccount() {
     setShowDeleteModal(true);
   };
 
-  const handleChangeProfileImage = () => {
-    fileInputRef.current?.click();
-  };
+  // const handleChangeProfileImage = () => {
+  //   fileInputRef.current?.click();
+  // };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setProfileImage(URL.createObjectURL(file));
-    }
-  };
+  // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = e.target.files?.[0];
+  //   if (file) {
+  //     setProfileImage(URL.createObjectURL(file));
+  //   }
+  // };
 
   const handleSelectReason = (value: string) => {
     setDeleteReason(value);
@@ -90,7 +89,7 @@ export default function MyAccount() {
                 userInfo?.profileImageUrl ? styles.accountProfileImage : ""
               }
             />
-            <input
+            {/* <input
               type="file"
               ref={fileInputRef}
               onChange={handleFileChange}
@@ -107,7 +106,7 @@ export default function MyAccount() {
                 height={24}
                 className={styles.cameraIcon}
               />
-            </Button>
+            </Button> */}
           </div>
           <h2 className={styles.accountProfileNameSmall}>
             {userInfo?.nickname || "김유저"}
@@ -124,9 +123,25 @@ export default function MyAccount() {
         <div className={styles.accountFormRow}>
           <p className={styles.accountFormLabel}>소셜 로그인</p>
           <div className={styles.accountSocialLoginRight}>
-            <Image src="/kakaoIcon.svg" alt="kakao" width={24} height={24} />
+            <Image
+              src={
+                userInfo?.userId === userInfo?.email?.includes("gmail")
+                  ? "/googleLogo.svg"
+                  : "/kakaoIcon.svg"
+              }
+              alt="kakao"
+              width={24}
+              height={24}
+              className={
+                userInfo?.userId === userInfo?.email?.includes("gmail")
+                  ? styles.googleLogo
+                  : ""
+              }
+            />
             <p className={styles.accountSocialLoginText}>
-              카카오톡 연동 로그인
+              {userInfo?.userId === userInfo?.email?.includes("gmail")
+                ? "구글 연동 로그인"
+                : "카카오톡 연동 로그인"}
             </p>
           </div>
         </div>

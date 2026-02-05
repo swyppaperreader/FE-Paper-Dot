@@ -113,10 +113,10 @@
   padding: 0;
   margin: 0 auto 20px auto;
   max-width: 92%;
-  text-align: left;
+  text-align: center;
 }
 
-/* 불릿 아이템 - 불릿 기호와 텍스트를 함께 왼쪽 정렬하되, 패딩 조정 */
+/* 불릿 아이템 - 불릿 기호와 텍스트를 함께 가운데 정렬 */
 .bulletItem {
   font-weight: 500;
   font-size: 16px;
@@ -127,7 +127,7 @@
   padding-left: 0px;
   position: relative;
   word-break: keep-all;
-  margin-left: -8px;
+  text-align: center;
 }
 
 /*.bulletItem::before {

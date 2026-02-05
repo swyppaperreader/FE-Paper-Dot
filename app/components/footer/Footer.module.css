@@ -107,6 +107,7 @@
   font-weight: 400;
   line-height: 150%;
   letter-spacing: -0.26px;
+  text-transform: none;
 }
 
 /* 📱 반응형: sm (640px 이상) */

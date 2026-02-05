@@ -17,7 +17,7 @@ export default function ThirdMainScreen() {
         </div>
         <div className={styles.contentRight}>
           <Image
-            src="/secondBackgroundImage1.svg"
+            src="/thirdBackgroundImage1.webp"
             alt=""
             width={572}
             height={394}
@@ -28,7 +28,7 @@ export default function ThirdMainScreen() {
       <div className={styles.content}>
         <div className={styles.contentRight}>
           <Image
-            src="/secondBackgroundImage2.svg"
+            src="/thirdBackgroundImage2.webp"
             alt=""
             width={572}
             height={394}
@@ -55,7 +55,7 @@ export default function ThirdMainScreen() {
         </div>
         <div className={styles.contentRight}>
           <Image
-            src="/secondBackgroundImage3.svg"
+            src="/thirdBackgroundImage3.webp"
             alt=""
             width={572}
             height={394}

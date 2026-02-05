@@ -22,7 +22,7 @@
 }
 
 .contentLeftContainer {
-  width: 50%;
+  width: 40%;
 }
 
 .title {
@@ -49,30 +49,13 @@
 
 .contentRightContainer {
   position: relative;
-  width: 50%;
+  flex: 1;
   height: 100%;
-  margin-left: auto;
-}
-
-.overlay {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  right: 0;
-  background: linear-gradient(
-    0deg,
-    rgba(71, 135, 255, 0.3) 0%,
-    rgba(126, 115, 255, 0.1) 100%
-  );
-  border-top-right-radius: 40px;
-  border-bottom-right-radius: 40px;
 }
 
 .secondMainScreenImage {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  z-index: 1;
-  max-width: 100%;
+  border-top-right-radius: 40px;
+  border-bottom-right-radius: 40px;
+  object-fit: cover;
+  object-position: right;
 }
