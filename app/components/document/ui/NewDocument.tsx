@@ -199,7 +199,7 @@ export default function NewDocumentPage() {
                 </div>
               </div>
 
-              <p className={styles.uploadLimit}>최대 n용량까지 가능합니다.</p>
+              <p className={styles.uploadLimit}></p>
             </div>
           )}
 
