@@ -7,6 +7,7 @@ import Image from "next/image";
 import { useAccessTokenStore, useLoginStore } from "@/app/store/useLogin";
 import { useRouter } from "next/navigation";
 import { logout } from "@/app/services/logout";
+import { withdraw } from "@/app/services/withdraw";
 
 export default function MyAccount() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -71,10 +72,6 @@ export default function MyAccount() {
     }
   };
 
-  const handleDeleteAccount = () => {
-    setShowDeleteModal(true);
-  };
-
   const handleConfirmDelete = async () => {
     try {
       if (!accessToken) {
@@ -83,33 +80,11 @@ export default function MyAccount() {
         return;
       }
 
-      const response = await fetch("https://be-paper-dot.store/users/me", {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
+      const response = await withdraw(
+        userInfo?.email?.includes("gmail.com") ? "google" : "kakao"
+      );
+      console.log("response", response);
 
-      // 응답 상태와 내용을 로깅
-      const responseData = await response.json().catch(() => ({}));
-      console.log("Delete account response:", {
-        status: response.status,
-        statusText: response.statusText,
-        data: responseData,
-      });
-
-      if (!response.ok) {
-        const errorMessage =
-          responseData?.message ||
-          responseData?.error ||
-          `탈퇴 요청 실패 (${response.status})`;
-        console.error("Delete account error:", errorMessage);
-        throw new Error(errorMessage);
-      }
-
-      // 탈퇴 성공 시 상태 완전히 초기화
       setAccessToken(null);
       setUserInfoState({
         profileImageUrl: "",
@@ -275,19 +250,21 @@ export default function MyAccount() {
 
                 {/* 🔥 커스텀 드롭다운 */}
                 <div
-                  className={`${styles.selectWrapper} ${!agreeChecked ? styles.disabled : ""
-                    }`}
+                  className={`${styles.selectWrapper} ${
+                    !agreeChecked ? styles.disabled : ""
+                  }`}
                   ref={dropdownRef}>
                   <div
-                    className={`${styles.customSelectValue} ${isDropdownOpen ? styles.open : ""
-                      }`}
+                    className={`${styles.customSelectValue} ${
+                      isDropdownOpen ? styles.open : ""
+                    }`}
                     onClick={() =>
                       agreeChecked && setIsDropdownOpen(!isDropdownOpen)
                     }>
                     {deleteReason
                       ? deleteReasonOptions.find(
-                        (opt) => opt.value === deleteReason
-                      )?.label
+                          (opt) => opt.value === deleteReason
+                        )?.label
                       : "선택해주세요"}{" "}
                     {/* ← 이렇게 변경 */}
                     <svg
