@@ -38,8 +38,16 @@ export default function IsLogin() {
         setUserInfoState(data);
       };
       fetchUserInfo();
+    } else {
+      // accessToken이 없으면 userInfo도 초기화하여 로그인 전 상태로 복귀
+      setUserInfoState({
+        profileImageUrl: "",
+        nickname: "",
+        email: "",
+      });
+      setAccessToken(null);
     }
-  }, [isLogin?.accessToken]);
+  }, [isLogin?.accessToken, setUserInfoState, setAccessToken]);
 
   return (
     <>
