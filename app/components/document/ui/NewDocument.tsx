@@ -5,7 +5,7 @@ import Image from "next/image";
 import styles from "./NewDocument.module.css";
 import { formatFileSize } from "@/app/utils/useFormatFileSize";
 import { postDocuments } from "@/app/services/document";
-import { useLoginStore } from "@/app/store/useLogin";
+import { useAccessTokenStore, useLoginStore } from "@/app/store/useLogin";
 
 interface UploadingFile {
   id: string;
@@ -19,6 +19,7 @@ export default function NewDocumentPage() {
   const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const userInfo = useLoginStore((state) => state.userInfo);
+  const accessToken = useAccessTokenStore((state) => state.accessToken);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -81,6 +82,7 @@ export default function NewDocumentPage() {
 
   const handleRemoveFile = () => {
     setUploadingFiles([]);
+    console.log("uploadingFiles", uploadingFiles);
   };
 
   // 파일이 추가되면 자동으로 업로드 시작
@@ -88,7 +90,6 @@ export default function NewDocumentPage() {
     const currentFile = uploadingFiles.find(
       (file) => file.status === "uploading" && file.progress === 0
     );
-
     if (!currentFile) {
       return;
     }
@@ -96,14 +97,14 @@ export default function NewDocumentPage() {
     const uploadFile = async () => {
       try {
         const formData = new FormData();
-        formData.append("ownerId", userInfo?.userId as string);
-        formData.append("title", currentFile?.file?.name);
+        formData.append("ownerId", "1234567890");
+        formData.append("title", currentFile?.file?.name ?? "");
         formData.append("languageSrc", "ko");
         formData.append("languageTgt", "en");
         formData.append("file", currentFile?.file);
 
         const response = await postDocuments(formData);
-        console.log(response);
+        console.log("response", response);
 
         setUploadingFiles((prev) =>
           prev.map((file) =>
@@ -124,7 +125,7 @@ export default function NewDocumentPage() {
     };
 
     uploadFile();
-  }, [uploadingFiles?.length, userInfo?.userId]);
+  }, [uploadingFiles?.length]);
 
   return (
     <main className={styles.container}>
@@ -162,10 +163,10 @@ export default function NewDocumentPage() {
               <button
                 type="button"
                 className={styles.closeIcon}
-                onClick={() => handleRemoveFile()}
+                onClick={handleRemoveFile}
                 disabled={uploadingFiles[0]?.progress !== 100}
                 style={
-                  uploadingFiles[0]?.progress === 100
+                  uploadingFiles[0]?.status === "completed"
                     ? { cursor: "pointer" }
                     : { cursor: "not-allowed" }
                 }>
