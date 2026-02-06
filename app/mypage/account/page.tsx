@@ -81,7 +81,8 @@ export default function MyAccount() {
       }
 
       const response = await withdraw(
-        userInfo?.email?.includes("gmail.com") ? "google" : "kakao"
+        userInfo?.email?.includes("gmail.com") ? "google" : "kakao",
+        accessToken
       );
       console.log("response", response);
 
