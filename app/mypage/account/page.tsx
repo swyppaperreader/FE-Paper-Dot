@@ -16,6 +16,7 @@ export default function MyAccount() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const userInfo = useLoginStore((state) => state.userInfo);
+  const setUserInfoState = useLoginStore((state) => state.setUserInfo);
   const accessToken = useAccessTokenStore((state) => state.accessToken);
   const setAccessToken = useAccessTokenStore((state) => state.setAccessToken);
 
@@ -50,13 +51,91 @@ export default function MyAccount() {
   ];
 
   const handleLogoutClick = async () => {
-    await logout(accessToken as string);
-    setAccessToken(null);
-    router.push("/");
+    try {
+      if (accessToken) {
+        await logout(accessToken);
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+    } finally {
+      // 상태 완전히 초기화 (에러가 발생해도 초기화)
+      setAccessToken(null);
+      // userInfo를 null로 설정하여 로그인 전 상태로 복귀
+      setUserInfoState({
+        profileImageUrl: "",
+        nickname: "",
+        email: "",
+      });
+      // 완전히 새로고침하여 로그인 전 헤더 상태로 복귀
+      window.location.href = "/";
+    }
   };
 
   const handleDeleteAccount = () => {
     setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      if (!accessToken) {
+        alert("로그인 상태가 아닙니다. 다시 로그인해주세요.");
+        window.location.href = "/login";
+        return;
+      }
+
+      const response = await fetch("https://be-paper-dot.store/users/me", {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+
+      // 응답 상태와 내용을 로깅
+      const responseData = await response.json().catch(() => ({}));
+      console.log("Delete account response:", {
+        status: response.status,
+        statusText: response.statusText,
+        data: responseData,
+      });
+
+      if (!response.ok) {
+        const errorMessage =
+          responseData?.message ||
+          responseData?.error ||
+          `탈퇴 요청 실패 (${response.status})`;
+        console.error("Delete account error:", errorMessage);
+        throw new Error(errorMessage);
+      }
+
+      // 탈퇴 성공 시 상태 완전히 초기화
+      setAccessToken(null);
+      setUserInfoState({
+        profileImageUrl: "",
+        nickname: "",
+        email: "",
+      });
+      setShowDeleteModal(false);
+
+      // 완전히 새로고침하여 로그인 전 상태로 복귀
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Delete account error:", error);
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "탈퇴 처리 중 오류가 발생했습니다.";
+
+      // 네트워크 오류인 경우
+      if (error instanceof TypeError && error.message.includes("fetch")) {
+        alert(
+          "네트워크 오류가 발생했습니다. 인터넷 연결을 확인하고 다시 시도해주세요."
+        );
+      } else {
+        alert(`${errorMessage} 다시 시도해주세요.`);
+      }
+    }
   };
 
   // const handleChangeProfileImage = () => {
@@ -196,21 +275,19 @@ export default function MyAccount() {
 
                 {/* 🔥 커스텀 드롭다운 */}
                 <div
-                  className={`${styles.selectWrapper} ${
-                    !agreeChecked ? styles.disabled : ""
-                  }`}
+                  className={`${styles.selectWrapper} ${!agreeChecked ? styles.disabled : ""
+                    }`}
                   ref={dropdownRef}>
                   <div
-                    className={`${styles.customSelectValue} ${
-                      isDropdownOpen ? styles.open : ""
-                    }`}
+                    className={`${styles.customSelectValue} ${isDropdownOpen ? styles.open : ""
+                      }`}
                     onClick={() =>
                       agreeChecked && setIsDropdownOpen(!isDropdownOpen)
                     }>
                     {deleteReason
                       ? deleteReasonOptions.find(
-                          (opt) => opt.value === deleteReason
-                        )?.label
+                        (opt) => opt.value === deleteReason
+                      )?.label
                       : "선택해주세요"}{" "}
                     {/* ← 이렇게 변경 */}
                     <svg
@@ -265,7 +342,7 @@ export default function MyAccount() {
                   취소
                 </button>
                 <button
-                  onClick={handleDeleteAccount}
+                  onClick={handleConfirmDelete}
                   className={styles.deleteModalConfirmBtn}
                   disabled={
                     !agreeChecked ||
