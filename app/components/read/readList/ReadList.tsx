@@ -2,6 +2,13 @@
 
 import { useState } from "react";
 import ReadHeader from "../../header/ReadHeader";
+import styles from "./readList.module.css";
+
+interface TranslationPair {
+  docUnitId: number;
+  sourceText: string;
+  translatedText: string;
+}
 
 export default function ReadList() {
   const [data] = useState(() => {
@@ -19,8 +26,17 @@ export default function ReadList() {
   console.log(fileName);
 
   return (
-    <div>
+    <main className={styles.container}>
       <ReadHeader fileName={fileName} />
-    </div>
+      <div className={styles.content}>
+        <aside className={styles.sidebar}></aside>
+        {data.map((item: TranslationPair) => (
+          <div className={styles.docUnitId} key={item.docUnitId}>
+            <p className={styles.sourceText}>{item.sourceText}</p>
+            <p className={styles.translatedText}>{item.translatedText}</p>
+          </div>
+        ))}
+      </div>
+    </main>
   );
 }

@@ -1,0 +1,48 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 74px);
+  overflow-y: auto;
+}
+
+.sidebar {
+  width: 226px;
+  height: calc(100% - 74px);
+  padding: 26px 12px;
+  background: #f0f4fa;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.docUnitId {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 36px;
+  padding-inline: 120px;
+}
+
+.sourceText {
+  color: #21232a;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 150%;
+  letter-spacing: -0.32px;
+}
+
+.translatedText {
+  color: #4b4d55;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 150%;
+  letter-spacing: -0.32px;
+  text-transform: capitalize;
+}
