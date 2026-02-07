@@ -8,14 +8,14 @@
 
 .content {
   display: flex;
-  height: calc(100% - 74px);
+  height: calc(100% - 61px);
   overflow-y: auto;
   width: 100%;
 }
 
 .sidebar {
   width: 226px;
-  height: calc(100% - 74px);
+  height: calc(100% - 61px);
   padding: 26px 12px;
   background: #f0f4fa;
   overflow-y: auto;
@@ -24,7 +24,7 @@
 
 .docUnitId {
   display: flex;
-  height: calc(100% - 74px);
+  height: calc(100% - 61px);
   width: calc(100% - 226px);
   flex-direction: column;
   gap: 24px;
