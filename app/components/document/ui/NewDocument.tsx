@@ -18,6 +18,7 @@ export default function NewDocumentPage() {
   const [isDragging, setIsDragging] = useState(false);
   const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [documentId, setDocumentId] = useState<string>("");
   const userInfo = useLoginStore((state) => state.userInfo);
   const accessToken = useAccessTokenStore((state) => state.accessToken);
 
@@ -97,14 +98,14 @@ export default function NewDocumentPage() {
     const uploadFile = async () => {
       try {
         const formData = new FormData();
-        formData.append("ownerId", "1234567890");
+        formData.append("ownerId", userInfo?.userId as string);
         formData.append("title", currentFile?.file?.name ?? "");
         formData.append("languageSrc", "ko");
         formData.append("languageTgt", "en");
         formData.append("file", currentFile?.file);
 
         const response = await postDocuments(formData);
-        console.log("response", response);
+        setDocumentId(response.data.documentId);
 
         setUploadingFiles((prev) =>
           prev.map((file) =>
@@ -126,6 +127,33 @@ export default function NewDocumentPage() {
 
     uploadFile();
   }, [uploadingFiles?.length]);
+
+  useEffect(() => {
+    if (!documentId) {
+      return;
+    }
+
+    const requestLLM = async () => {
+      try {
+        const res = await fetch("https://be-paper-dot.store/api/llm/chat-pdf", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          credentials: "include",
+          body: uploadingFiles[0].file,
+        });
+
+        const data = await res.json();
+        console.log("LLM 응답:", data);
+      } catch (e) {
+        console.error("LLM 요청 실패", e);
+      }
+    };
+
+    requestLLM();
+  }, [documentId]);
 
   return (
     <main className={styles.container}>
