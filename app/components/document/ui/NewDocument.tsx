@@ -160,17 +160,32 @@ export default function NewDocumentPage() {
     const requestTranslation = async () => {
       try {
         setIsTranslating(true);
-        // 1) 번역 요청
-        await postTranslation(document.documentId);
-        // 2) 성공 후 번역 결과 조회 (API가 배열을 그대로 반환)
-        const raw = await getTranslation(document.documentId);
-        const list = Array.isArray(raw) ? raw : raw?.data ?? [];
-        const pairs: TranslationPair[] = list.map((pair: TranslationPair) => ({
-          docUnitId: pair.docUnitId,
-          sourceText: pair.sourceText ?? "",
-          translatedText: pair.translatedText ?? "",
-        }));
-        setTranslatedText(pairs);
+        // 1) 문서 처리 파이프라인 (process?overwrite=false)
+        await postTranslation(document.documentId, false);
+        // 2) 서버가 비동기로 처리하므로 결과가 나올 때까지 폴링
+        const maxAttempts = 15;
+        const delayMs = 2500;
+        for (let attempt = 0; attempt < maxAttempts; attempt++) {
+          const raw = await getTranslation(document.documentId);
+          const list = Array.isArray(raw) ? raw : raw?.data ?? [];
+          if (list.length > 0) {
+            const pairs: TranslationPair[] = list.map(
+              (pair: TranslationPair) => ({
+                docUnitId: pair.docUnitId,
+                sourceText: pair.sourceText ?? "",
+                translatedText: pair.translatedText ?? "",
+              })
+            );
+            setTranslatedText(pairs);
+            return;
+          }
+          if (attempt < maxAttempts - 1) {
+            await new Promise((r) => setTimeout(r, delayMs));
+          }
+        }
+        console.warn(
+          "[번역] 결과가 비어 있습니다. 서버 처리 중일 수 있습니다."
+        );
       } catch (e) {
         console.error("번역 요청/조회 실패", e);
       } finally {
@@ -178,7 +193,7 @@ export default function NewDocumentPage() {
       }
     };
     requestTranslation();
-  }, [document?.documentId, accessToken]);
+  }, [document?.documentId]);
 
   console.log(document);
   console.log("translatedText", translatedText);
