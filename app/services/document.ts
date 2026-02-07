@@ -75,6 +75,11 @@ export const getTranslation = async (documentId: string) => {
     }
   );
 
+  if (response.status === 404) {
+    // 번역 미준비 시 서버가 404 반환 → 빈 배열 반환, 폴링 계속
+    return [];
+  }
+
   if (!response.ok) {
     const errText = await response.text();
     console.error("[getTranslation] 실패:", response.status, errText);
