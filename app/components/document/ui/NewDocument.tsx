@@ -10,7 +10,6 @@ import {
   postTranslation,
 } from "@/app/services/document";
 import { useAccessTokenStore, useLoginStore } from "@/app/store/useLogin";
-import { useDocumentStore } from "@/app/store/useDocument";
 
 interface UploadingFile {
   id: string;
