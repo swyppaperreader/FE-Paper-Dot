@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ReadHeader from "../../header/ReadHeader";
 
 interface TranslationPair {
@@ -9,23 +9,20 @@ interface TranslationPair {
   translatedText: string;
 }
 
-export default function ReadList() {
-  const [translationPairs, setTranslationPairs] = useState<TranslationPair[]>(
-    []
-  );
+function getInitialPairs(): TranslationPair[] {
+  try {
+    return (
+      (JSON.parse(
+        sessionStorage.getItem("translationPairs") ?? "[]"
+      ) as TranslationPair[]) || []
+    );
+  } catch {
+    return [];
+  }
+}
 
-  useEffect(() => {
-    const id = sessionStorage.getItem("documentId");
-    if (!id) return;
-    const fetchTranslationPairs = async () => {
-      const response = await fetch(
-        `https://be-paper-dot.store/api/v1/documents/${id}/translation-pairs`
-      );
-      const data = await response.json();
-      setTranslationPairs(Array.isArray(data) ? data : data?.data ?? []);
-    };
-    fetchTranslationPairs();
-  }, []);
+export default function ReadList() {
+  const [translationPairs] = useState<TranslationPair[]>(getInitialPairs);
 
   console.log(translationPairs);
 
