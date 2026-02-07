@@ -19,6 +19,7 @@ export default function NewDocumentPage() {
   const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [documentId, setDocumentId] = useState<string>("");
+  const [translatedText, setTranslatedText] = useState<string>("");
   const userInfo = useLoginStore((state) => state.userInfo);
   const accessToken = useAccessTokenStore((state) => state.accessToken);
 
@@ -146,7 +147,7 @@ export default function NewDocumentPage() {
         });
 
         const data = await res.json();
-        console.log("LLM 응답:", data);
+        setTranslatedText(data);
       } catch (e) {
         console.error("LLM 요청 실패", e);
       }
@@ -154,6 +155,8 @@ export default function NewDocumentPage() {
 
     requestLLM();
   }, [documentId]);
+
+  console.log("translatedText", translatedText);
 
   return (
     <main className={styles.container}>
