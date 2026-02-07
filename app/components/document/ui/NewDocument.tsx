@@ -4,7 +4,11 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import styles from "./NewDocument.module.css";
 import { formatFileSize } from "@/app/utils/useFormatFileSize";
-import { postDocuments } from "@/app/services/document";
+import {
+  postDocuments,
+  postTranslation,
+  requestLLM,
+} from "@/app/services/document";
 import { useAccessTokenStore, useLoginStore } from "@/app/store/useLogin";
 
 interface UploadingFile {
@@ -127,36 +131,24 @@ export default function NewDocumentPage() {
     };
 
     uploadFile();
-  }, [uploadingFiles?.length]);
+  }, [uploadingFiles.length, userInfo?.userId, accessToken]);
 
+  // 업로드가 성공해 documentId가 생긴 뒤에만 번역 요청
   useEffect(() => {
     if (!documentId) {
       return;
     }
 
-    const requestLLM = async () => {
+    const requestTranslation = async () => {
       try {
-        const res = await fetch("https://be-paper-dot.store/api/llm/chat-pdf", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-          credentials: "include",
-          body: uploadingFiles[0].file,
-        });
-
-        const data = await res.json();
-        setTranslatedText(data);
+        const res = await requestLLM(uploadingFiles[0].file);
+        setTranslatedText(res?.data ?? res ?? "");
       } catch (e) {
         console.error("LLM 요청 실패", e);
       }
     };
-
-    requestLLM();
+    requestTranslation();
   }, [documentId]);
-
-  console.log("translatedText", translatedText);
 
   return (
     <main className={styles.container}>
