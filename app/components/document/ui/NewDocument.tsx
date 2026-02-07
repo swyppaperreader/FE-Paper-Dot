@@ -141,14 +141,16 @@ export default function NewDocumentPage() {
 
     const requestLLM = async () => {
       try {
+        const formData = new FormData();
+        formData.append("file", uploadingFiles[0].file);
+
         const res = await fetch("https://be-paper-dot.store/api/llm/chat-pdf", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${accessToken}`,
           },
           credentials: "include",
-          body: uploadingFiles[0].file,
+          body: formData,
         });
 
         const data = await res.json();

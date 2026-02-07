@@ -121,8 +121,8 @@ export interface UploadDocumentResponse {
   documentId: number;
   fileId: number;
   storagePath: string;
-  fileType: 'ORIGINAL_PDF' | string;
-  status: 'UPLOADED' | 'PROCESSING' | 'COMPLETED' | 'FAILED' | string;
+  fileType: 'ORIGINAL_PDF' | 'TRANSLATED_PDF';
+  status: 'UPLOADED' | 'TRANSLATING' | 'TRANSLATED' | 'FAILED';
   originalFilename: string;
   mimeType: string;
   fileSizeBytes: number;
@@ -170,44 +170,18 @@ export interface DocumentListItem {
 }
 
 /**
- * 번역 요청 파라미터
+ * 문서 처리(번역) 요청 파라미터
  */
-export interface TranslationRequest {
-  documentId: number;
-  languageSrc?: string;
-  languageTgt?: string;
-}
-
-/**
- * 번역 응답
- */
-export interface TranslationResponse {
-  documentId: number;
-  status: string;
-  message?: string;
-}
-
-/**
- * 요약 요청 파라미터
- */
-export interface SummaryRequest {
-  documentId: number;
-}
-
-/**
- * 요약 응답
- */
-export interface SummaryResponse {
-  documentId: number;
-  summary: string;
-  status: string;
+export interface ProcessDocumentRequest {
+  documentId: number | string;
+  overwrite?: boolean;
 }
 
 // ==================== API 함수 ====================
 
 /**
  * 문서 업로드
- * POST /api/v1/documents 또는 /documents
+ * POST /documents
  */
 export async function uploadDocument(
   request: UploadDocumentRequest,
@@ -225,7 +199,7 @@ export async function uploadDocument(
     headers['Authorization'] = `Bearer ${accessToken}`;
   }
 
-  const response = await fetch(`${API_BASE_URL}/api/v1/documents`, {
+  const response = await fetch(`${API_BASE_URL}/documents`, {
     method: 'POST',
     headers,
     body: formData,
@@ -270,14 +244,14 @@ export async function getDocumentDetail(
 
 /**
  * 번역된 문서 단위 조회
- * GET /api/v1/documents/{id}/units
+ * GET /api/v1/documents/{documentId}/translation-pairs
  */
 export async function getTranslatedDocumentUnits(
   documentId: number | string,
   accessToken?: string
 ): Promise<TranslatedDocumentUnit[]> {
   const response = await fetch(
-    `${API_BASE_URL}/api/v1/documents/${documentId}/units`,
+    `${API_BASE_URL}/api/v1/documents/${documentId}/translation-pairs`,
     {
       method: 'GET',
       headers: getAuthHeaders(accessToken),
@@ -289,84 +263,31 @@ export async function getTranslatedDocumentUnits(
 }
 
 /**
- * 번역 요청
- * POST /api/v1/translate
+ * 문서 처리(번역) 요청
+ * POST /api/v1/documents/{documentId}/process
  */
-export async function requestTranslation(
-  request: TranslationRequest,
-  accessToken?: string
-): Promise<TranslationResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/v1/translate`, {
-    method: 'POST',
-    headers: getAuthHeaders(accessToken),
-    credentials: 'include',
-    body: JSON.stringify(request),
-  });
-
-  return handleResponse<TranslationResponse>(response);
-}
-
-/**
- * 요약 요청
- * POST /api/v1/summary
- */
-export async function requestSummary(
-  request: SummaryRequest,
-  accessToken?: string
-): Promise<SummaryResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/v1/summary`, {
-    method: 'POST',
-    headers: getAuthHeaders(accessToken),
-    credentials: 'include',
-    body: JSON.stringify(request),
-  });
-
-  return handleResponse<SummaryResponse>(response);
-}
-
-/**
- * 문서 원문 가져오기 (PDF 다운로드)
- * GET /api/v1/documents/{id}/original
- */
-export async function getOriginalDocument(
-  documentId: number | string,
-  accessToken?: string
-): Promise<Blob> {
-  const response = await fetch(
-    `${API_BASE_URL}/api/v1/documents/${documentId}/original`,
-    {
-      method: 'GET',
-      headers: accessToken
-        ? { Authorization: `Bearer ${accessToken}` }
-        : {},
-      credentials: 'include',
-    }
-  );
-
-  if (!response.ok) {
-    const errorMessage = getErrorMessage(response.status);
-    throw new ApiError(errorMessage, response.status);
-  }
-
-  return response.blob();
-}
-
-/**
- * 문서 삭제
- * DELETE /api/v1/documents/{id}
- */
-export async function deleteDocument(
-  documentId: number | string,
+export async function processDocument(
+  request: ProcessDocumentRequest,
   accessToken?: string
 ): Promise<void> {
-  const response = await fetch(
-    `${API_BASE_URL}/api/v1/documents/${documentId}`,
-    {
-      method: 'DELETE',
-      headers: getAuthHeaders(accessToken),
-      credentials: 'include',
-    }
-  );
+  const params = new URLSearchParams();
+  if (request.overwrite) {
+    params.append('overwrite', 'true');
+  }
+
+  const queryString = params.toString();
+  const url = `${API_BASE_URL}/api/v1/documents/${request.documentId}/process${queryString ? `?${queryString}` : ''}`;
+
+  const headers: HeadersInit = {};
+  if (accessToken) {
+    headers['Authorization'] = `Bearer ${accessToken}`;
+  }
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers,
+    credentials: 'include',
+  });
 
   await handleResponse<void>(response);
 }

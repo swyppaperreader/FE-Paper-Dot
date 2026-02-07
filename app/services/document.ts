@@ -5,7 +5,7 @@ export const postDocuments = async (formData: FormData, accessToken?: string) =>
       headers["Authorization"] = `Bearer ${accessToken}`;
     }
 
-    const response = await fetch("https://be-paper-dot.store/api/v1/documents", {
+    const response = await fetch("https://be-paper-dot.store/documents", {
       method: "POST",
       headers,
       body: formData,
@@ -51,7 +51,7 @@ export const getTranslatedDocument = async (
       headers["Authorization"] = `Bearer ${accessToken}`;
     }
 
-    const response = await fetch(`${apiUrl}/api/v1/documents/${documentId}/units`, {
+    const response = await fetch(`${apiUrl}/api/v1/documents/${documentId}/translation-pairs`, {
       method: "GET",
       headers,
       credentials: "include",
