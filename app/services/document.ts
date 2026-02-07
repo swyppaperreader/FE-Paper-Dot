@@ -55,9 +55,32 @@ export const postTranslation = async (documentId: string) => {
     `https://be-paper-dot.store/api/v1/documents/${documentId}/process`,
     {
       method: "POST",
-      body: documentId,
     }
   );
+
+  if (!response.ok) {
+    const errText = await response.text();
+    console.error("[postTranslation] 실패:", response.status, errText);
+    throw new Error(`번역 요청 실패 (${response.status}): ${errText.slice(0, 200)}`);
+  }
+
+  const data = await response.json();
+  return data;
+};
+
+export const getTranslation = async (documentId: string) => {
+  const response = await fetch(
+    `https://be-paper-dot.store/api/v1/documents/${documentId}/translation-pairs`,
+    {
+      method: "GET",
+    }
+  );
+
+  if (!response.ok) {
+    const errText = await response.text();
+    console.error("[getTranslation] 실패:", response.status, errText);
+    throw new Error(`번역 조회 실패 (${response.status}): ${errText.slice(0, 200)}`);
+  }
 
   const data = await response.json();
   return data;

@@ -5,6 +5,7 @@ import Image from "next/image";
 import styles from "./NewDocument.module.css";
 import { formatFileSize } from "@/app/utils/useFormatFileSize";
 import {
+  getTranslation,
   postDocuments,
   postTranslation,
   requestLLM,
@@ -152,11 +153,16 @@ export default function NewDocumentPage() {
 
     const requestTranslation = async () => {
       try {
-        const res = await postTranslation(document?.documentId);
-        console.log("res", res);
-        setTranslatedText(res);
+        await postTranslation(document.documentId);
+        // postTranslation 성공 후에만 번역 결과 조회
+        const translationPairs = await getTranslation(document.documentId);
+        setTranslatedText(
+          typeof translationPairs === "string"
+            ? translationPairs
+            : JSON.stringify(translationPairs ?? "")
+        );
       } catch (e) {
-        console.error("LLM 요청 실패", e);
+        console.error("번역 요청/조회 실패", e);
       }
     };
     requestTranslation();
