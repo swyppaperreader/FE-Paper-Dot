@@ -15,7 +15,6 @@
 
 .sidebar {
   width: 226px;
-  height: calc(100% - 61px);
   padding: 26px 12px;
   background: #f0f4fa;
   overflow-y: auto;
@@ -24,7 +23,6 @@
 
 .docUnitId {
   display: flex;
-  height: calc(100% - 61px);
   width: calc(100% - 226px);
   flex-direction: column;
   gap: 24px;
@@ -42,7 +40,7 @@
 .sourceText {
   color: #21232a;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 700;
   line-height: 150%;
   letter-spacing: -0.32px;
 }
@@ -50,7 +48,7 @@
 .translatedText {
   color: #4b4d55;
   font-size: 16px;
-  font-weight: 400;
+  font-weight: 300;
   line-height: 150%;
   letter-spacing: -0.32px;
   text-transform: capitalize;
