@@ -10,6 +10,7 @@ import {
   postTranslation,
 } from "@/app/services/document";
 import { useAccessTokenStore, useLoginStore } from "@/app/store/useLogin";
+import { useDocumentStore } from "@/app/store/useDocument";
 
 interface UploadingFile {
   id: string;
@@ -42,6 +43,8 @@ export default function NewDocumentPage() {
   const [isTranslating, setIsTranslating] = useState(false);
   const [document, setDocument] = useState<Document | null>(null);
   const [translatedText, setTranslatedText] = useState<TranslationPair[]>([]);
+
+  const setDocumentId = useDocumentStore((state) => state.setDocumentId);
   const userInfo = useLoginStore((state) => state.userInfo);
   const accessToken = useAccessTokenStore((state) => state.accessToken);
 
@@ -132,6 +135,7 @@ export default function NewDocumentPage() {
         const doc = response?.data ?? response?.document ?? response;
         if (doc?.documentId != null) {
           setDocument({ ...doc, documentId: String(doc.documentId) });
+          setDocumentId(String(doc.documentId));
         }
 
         setUploadingFiles((prev) =>
@@ -154,7 +158,6 @@ export default function NewDocumentPage() {
 
     uploadFile();
   }, [uploadingFiles.length, userInfo?.userId, accessToken]);
-  console.log("document", document?.documentId);
 
   // 업로드가 성공해 document가 생긴 뒤: 1) postTranslation → 2) getTranslation
   useEffect(() => {

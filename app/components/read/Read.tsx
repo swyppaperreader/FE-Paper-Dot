@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import styles from "./read.module.css";
-import ReadHeader from "./header/ReadHeader";
+import ReadList from "./readList/ReadList";
 
 interface PageContent {
   pageNumber: number;
@@ -269,8 +269,8 @@ By combining the best of both traditional and digital methods, we can create mor
   };
 
   return (
-    <div className={styles.container}>
-      <ReadHeader />
+    <main className={styles.container}>
+      <ReadList />
       {/* ==================== 메인 콘텐츠 ==================== */}
       <div className={styles.contentWrapper}>
         {/* 왼쪽 사이드바: 페이지 썸네일 (토글 가능) */}
@@ -303,6 +303,6 @@ By combining the best of both traditional and digital methods, we can create mor
           </div>
         </main>
       </div>
-    </div>
+    </main>
   );
 }
