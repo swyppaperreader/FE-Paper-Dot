@@ -162,6 +162,8 @@ export default function NewDocumentPage() {
     requestTranslation();
   }, [document?.documentId]);
 
+  console.log(translatedText);
+
   return (
     <main className={styles.container}>
       <section className={styles.main}>
