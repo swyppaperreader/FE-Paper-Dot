@@ -32,10 +32,10 @@ export default function ReadList() {
         <aside className={styles.sidebar}></aside>
         <div className={styles.docUnitId}>
           {data.map((item: TranslationPair) => (
-            <>
+            <div className={styles.docUnitIdItem} key={item.docUnitId}>
               <p className={styles.sourceText}>{item.sourceText}</p>
               <p className={styles.translatedText}>{item.translatedText}</p>
-            </>
+            </div>
           ))}
         </div>
       </div>
