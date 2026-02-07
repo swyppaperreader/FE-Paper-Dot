@@ -160,20 +160,21 @@ export default function NewDocumentPage() {
     const requestTranslation = async () => {
       try {
         await postTranslation(document.documentId);
-        // postTranslation 성공 후에만 번역 결과 조회
-        const translationPairs = await getTranslation(document.documentId);
-        setTranslatedText(
-          translationPairs.data.map((pair: TranslationPair) => pair)
-        );
+        const raw = await getTranslation(document.documentId);
+        // API는 배열을 그대로 반환함: [{ docUnitId, sourceText, translatedText }, ...]
+        const list = Array.isArray(raw) ? raw : raw?.data ?? [];
+        const pairs: TranslationPair[] = list.map((pair: TranslationPair) => ({
+          docUnitId: pair.docUnitId,
+          sourceText: pair.sourceText ?? "",
+          translatedText: pair.translatedText ?? "",
+        }));
+        setTranslatedText(pairs);
       } catch (e) {
         console.error("번역 요청/조회 실패", e);
       }
     };
     requestTranslation();
   }, [document?.documentId]);
-
-  console.log(document);
-  console.log("translatedText", translatedText);
 
   return (
     <main className={styles.container}>
