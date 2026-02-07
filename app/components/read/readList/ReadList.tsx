@@ -20,7 +20,7 @@ export default function ReadList() {
 
   return (
     <div>
-      <ReadHeader />
+      <ReadHeader fileName={fileName} />
     </div>
   );
 }
