@@ -8,7 +8,6 @@ import {
   getTranslation,
   postDocuments,
   postTranslation,
-  requestLLM,
 } from "@/app/services/document";
 import { useAccessTokenStore, useLoginStore } from "@/app/store/useLogin";
 
@@ -152,7 +151,7 @@ export default function NewDocumentPage() {
     uploadFile();
   }, [uploadingFiles.length, userInfo?.userId, accessToken]);
 
-  // 업로드가 성공해 documentId가 생긴 뒤에만 번역 요청
+  // 업로드가 성공해 document가 생긴 뒤: 1) postTranslation → 2) getTranslation
   useEffect(() => {
     if (!document) {
       return;
@@ -160,26 +159,26 @@ export default function NewDocumentPage() {
 
     const requestTranslation = async () => {
       try {
-        const res = await postTranslation(document.documentId);
-        console.log("res", res);
-        setIsTranslating(res);
-        // postTranslation 성공 후에만 번역 결과 조회
-        if (isTranslating) {
-          const translationPairs = await getTranslation(document.documentId);
-          setTranslatedText(
-            translationPairs.data.map((pair: TranslationPair) => ({
-              docUnitId: pair.docUnitId,
-              sourceText: pair.sourceText,
-              translatedText: pair.translatedText,
-            }))
-          );
-        }
+        setIsTranslating(true);
+        // 1) 번역 요청
+        await postTranslation(document.documentId);
+        // 2) 성공 후 번역 결과 조회 (API가 배열을 그대로 반환)
+        const raw = await getTranslation(document.documentId);
+        const list = Array.isArray(raw) ? raw : raw?.data ?? [];
+        const pairs: TranslationPair[] = list.map((pair: TranslationPair) => ({
+          docUnitId: pair.docUnitId,
+          sourceText: pair.sourceText ?? "",
+          translatedText: pair.translatedText ?? "",
+        }));
+        setTranslatedText(pairs);
       } catch (e) {
         console.error("번역 요청/조회 실패", e);
+      } finally {
+        setIsTranslating(false);
       }
     };
     requestTranslation();
-  }, [document?.documentId]);
+  }, [document?.documentId, accessToken]);
 
   console.log(document);
   console.log("translatedText", translatedText);

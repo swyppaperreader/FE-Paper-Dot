@@ -50,19 +50,11 @@ export const requestLLM = async (file: File) => {
   }
 };
 
-export const postTranslation = async (
-  documentId: string,
-  accessToken?: string | null
-) => {
-  const headers: HeadersInit = {};
-  if (accessToken) {
-    headers.Authorization = `Bearer ${accessToken}`;
-  }
+export const postTranslation = async (documentId: string) => {
   const response = await fetch(
     `https://be-paper-dot.store/api/v1/documents/${documentId}/process`,
     {
       method: "POST",
-      headers,
     }
   );
 
@@ -78,19 +70,11 @@ export const postTranslation = async (
   return data;
 };
 
-export const getTranslation = async (
-  documentId: string,
-  accessToken?: string | null
-) => {
-  const headers: HeadersInit = {};
-  if (accessToken) {
-    headers.Authorization = `Bearer ${accessToken}`;
-  }
+export const getTranslation = async (documentId: string) => {
   const response = await fetch(
     `https://be-paper-dot.store/api/v1/documents/${documentId}/translation-pairs`,
     {
       method: "GET",
-      headers,
     }
   );
 
