@@ -30,12 +30,14 @@ export default function ReadList() {
       <ReadHeader fileName={fileName} />
       <div className={styles.content}>
         <aside className={styles.sidebar}></aside>
-        {data.map((item: TranslationPair) => (
-          <div className={styles.docUnitId} key={item.docUnitId}>
-            <p className={styles.sourceText}>{item.sourceText}</p>
-            <p className={styles.translatedText}>{item.translatedText}</p>
-          </div>
-        ))}
+        <div className={styles.docUnitId}>
+          {data.map((item: TranslationPair) => (
+            <>
+              <p className={styles.sourceText}>{item.sourceText}</p>
+              <p className={styles.translatedText}>{item.translatedText}</p>
+            </>
+          ))}
+        </div>
       </div>
     </main>
   );
