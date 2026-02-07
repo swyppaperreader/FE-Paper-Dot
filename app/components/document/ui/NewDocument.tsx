@@ -40,6 +40,7 @@ export default function NewDocumentPage() {
   const [isDragging, setIsDragging] = useState(false);
   const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isTranslating, setIsTranslating] = useState(false);
   const [document, setDocument] = useState<Document | null>(null);
   const [translatedText, setTranslatedText] = useState<TranslationPair[]>([]);
   const userInfo = useLoginStore((state) => state.userInfo);
@@ -159,36 +160,28 @@ export default function NewDocumentPage() {
 
     const requestTranslation = async () => {
       try {
-        await postTranslation(document.documentId, accessToken);
-        // 번역이 비동기 처리될 수 있으므로 결과가 나올 때까지 폴링
-        const maxAttempts = 15;
-        const delayMs = 2000;
-        for (let attempt = 0; attempt < maxAttempts; attempt++) {
-          const raw = await getTranslation(document.documentId, accessToken);
-          const list = Array.isArray(raw) ? raw : raw?.data ?? [];
-          if (list.length > 0) {
-            const pairs: TranslationPair[] = list.map(
-              (pair: TranslationPair) => ({
-                docUnitId: pair.docUnitId,
-                sourceText: pair.sourceText ?? "",
-                translatedText: pair.translatedText ?? "",
-              })
-            );
-            setTranslatedText(pairs);
-            return;
-          }
-          if (attempt < maxAttempts - 1) {
-            await new Promise((r) => setTimeout(r, delayMs));
-          }
+        const res = await postTranslation(document.documentId);
+        console.log("res", res);
+        setIsTranslating(res);
+        // postTranslation 성공 후에만 번역 결과 조회
+        if (isTranslating) {
+          const translationPairs = await getTranslation(document.documentId);
+          setTranslatedText(
+            translationPairs.data.map((pair: TranslationPair) => ({
+              docUnitId: pair.docUnitId,
+              sourceText: pair.sourceText,
+              translatedText: pair.translatedText,
+            }))
+          );
         }
-        console.warn("번역 결과가 비어 있습니다. 잠시 후 다시 시도해보세요.");
       } catch (e) {
         console.error("번역 요청/조회 실패", e);
       }
     };
     requestTranslation();
-  }, [document?.documentId, accessToken]);
+  }, [document?.documentId]);
 
+  console.log(document);
   console.log("translatedText", translatedText);
 
   return (
