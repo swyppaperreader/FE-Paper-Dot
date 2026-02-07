@@ -161,7 +161,7 @@ export default function NewDocumentPage() {
       try {
         setIsTranslating(true);
         // 1) 문서 처리 파이프라인 (process?overwrite=false)
-        await postTranslation(document.documentId, false);
+        await postTranslation(document.documentId);
         // 2) 서버가 비동기로 처리하므로 결과가 나올 때까지 폴링
         const maxAttempts = 15;
         const delayMs = 2500;
