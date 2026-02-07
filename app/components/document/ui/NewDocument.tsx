@@ -35,7 +35,7 @@ export default function NewDocumentPage() {
   const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [document, setDocument] = useState<Document | null>(null);
-  const [translatedText, setTranslatedText] = useState<string>("");
+  const [translatedText, setTranslatedText] = useState<string[]>([]);
   const userInfo = useLoginStore((state) => state.userInfo);
   const accessToken = useAccessTokenStore((state) => state.accessToken);
 
@@ -157,9 +157,7 @@ export default function NewDocumentPage() {
         // postTranslation 성공 후에만 번역 결과 조회
         const translationPairs = await getTranslation(document.documentId);
         setTranslatedText(
-          typeof translationPairs === "string"
-            ? translationPairs
-            : JSON.stringify(translationPairs ?? "")
+          translationPairs.data.map((pair: any) => pair.english)
         );
       } catch (e) {
         console.error("번역 요청/조회 실패", e);
