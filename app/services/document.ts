@@ -78,10 +78,7 @@ export const postTranslation = async (
   return data;
 };
 
-export const getTranslation = async (
-  documentId: string,
-  accessToken?: string | null
-) => {
+export const getTranslation = async (documentId: string) => {
   const response = await fetch(
     `https://be-paper-dot.store/api/v1/documents/${documentId}/translation-pairs`,
     {
