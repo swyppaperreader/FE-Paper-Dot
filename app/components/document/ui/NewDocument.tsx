@@ -18,16 +18,25 @@ interface UploadingFile {
   status: "uploading" | "completed" | "error";
 }
 
+interface Document {
+  documentId: string;
+  fileId: string | null;
+  fileSizeBytes: number;
+  fileType: string;
+  mimeType: string;
+  originalFilename: string;
+  status: string;
+  storagePath: string;
+}
+
 export default function NewDocumentPage() {
   const [isDragging, setIsDragging] = useState(false);
   const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [documentId, setDocumentId] = useState<string>("");
+  const [document, setDocument] = useState<Document | null>(null);
   const [translatedText, setTranslatedText] = useState<string>("");
   const userInfo = useLoginStore((state) => state.userInfo);
   const accessToken = useAccessTokenStore((state) => state.accessToken);
-
-  console.log("documentId", documentId);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -112,8 +121,7 @@ export default function NewDocumentPage() {
         formData.append("file", currentFile?.file);
 
         const response = await postDocuments(formData);
-        setDocumentId(response.data.documentId);
-        console.log("response", response);
+        setDocument(response.data);
 
         setUploadingFiles((prev) =>
           prev.map((file) =>
@@ -138,13 +146,13 @@ export default function NewDocumentPage() {
 
   // 업로드가 성공해 documentId가 생긴 뒤에만 번역 요청
   useEffect(() => {
-    if (!documentId) {
+    if (!document) {
       return;
     }
 
     const requestTranslation = async () => {
       try {
-        const res = await postTranslation(documentId);
+        const res = await postTranslation(document?.documentId);
         console.log("res", res);
         setTranslatedText(res);
       } catch (e) {
@@ -152,9 +160,7 @@ export default function NewDocumentPage() {
       }
     };
     requestTranslation();
-  }, [documentId]);
-
-  console.log("translatedText", documentId);
+  }, [document?.documentId]);
 
   return (
     <main className={styles.container}>
