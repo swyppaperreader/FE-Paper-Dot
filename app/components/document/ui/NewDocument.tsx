@@ -150,6 +150,7 @@ export default function NewDocumentPage() {
 
     uploadFile();
   }, [uploadingFiles.length, userInfo?.userId, accessToken]);
+  console.log("document", document?.documentId);
 
   // 업로드가 성공해 document가 생긴 뒤: 1) postTranslation → 2) getTranslation
   useEffect(() => {
@@ -160,12 +161,13 @@ export default function NewDocumentPage() {
     const requestTranslation = async () => {
       try {
         setIsTranslating(true);
-        // 1) 문서 처리 파이프라인 (process?overwrite=false)
+        // 1) 문서 처리 파이프라인 (서버가 비동기로 처리함)
         await postTranslation(document.documentId);
-        // 2) 서버가 비동기로 처리하므로 결과가 나올 때까지 폴링
-        const maxAttempts = 15;
-        const delayMs = 2500;
+        // 2) 처리 완료될 때까지 주기적으로 조회 (폴링)
+        const maxAttempts = 20;
+        const intervalMs = 3000;
         for (let attempt = 0; attempt < maxAttempts; attempt++) {
+          await new Promise((r) => setTimeout(r, intervalMs));
           const raw = await getTranslation(document.documentId);
           const list = Array.isArray(raw) ? raw : raw?.data ?? [];
           if (list.length > 0) {
@@ -179,12 +181,9 @@ export default function NewDocumentPage() {
             setTranslatedText(pairs);
             return;
           }
-          if (attempt < maxAttempts - 1) {
-            await new Promise((r) => setTimeout(r, delayMs));
-          }
         }
         console.warn(
-          "[번역] 결과가 비어 있습니다. 서버 처리 중일 수 있습니다."
+          "번역 결과를 가져오지 못했습니다. 잠시 후 새로고침 후 다시 시도해보세요."
         );
       } catch (e) {
         console.error("번역 요청/조회 실패", e);
