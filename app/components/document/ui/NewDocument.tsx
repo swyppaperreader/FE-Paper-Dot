@@ -263,9 +263,7 @@ export default function NewDocumentPage() {
             <button
               type="button"
               className={styles.viewResultButton}
-              onClick={() =>
-                router.push(`/read?documentId=${document.documentId}`)
-              }>
+              onClick={() => router.push(`/read`)}>
               번역 결과 보기
             </button>
           )}
