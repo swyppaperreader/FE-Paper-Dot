@@ -44,7 +44,6 @@ export default function NewDocumentPage() {
   const [document, setDocument] = useState<Document | null>(null);
   const [translatedText, setTranslatedText] = useState<TranslationPair[]>([]);
 
-  const setDocumentId = useDocumentStore((state) => state.setDocumentId);
   const userInfo = useLoginStore((state) => state.userInfo);
   const accessToken = useAccessTokenStore((state) => state.accessToken);
 
@@ -135,7 +134,7 @@ export default function NewDocumentPage() {
         const doc = response?.data ?? response?.document ?? response;
         if (doc?.documentId != null) {
           setDocument({ ...doc, documentId: String(doc.documentId) });
-          setDocumentId(String(doc.documentId));
+          sessionStorage.setItem("documentId", doc.documentId);
         }
 
         setUploadingFiles((prev) =>

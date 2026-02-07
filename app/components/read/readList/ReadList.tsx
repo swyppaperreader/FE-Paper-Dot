@@ -11,7 +11,8 @@ interface TranslationPair {
 }
 
 export default function ReadList() {
-  const getDocumentId = useDocumentStore((state) => state.documentId);
+  const getDocumentId = sessionStorage.getItem("documentId");
+  console.log(getDocumentId);
   const [translationPairs, setTranslationPairs] = useState<TranslationPair[]>(
     []
   );
