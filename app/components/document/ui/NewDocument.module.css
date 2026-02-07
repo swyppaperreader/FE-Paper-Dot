@@ -117,6 +117,24 @@
   display: none;
 }
 
+.viewResultButton {
+  margin-top: 24px;
+  width: 100%;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #4787ff, #4787ff);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.viewResultButton:hover {
+  opacity: 0.9;
+}
+
 /* ==================== UPLOADING CONTAINER ==================== */
 .uploadingFilesWrapper {
   display: flex;

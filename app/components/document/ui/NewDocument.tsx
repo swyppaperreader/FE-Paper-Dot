@@ -10,6 +10,7 @@ import {
   postTranslation,
 } from "@/app/services/document";
 import { useAccessTokenStore, useLoginStore } from "@/app/store/useLogin";
+import { useRouter } from "next/navigation";
 
 interface UploadingFile {
   id: string;
@@ -45,6 +46,7 @@ export default function NewDocumentPage() {
 
   const userInfo = useLoginStore((state) => state.userInfo);
   const accessToken = useAccessTokenStore((state) => state.accessToken);
+  const router = useRouter();
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -139,7 +141,7 @@ export default function NewDocumentPage() {
         setUploadingFiles((prev) =>
           prev.map((file) =>
             file.id === currentFile?.id
-              ? { ...file, status: "completed", progress: 100 }
+              ? { ...file, status: "completed", progress: 80 }
               : file
           )
         );
@@ -186,6 +188,11 @@ export default function NewDocumentPage() {
             setTranslatedText(pairs);
             sessionStorage.setItem("translationPairs", JSON.stringify(list));
             sessionStorage.setItem("fileName", uploadingFiles[0].file.name);
+            setUploadingFiles((prev) =>
+              prev.map((f) =>
+                f.status === "completed" ? { ...f, progress: 100 } : f
+              )
+            );
             return;
           }
         }
@@ -250,6 +257,17 @@ export default function NewDocumentPage() {
                 <Image src="/close.svg" alt="close" width={12} height={12} />
               </button>
             </div>
+          )}
+
+          {translatedText.length > 0 && document && (
+            <button
+              type="button"
+              className={styles.viewResultButton}
+              onClick={() =>
+                router.push(`/read?documentId=${document.documentId}`)
+              }>
+              번역 결과 보기
+            </button>
           )}
 
           {uploadingFiles.length === 0 && (
