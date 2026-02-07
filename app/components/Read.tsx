@@ -8,6 +8,7 @@ import {
   getTranslatedDocument,
   TranslatedDocumentUnit,
 } from "@/app/services/document";
+import { useAccessTokenStore } from "@/app/store/useLogin";
 
 interface PageContent {
   pageNumber: number;
@@ -25,6 +26,7 @@ interface ReadProps {
 
 export default function Read({ translatedUnits, documentId }: ReadProps = {}) {
   const searchParams = useSearchParams();
+  const accessToken = useAccessTokenStore((state) => state.accessToken);
   const [currentPage, setCurrentPage] = useState(1);
   const [filterMode] = useState<"all" | "korean" | "english">("all");
   // const [showProfileMenu, setShowProfileMenu] = useState(false); // 향후 사용 예정
@@ -56,7 +58,7 @@ export default function Read({ translatedUnits, documentId }: ReadProps = {}) {
         setIsLoading(true);
         setError(null);
         try {
-          const data = await getTranslatedDocument(docIdFromUrl);
+          const data = await getTranslatedDocument(docIdFromUrl, accessToken ?? undefined);
           setApiTranslatedUnits(data);
           setIsLoading(false);
         } catch (err) {
@@ -69,7 +71,7 @@ export default function Read({ translatedUnits, documentId }: ReadProps = {}) {
 
       fetchData();
     }
-  }, [docIdFromUrl, translatedUnits, apiTranslatedUnits]);
+  }, [docIdFromUrl, translatedUnits, apiTranslatedUnits, accessToken]);
 
   // 사용할 번역 데이터 결정: props > API > 더미 데이터
   const activeTranslatedUnits = translatedUnits || apiTranslatedUnits;
