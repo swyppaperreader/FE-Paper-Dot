@@ -1,30 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ReadHeader from "../../header/ReadHeader";
 
-interface TranslationPair {
-  docUnitId: number;
-  sourceText: string;
-  translatedText: string;
-}
-
 export default function ReadList() {
-  const [data, setData] = useState<TranslationPair[]>([]);
-  const [fileName, setFileName] = useState<string>("");
+  const [data] = useState(() => {
+    if (typeof window === "undefined") return [];
+    const stored = sessionStorage.getItem("translationPairs");
+    return stored ? JSON.parse(stored) : [];
+  });
 
-  useEffect(() => {
-    const storedPairs = sessionStorage.getItem("translationPairs");
-    const storedFileName = sessionStorage.getItem("fileName");
-
-    if (storedPairs) {
-      setData(JSON.parse(storedPairs));
-    }
-
-    if (storedFileName) {
-      setFileName(JSON.parse(storedFileName));
-    }
-  }, []);
+  const [fileName] = useState(() => {
+    if (typeof window === "undefined") return "";
+    const stored = sessionStorage.getItem("fileName");
+    return stored ? JSON.parse(stored) : "";
+  });
 
   console.log(data);
   console.log(fileName);
