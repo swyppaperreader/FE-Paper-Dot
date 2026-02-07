@@ -11,10 +11,14 @@ interface TranslationPair {
 }
 
 export default function ReadList() {
-  const [data] = useState(() => {
+  const [data] = useState<TranslationPair[]>(() => {
     if (typeof window === "undefined") return [];
-    const stored = sessionStorage.getItem("translationPairs");
-    return stored ? JSON.parse(stored) : [];
+    try {
+      const stored = sessionStorage.getItem("translationPairs");
+      return stored ? (JSON.parse(stored) as TranslationPair[]) : [];
+    } catch {
+      return [];
+    }
   });
 
   const [fileName] = useState(() => {
@@ -22,21 +26,41 @@ export default function ReadList() {
     return sessionStorage.getItem("fileName") ?? "";
   });
 
-  console.log("data", data);
-  console.log(fileName);
+  const [selectedPageIndex, setSelectedPageIndex] = useState(0);
+
+  const selectedItem = data[selectedPageIndex];
 
   return (
     <main className={styles.container}>
       <ReadHeader fileName={fileName} />
       <div className={styles.content}>
-        <aside className={styles.sidebar}></aside>
+        <aside className={styles.sidebar}>
+          <ul className={styles.pageList}>
+            {data.map((item, index) => (
+              <li key={item.docUnitId} className={styles.pageListItem}>
+                <button
+                  type="button"
+                  className={`${styles.pageCard} ${
+                    index === selectedPageIndex ? styles.pageCardSelected : ""
+                  }`}
+                  onClick={() => setSelectedPageIndex(index)}
+                  aria-pressed={index === selectedPageIndex}>
+                  <span className={styles.pagePreview} />
+                  <span className={styles.pageNumber}>{index + 1}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </aside>
         <div className={styles.docUnitId}>
-          {data.map((item: TranslationPair) => (
-            <div className={styles.docUnitIdItem} key={item.docUnitId}>
-              <p className={styles.sourceText}>{item.sourceText}</p>
-              <p className={styles.translatedText}>{item.translatedText}</p>
+          {selectedItem && (
+            <div className={styles.docUnitIdItem}>
+              <p className={styles.sourceText}>{selectedItem.sourceText}</p>
+              <p className={styles.translatedText}>
+                {selectedItem.translatedText}
+              </p>
             </div>
-          ))}
+          )}
         </div>
       </div>
     </main>
