@@ -128,7 +128,11 @@ export default function NewDocumentPage() {
         formData.append("file", currentFile?.file);
 
         const response = await postDocuments(formData);
-        setDocument(response.data);
+        // API 응답 형태: { data: { ... } } | { document: { ... } } | { documentId, ... }
+        const doc = response?.data ?? response?.document ?? response;
+        if (doc?.documentId != null) {
+          setDocument({ ...doc, documentId: String(doc.documentId) });
+        }
 
         setUploadingFiles((prev) =>
           prev.map((file) =>
