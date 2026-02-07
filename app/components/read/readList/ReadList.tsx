@@ -12,8 +12,7 @@ export default function ReadList() {
 
   const [fileName] = useState(() => {
     if (typeof window === "undefined") return "";
-    const stored = sessionStorage.getItem("fileName");
-    return stored ? JSON.parse(stored) : "";
+    return sessionStorage.getItem("fileName") ?? "";
   });
 
   console.log(data);
