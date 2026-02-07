@@ -27,6 +27,8 @@ export default function NewDocumentPage() {
   const userInfo = useLoginStore((state) => state.userInfo);
   const accessToken = useAccessTokenStore((state) => state.accessToken);
 
+  console.log("documentId", documentId);
+
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(true);
@@ -111,6 +113,7 @@ export default function NewDocumentPage() {
 
         const response = await postDocuments(formData);
         setDocumentId(response.data.documentId);
+        console.log("response", response);
 
         setUploadingFiles((prev) =>
           prev.map((file) =>
@@ -141,8 +144,9 @@ export default function NewDocumentPage() {
 
     const requestTranslation = async () => {
       try {
-        const res = await requestLLM(uploadingFiles[0].file);
-        setTranslatedText(res?.data ?? res ?? "");
+        const res = await postTranslation(documentId);
+        console.log("res", res);
+        setTranslatedText(res);
       } catch (e) {
         console.error("LLM 요청 실패", e);
       }
@@ -150,7 +154,7 @@ export default function NewDocumentPage() {
     requestTranslation();
   }, [documentId]);
 
-  console.log("translatedText", translatedText);
+  console.log("translatedText", documentId);
 
   return (
     <main className={styles.container}>

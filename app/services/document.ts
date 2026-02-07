@@ -25,6 +25,7 @@ export const requestLLM = async (file: File) => {
   });
 
   const text = await response.text();
+  console.log("text", text);
 
   if (!response.ok) {
     console.error("[requestLLM] 실패:", response.status, text);
@@ -51,7 +52,7 @@ export const requestLLM = async (file: File) => {
 
 export const postTranslation = async (documentId: string) => {
   const response = await fetch(
-    `https://be-paper-dot.store/api/v1/documents/${documentId}/process?overwrite=false`,
+    `https://be-paper-dot.store/api/v1/documents/${documentId}/process`,
     {
       method: "POST",
       body: documentId,
