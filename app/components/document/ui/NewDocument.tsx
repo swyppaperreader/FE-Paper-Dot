@@ -159,22 +159,35 @@ export default function NewDocumentPage() {
 
     const requestTranslation = async () => {
       try {
-        await postTranslation(document.documentId);
-        const raw = await getTranslation(document.documentId);
-        // API는 배열을 그대로 반환함: [{ docUnitId, sourceText, translatedText }, ...]
-        const list = Array.isArray(raw) ? raw : raw?.data ?? [];
-        const pairs: TranslationPair[] = list.map((pair: TranslationPair) => ({
-          docUnitId: pair.docUnitId,
-          sourceText: pair.sourceText ?? "",
-          translatedText: pair.translatedText ?? "",
-        }));
-        setTranslatedText(pairs);
+        await postTranslation(document.documentId, accessToken);
+        // 번역이 비동기 처리될 수 있으므로 결과가 나올 때까지 폴링
+        const maxAttempts = 15;
+        const delayMs = 2000;
+        for (let attempt = 0; attempt < maxAttempts; attempt++) {
+          const raw = await getTranslation(document.documentId, accessToken);
+          const list = Array.isArray(raw) ? raw : raw?.data ?? [];
+          if (list.length > 0) {
+            const pairs: TranslationPair[] = list.map(
+              (pair: TranslationPair) => ({
+                docUnitId: pair.docUnitId,
+                sourceText: pair.sourceText ?? "",
+                translatedText: pair.translatedText ?? "",
+              })
+            );
+            setTranslatedText(pairs);
+            return;
+          }
+          if (attempt < maxAttempts - 1) {
+            await new Promise((r) => setTimeout(r, delayMs));
+          }
+        }
+        console.warn("번역 결과가 비어 있습니다. 잠시 후 다시 시도해보세요.");
       } catch (e) {
         console.error("번역 요청/조회 실패", e);
       }
     };
     requestTranslation();
-  }, [document?.documentId]);
+  }, [document?.documentId, accessToken]);
 
   console.log("translatedText", translatedText);
 

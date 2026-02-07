@@ -78,11 +78,19 @@ export const postTranslation = async (
   return data;
 };
 
-export const getTranslation = async (documentId: string) => {
+export const getTranslation = async (
+  documentId: string,
+  accessToken?: string | null
+) => {
+  const headers: HeadersInit = {};
+  if (accessToken) {
+    headers.Authorization = `Bearer ${accessToken}`;
+  }
   const response = await fetch(
     `https://be-paper-dot.store/api/v1/documents/${documentId}/translation-pairs`,
     {
       method: "GET",
+      headers,
     }
   );
 
