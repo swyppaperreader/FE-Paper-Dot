@@ -24,11 +24,13 @@
 
 .docUnitId {
   display: flex;
+  height: calc(100% - 74px);
   width: calc(100% - 226px);
   flex-direction: column;
   gap: 12px;
   padding-top: 36px;
   padding-inline: 120px;
+  overflow-y: auto;
 }
 
 .sourceText {
