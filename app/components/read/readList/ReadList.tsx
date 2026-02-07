@@ -9,22 +9,12 @@ interface TranslationPair {
   translatedText: string;
 }
 
-function getInitialPairs(): TranslationPair[] {
-  try {
-    return (
-      (JSON.parse(
-        sessionStorage.getItem("translationPairs") ?? "[]"
-      ) as TranslationPair[]) || []
-    );
-  } catch {
-    return [];
-  }
-}
-
 export default function ReadList() {
-  const [translationPairs] = useState<TranslationPair[]>(getInitialPairs);
+  const data = JSON.parse(sessionStorage.getItem("translationPairs") ?? "[]");
+  const fileName = JSON.parse(sessionStorage.getItem("fileName") ?? "");
 
-  console.log(translationPairs);
+  console.log(data);
+  console.log(fileName);
 
   return (
     <div>

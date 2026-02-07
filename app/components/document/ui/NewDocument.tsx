@@ -185,6 +185,7 @@ export default function NewDocumentPage() {
             );
             setTranslatedText(pairs);
             sessionStorage.setItem("translationPairs", JSON.stringify(list));
+            sessionStorage.setItem("fileName", uploadingFiles[0].file.name);
             return;
           }
         }
