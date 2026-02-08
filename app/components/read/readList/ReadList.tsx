@@ -94,7 +94,7 @@ export default function ReadList() {
                   onClick={() => scrollToPage(index)}
                   aria-pressed={index === selectedPageIndex}>
                   <span className={styles.pagePreview} />
-                  <span className={styles.pageNumber}>{index + 1}</span>
+                  <span className={styles.pageNumber}>{totalPages}</span>
                 </button>
               </li>
             ))}
