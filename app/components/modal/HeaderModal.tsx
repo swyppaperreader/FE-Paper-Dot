@@ -67,6 +67,8 @@ export default function HeaderModal({
     }
   };
 
+  console.log(userInfo);
+
   return (
     <div
       className={className ? className : styles.headerModalContainer}
