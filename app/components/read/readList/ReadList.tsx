@@ -37,8 +37,12 @@ export default function ReadList() {
 
     const updateTotalPages = () => {
       const { scrollHeight, clientHeight } = el;
-      const pages = Math.max(1, Math.ceil(scrollHeight / clientHeight));
-      setTotalPages(pages);
+      // 스크롤 가능한 구간만 페이지로 셈 (ceil 쓰면 픽셀 오차로 +1 나옴)
+      const pages =
+        clientHeight >= scrollHeight
+          ? 1
+          : Math.floor((scrollHeight - clientHeight) / clientHeight) + 1;
+      setTotalPages(Math.max(1, pages));
     };
 
     updateTotalPages();
@@ -71,6 +75,8 @@ export default function ReadList() {
     const pageHeight = el.clientHeight;
     el.scrollTo({ top: pageIndex * pageHeight, behavior: "smooth" });
   };
+
+  console.log(totalPages);
 
   return (
     <main className={styles.container}>
