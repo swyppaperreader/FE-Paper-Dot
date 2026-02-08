@@ -15,7 +15,8 @@
 
 .sidebar {
   width: 226px;
-  padding: 26px 12px;
+  padding-top: 24px;
+  padding-inline: 12px;
   background: #f0f4fa;
   overflow-y: auto;
   flex-shrink: 0;
@@ -26,19 +27,24 @@
   margin: 0;
   padding: 0;
   display: flex;
+  align-items: center;
   flex-direction: column;
-  gap: 16px;
+  gap: 40px;
+  width: 100%;
 }
 
 .pageListItem {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
 }
 
 .pageCard {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
   padding: 0;
   border: 2px solid transparent;
   border-radius: 8px;
@@ -46,6 +52,8 @@
   cursor: pointer;
   transition: border-color 0.2s, box-shadow 0.2s;
   overflow: hidden;
+  height: 140px;
+  aspect-ratio: 27/35;
 }
 
 .pageCard:hover {
@@ -69,11 +77,19 @@
 }
 
 .pageNumber {
-  display: block;
-  padding: 8px 0;
-  font-size: 14px;
-  font-weight: 500;
-  color: #21232a;
+  position: absolute;
+  bottom: -18%;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 150%;
+  letter-spacing: -0.26px;
+}
+
+.pageListItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
 }
 
 .docUnitId {
