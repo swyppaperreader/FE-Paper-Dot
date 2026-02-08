@@ -30,7 +30,6 @@ export default function ReadList() {
   const [totalPages, setTotalPages] = useState(1);
   const contentScrollRef = useRef<HTMLDivElement>(null);
 
-  // 스크롤 영역 높이 기준으로 전체 페이지 수 계산
   useEffect(() => {
     const el = contentScrollRef.current;
     if (!el || data.length === 0) return;
