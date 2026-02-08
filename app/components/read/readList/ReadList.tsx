@@ -37,15 +37,16 @@ export default function ReadList() {
 
     const updateTotalPages = () => {
       const { scrollHeight, clientHeight } = el;
-      // 스크롤 가능한 구간만 페이지로 셈 (ceil 쓰면 픽셀 오차로 +1 나옴)
+
+      const maxScrollTop = scrollHeight - clientHeight;
       const pages =
-        clientHeight >= scrollHeight
-          ? 1
-          : Math.floor((scrollHeight - clientHeight) / clientHeight) + 1;
-      setTotalPages(Math.max(1, pages));
+        maxScrollTop <= 0 ? 1 : Math.floor(maxScrollTop / clientHeight) + 1;
+
+      setTotalPages(pages);
     };
 
     updateTotalPages();
+
     const ro = new ResizeObserver(updateTotalPages);
     ro.observe(el);
     return () => ro.disconnect();
