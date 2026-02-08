@@ -3,6 +3,7 @@ export const postDocuments = async (formData: FormData) => {
     const response = await fetch("https://be-paper-dot.store/documents", {
       method: "POST",
       body: formData,
+      credentials: "include",
     });
 
     if (!response.ok) {
@@ -52,6 +53,7 @@ export const postTranslation = async (documentId: string) => {
     `https://be-paper-dot.store/api/v1/documents/${documentId}/process`,
     {
       method: "POST",
+      credentials: "include",
     }
   );
 
@@ -72,6 +74,7 @@ export const getTranslation = async (documentId: string) => {
     `https://be-paper-dot.store/api/v1/documents/${documentId}/translation-pairs`,
     {
       method: "GET",
+      credentials: "include",
     }
   );
 
