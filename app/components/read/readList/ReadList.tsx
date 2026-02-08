@@ -37,12 +37,12 @@ export default function ReadList() {
 
     const updateTotalPages = () => {
       const { scrollHeight, clientHeight } = el;
+      // 스크롤 가능한 구간만 페이지로 셈 (ceil 쓰면 픽셀 오차로 +1 나옴)
       const pages =
         clientHeight >= scrollHeight
           ? 1
           : Math.floor((scrollHeight - clientHeight) / clientHeight) + 1;
-      // 스크롤로 이미 늘어난 페이지 수는 유지
-      setTotalPages((prev) => Math.max(prev, Math.max(1, pages)));
+      setTotalPages(Math.max(1, pages));
     };
 
     updateTotalPages();
@@ -51,21 +51,23 @@ export default function ReadList() {
     return () => ro.disconnect();
   }, [data]);
 
-  // 스크롤 시 현재 페이지 갱신 + 끝까지 넘어가면 페이지 하나 추가
+  // 스크롤 시 현재 페이지 인덱스 갱신 (한 화면 = 1페이지)
   useEffect(() => {
     const el = contentScrollRef.current;
     if (!el) return;
 
     const onScroll = () => {
       const { scrollTop, clientHeight } = el;
-      const pageIndex = Math.floor(scrollTop / clientHeight);
-      setTotalPages((prev) => Math.max(prev, pageIndex + 1));
+      const pageIndex = Math.min(
+        totalPages - 1,
+        Math.floor(scrollTop / clientHeight)
+      );
       setSelectedPageIndex(pageIndex);
     };
 
     el.addEventListener("scroll", onScroll, { passive: true });
     return () => el.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [totalPages]);
 
   const scrollToPage = (pageIndex: number) => {
     const el = contentScrollRef.current;
@@ -73,8 +75,6 @@ export default function ReadList() {
     const pageHeight = el.clientHeight;
     el.scrollTo({ top: pageIndex * pageHeight, behavior: "smooth" });
   };
-
-  console.log(totalPages);
 
   return (
     <main className={styles.container}>
@@ -92,9 +92,7 @@ export default function ReadList() {
                   onClick={() => scrollToPage(index)}
                   aria-pressed={index === selectedPageIndex}>
                   <span className={styles.pagePreview} />
-                  <span className={styles.pageNumber}>
-                    {Math.min(index + 1, totalPages)}
-                  </span>
+                  <span className={styles.pageNumber}>{index + 1}</span>
                 </button>
               </li>
             ))}
