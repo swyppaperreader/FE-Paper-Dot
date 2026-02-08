@@ -38,15 +38,23 @@ export default function ReadList() {
       const { scrollHeight, clientHeight } = el;
 
       const maxScrollTop = scrollHeight - clientHeight;
-      const pages =
-        maxScrollTop <= 0 ? 1 : Math.floor(maxScrollTop / clientHeight) + 1;
+      const threshold = clientHeight * 0.15;
 
-      setTotalPages(pages);
+      const pages =
+        maxScrollTop <= 0
+          ? 1
+          : Math.floor((maxScrollTop + threshold) / clientHeight) + 1;
+
+      setTotalPages((prev) => (prev === pages ? prev : pages));
     };
 
     updateTotalPages();
 
-    const ro = new ResizeObserver(updateTotalPages);
+    const ro = new ResizeObserver(() => {
+      // 🔒 스크롤 중 연쇄 방지
+      requestAnimationFrame(updateTotalPages);
+    });
+
     ro.observe(el);
     return () => ro.disconnect();
   }, [data]);
