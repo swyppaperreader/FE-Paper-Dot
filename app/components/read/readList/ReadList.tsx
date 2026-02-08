@@ -76,8 +76,6 @@ export default function ReadList() {
     el.scrollTo({ top: pageIndex * pageHeight, behavior: "smooth" });
   };
 
-  console.log(totalPages);
-
   return (
     <main className={styles.container}>
       <ReadHeader fileName={fileName} />
@@ -94,7 +92,9 @@ export default function ReadList() {
                   onClick={() => scrollToPage(index)}
                   aria-pressed={index === selectedPageIndex}>
                   <span className={styles.pagePreview} />
-                  <span className={styles.pageNumber}>{totalPages}</span>
+                  <span className={styles.pageNumber}>
+                    {Math.min(index + 1, totalPages)}
+                  </span>
                 </button>
               </li>
             ))}
