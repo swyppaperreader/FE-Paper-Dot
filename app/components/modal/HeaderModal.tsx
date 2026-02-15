@@ -9,6 +9,15 @@ import Image from "next/image";
 import { useAccessTokenStore, useLoginStore } from "@/app/store/useLogin";
 import { logout } from "@/app/services/logout";
 
+// HTTP URL을 HTTPS로 변환하는 유틸 함수
+const ensureHttps = (url: string): string => {
+  if (!url) return url;
+  if (url.startsWith("http://")) {
+    return url.replace("http://", "https://");
+  }
+  return url;
+};
+
 export default function HeaderModal({
   isReadHeader,
   className,
@@ -83,12 +92,13 @@ export default function HeaderModal({
           className={styles.userImageButton}
           onClick={() => setIsOpen(!isOpen)}>
           {userInfo?.profileImageUrl?.includes("http") ? (
-            <img
-              src={userInfo?.profileImageUrl}
+            <Image
+              src={ensureHttps(userInfo.profileImageUrl)}
               alt="user image"
               width={40}
               height={40}
               className={styles.userImage}
+              unoptimized
             />
           ) : (
             <Image
