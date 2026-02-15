@@ -66,32 +66,34 @@ export default function ReadHeader({
         <Link href={"/"} className={styles.link}>
           <Image src="/Logo.svg" alt="Paperdot" width={106} height={40} />
         </Link>
-        <Button
-          className={styles.readHeaderUserImageButton}
-          onClick={onToggleSidebar}>
-          <Image src="/slide.svg" alt="slide" width={24} height={24} />
-        </Button>
-        <div className={styles.readHeaderPageNumber}>
-          <div className={styles.readHeaderPageNumberPageContainer}>
-            <input
-              ref={inputRef}
-              type="text"
-              value={inputValue}
-              onChange={handleInputChange}
-              onBlur={handleInputBlur}
-              onKeyDown={handleInputKeyDown}
-              className={styles.readHeaderPageNumberPage}
-              style={{
-                border: "none",
-                outline: "none",
-                background: "transparent",
-                width: "100%",
-                textAlign: "center",
-                padding: 0,
-              }}
-            />
+        <div className={styles.readHeaderLeftControls}>
+          <Button
+            className={styles.readHeaderUserImageButton}
+            onClick={onToggleSidebar}>
+            <Image src="/slide.svg" alt="slide" width={24} height={24} />
+          </Button>
+          <div className={styles.readHeaderPageNumber}>
+            <div className={styles.readHeaderPageNumberPageContainer}>
+              <input
+                ref={inputRef}
+                type="text"
+                value={inputValue}
+                onChange={handleInputChange}
+                onBlur={handleInputBlur}
+                onKeyDown={handleInputKeyDown}
+                className={styles.readHeaderPageNumberPage}
+                style={{
+                  border: "none",
+                  outline: "none",
+                  background: "transparent",
+                  width: "100%",
+                  textAlign: "center",
+                  padding: 0,
+                }}
+              />
+            </div>
+            <p className={styles.readHeaderPageNumberTotal}>/ {totalPages}</p>
           </div>
-          <p className={styles.readHeaderPageNumberTotal}>/ {totalPages}</p>
         </div>
         {fileName && (
           <p className={styles.readHeaderFileName}>{fileName}</p>
