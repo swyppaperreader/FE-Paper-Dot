@@ -7,6 +7,8 @@ import ReadHeader from "./header/ReadHeader";
 import {
   getTranslatedDocument,
   TranslatedDocumentUnit,
+  getDocumentDetail,
+  DocumentDetail,
 } from "@/app/services/document";
 import { useAccessTokenStore } from "@/app/store/useLogin";
 
@@ -40,6 +42,8 @@ export default function Read({ translatedUnits, documentId }: ReadProps = {}) {
   >(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [documentDetail, setDocumentDetail] = useState<DocumentDetail | null>(null);
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
 
   // URL 파라미터에서 문서 ID 가져오기
   const docIdFromUrl = searchParams?.get("docId") || documentId;
@@ -58,14 +62,28 @@ export default function Read({ translatedUnits, documentId }: ReadProps = {}) {
         setIsLoading(true);
         setError(null);
         try {
-          const data = await getTranslatedDocument(docIdFromUrl, accessToken ?? undefined);
-          setApiTranslatedUnits(data);
+          const [translatedData, detailData] = await Promise.all([
+            getTranslatedDocument(docIdFromUrl, accessToken ?? undefined),
+            getDocumentDetail(docIdFromUrl, accessToken ?? undefined),
+          ]);
+          setApiTranslatedUnits(translatedData);
+          setDocumentDetail(detailData);
+
+          // PDF URL 구성
+          if (detailData.storagePath) {
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://be-paper-dot.store";
+            // storagePath가 이미 전체 URL인지 확인
+            const pdfUrl = detailData.storagePath.startsWith("http")
+              ? detailData.storagePath
+              : `${apiUrl}${detailData.storagePath.startsWith("/") ? "" : "/"}${detailData.storagePath}`;
+            setPdfUrl(pdfUrl);
+          }
           setIsLoading(false);
         } catch (err) {
           const errorMessage = err instanceof Error ? err.message : "알 수 없는 오류가 발생했습니다.";
           setError(errorMessage);
           setIsLoading(false);
-          console.error("번역된 문서를 가져오는데 실패했습니다:", err);
+          console.error("문서를 가져오는데 실패했습니다:", err);
         }
       };
 
@@ -429,7 +447,15 @@ By combining the best of both traditional and digital methods, we can create mor
                     : ""
                     }`}
                   onClick={() => handlePageChange(page.pageNumber)}>
-                  <div className={styles.pageThumbPreview}></div>
+                  <div className={styles.pageThumbPreview}>
+                    {pdfUrl && (
+                      <iframe
+                        src={`${pdfUrl}#page=${page.pageNumber}&zoom=25`}
+                        className={styles.pageThumbIframe}
+                        title={`Page ${page.pageNumber}`}
+                      />
+                    )}
+                  </div>
                   <span className={styles.pageThumbNumber}>
                     {page.pageNumber}
                   </span>
@@ -437,6 +463,17 @@ By combining the best of both traditional and digital methods, we can create mor
               ))}
             </div>
           </aside>
+        )}
+
+        {/* PDF 뷰어 */}
+        {!isLoading && !error && pdfUrl && (
+          <div className={styles.pdfViewer}>
+            <iframe
+              src={`${pdfUrl}#page=${currentPage}`}
+              className={styles.pdfIframe}
+              title="PDF Viewer"
+            />
+          </div>
         )}
 
         {/* 중앙: 텍스트 콘텐츠 */}
