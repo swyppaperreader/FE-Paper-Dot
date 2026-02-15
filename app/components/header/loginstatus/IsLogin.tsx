@@ -22,7 +22,7 @@ export default function IsLogin() {
       setAccessToken(data.accessToken as string);
     };
     fetchUserInfo();
-  }, []);
+  }, [setAccessToken]);
 
   useEffect(() => {
     if (isLogin?.accessToken) {

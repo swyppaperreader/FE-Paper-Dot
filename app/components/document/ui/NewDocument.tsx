@@ -37,7 +37,7 @@ interface TranslationPair {
 }
 
 export default function NewDocumentPage() {
-  const [isDragging, setIsDragging] = useState(false);
+  const [, setIsDragging] = useState(false);
   const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isTranslating, setIsTranslating] = useState(false);
@@ -134,8 +134,9 @@ export default function NewDocumentPage() {
         // API 응답 형태: { data: { ... } } | { document: { ... } } | { documentId, ... }
         const doc = response?.data ?? response?.document ?? response;
         if (doc?.documentId != null) {
-          setDocument({ ...doc, documentId: String(doc.documentId) });
-          sessionStorage.setItem("documentId", doc.documentId);
+          const documentIdStr = String(doc.documentId);
+          setDocument({ ...doc, documentId: documentIdStr });
+          sessionStorage.setItem("documentId", documentIdStr);
         }
 
         setUploadingFiles((prev) =>
@@ -145,7 +146,9 @@ export default function NewDocumentPage() {
               : file
           )
         );
-      } catch {
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "파일 업로드에 실패했습니다.";
+        alert(message);
         setUploadingFiles((prev) =>
           prev.map((file) =>
             file.id === currentFile.id
@@ -157,11 +160,11 @@ export default function NewDocumentPage() {
     };
 
     uploadFile();
-  }, [uploadingFiles.length, userInfo?.userId, accessToken]);
+  }, [uploadingFiles, accessToken, userInfo?.userId]);
 
   // 업로드가 성공해 document가 생긴 뒤: 1) postTranslation → 2) getTranslation
   useEffect(() => {
-    if (!document) {
+    if (!document || !uploadingFiles[0]?.file || !accessToken) {
       return;
     }
 
@@ -176,7 +179,7 @@ export default function NewDocumentPage() {
         for (let attempt = 0; attempt < maxAttempts; attempt++) {
           await new Promise((r) => setTimeout(r, intervalMs));
           const raw = await getTranslation(document.documentId);
-          const list = Array.isArray(raw) ? raw : raw?.data ?? [];
+          const list = Array.isArray(raw) ? raw : [];
           if (list.length > 0) {
             const pairs: TranslationPair[] = list.map(
               (pair: TranslationPair) => ({
@@ -205,6 +208,7 @@ export default function NewDocumentPage() {
         setIsTranslating(false);
       }
     };
+
     requestTranslation();
   }, [document?.documentId]);
 
