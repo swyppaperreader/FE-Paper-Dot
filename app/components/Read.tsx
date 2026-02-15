@@ -1,8 +1,14 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import styles from "./read.module.css";
 import ReadHeader from "./header/ReadHeader";
+import {
+  getTranslatedDocument,
+  TranslatedDocumentUnit,
+} from "@/app/services/document";
+import { useAccessTokenStore } from "@/app/store/useLogin";
 
 interface PageContent {
   pageNumber: number;
@@ -11,17 +17,89 @@ interface PageContent {
   englishText: string;
 }
 
-export default function Read() {
+interface ReadProps {
+  // props로 직접 번역된 데이터를 전달할 수 있음
+  translatedUnits?: TranslatedDocumentUnit[];
+  // 또는 문서 ID를 전달하여 API 호출
+  documentId?: string | number;
+}
+
+export default function Read({ translatedUnits, documentId }: ReadProps = {}) {
+  const searchParams = useSearchParams();
+  const accessToken = useAccessTokenStore((state) => state.accessToken);
   const [currentPage, setCurrentPage] = useState(1);
-  const [filterMode, setFilterMode] = useState<"all" | "korean" | "english">(
-    "all"
-  );
-  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [filterMode] = useState<"all" | "korean" | "english">("all");
+  // const [showProfileMenu, setShowProfileMenu] = useState(false); // 향후 사용 예정
   const [showSidebar, setShowSidebar] = useState(true);
   const contentBoxRef = useRef<HTMLDivElement>(null);
   const pageStartRefs = useRef<Map<number, HTMLDivElement>>(new Map());
 
-  // 더미 데이터: 모든 텍스트를 한 곳에 저장
+  // API에서 가져온 번역된 데이터를 저장하는 state
+  const [apiTranslatedUnits, setApiTranslatedUnits] = useState<
+    TranslatedDocumentUnit[] | null
+  >(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // URL 파라미터에서 문서 ID 가져오기
+  const docIdFromUrl = searchParams?.get("docId") || documentId;
+
+  // API에서 번역된 데이터 가져오기
+  useEffect(() => {
+    // props로 직접 데이터가 전달된 경우 또는 이미 로드된 경우
+    if (translatedUnits || apiTranslatedUnits) {
+      return;
+    }
+
+    // URL 파라미터나 props로 문서 ID가 있는 경우 API 호출
+    if (docIdFromUrl) {
+      // 비동기 함수로 분리하여 setState를 비동기적으로 호출
+      const fetchData = async () => {
+        setIsLoading(true);
+        setError(null);
+        try {
+          const data = await getTranslatedDocument(docIdFromUrl, accessToken ?? undefined);
+          setApiTranslatedUnits(data);
+          setIsLoading(false);
+        } catch (err) {
+          const errorMessage = err instanceof Error ? err.message : "알 수 없는 오류가 발생했습니다.";
+          setError(errorMessage);
+          setIsLoading(false);
+          console.error("번역된 문서를 가져오는데 실패했습니다:", err);
+        }
+      };
+
+      fetchData();
+    }
+  }, [docIdFromUrl, translatedUnits, apiTranslatedUnits, accessToken]);
+
+  // 사용할 번역 데이터 결정: props > API > 더미 데이터
+  const activeTranslatedUnits = translatedUnits || apiTranslatedUnits;
+
+  // API 데이터를 PageContent 형식으로 변환하는 함수
+  const convertToPageContent = (
+    units: TranslatedDocumentUnit[]
+  ): PageContent[] => {
+    // 간단하게 모든 단위를 하나의 페이지로 묶거나,
+    // 필요에 따라 여러 페이지로 나눌 수 있습니다
+    // 여기서는 모든 단위를 하나의 페이지로 처리합니다
+    const fullText = units
+      .map((unit) => `${unit.sourceText}\n${unit.translatedText}`)
+      .join("\n\n");
+    const koreanText = units.map((unit) => unit.translatedText).join("\n\n");
+    const englishText = units.map((unit) => unit.sourceText).join("\n\n");
+
+    return [
+      {
+        pageNumber: 1,
+        fullText,
+        koreanText,
+        englishText,
+      },
+    ];
+  };
+
+  // 더미 데이터: 모든 텍스트를 한 곳에 저장 (API 데이터가 없을 때만 사용)
   const mockPages: PageContent[] = [
     {
       pageNumber: 1,
@@ -79,13 +157,31 @@ By combining the best of both traditional and digital methods, we can create mor
     },
   ];
 
+  // 사용할 페이지 데이터 결정
+  const pagesToUse: PageContent[] = activeTranslatedUnits
+    ? convertToPageContent(activeTranslatedUnits)
+    : mockPages;
+
   // 모든 텍스트를 한 곳에 합쳐서 표시 (페이지 구분 없음)
   const getAllText = () => {
     if (filterMode === "all") {
       const allSentences: Array<{ eng: string; kor: string; pageNum: number }> =
         [];
 
-      mockPages.forEach((page) => {
+      // API 데이터를 직접 사용하는 경우
+      if (activeTranslatedUnits) {
+        activeTranslatedUnits.forEach((unit) => {
+          allSentences.push({
+            eng: unit.sourceText.trim(),
+            kor: unit.translatedText.trim(),
+            pageNum: 1, // 모든 단위를 하나의 페이지로 처리
+          });
+        });
+        return allSentences;
+      }
+
+      // 더미 데이터 사용
+      pagesToUse.forEach((page) => {
         const lines = page.fullText.split("\n").filter((line) => line.trim());
         for (let i = 0; i < lines.length; i += 2) {
           if (lines[i] && lines[i + 1]) {
@@ -102,7 +198,19 @@ By combining the best of both traditional and digital methods, we can create mor
     } else if (filterMode === "english") {
       const allEnglish: Array<{ text: string; pageNum: number }> = [];
 
-      mockPages.forEach((page) => {
+      // API 데이터를 직접 사용하는 경우
+      if (activeTranslatedUnits) {
+        activeTranslatedUnits.forEach((unit) => {
+          allEnglish.push({
+            text: unit.sourceText.trim(),
+            pageNum: 1,
+          });
+        });
+        return allEnglish;
+      }
+
+      // 더미 데이터 사용
+      pagesToUse.forEach((page) => {
         page.englishText
           .split("\n")
           .filter((line) => line.trim())
@@ -118,7 +226,19 @@ By combining the best of both traditional and digital methods, we can create mor
     } else {
       const allKorean: Array<{ text: string; pageNum: number }> = [];
 
-      mockPages.forEach((page) => {
+      // API 데이터를 직접 사용하는 경우
+      if (activeTranslatedUnits) {
+        activeTranslatedUnits.forEach((unit) => {
+          allKorean.push({
+            text: unit.translatedText.trim(),
+            pageNum: 1,
+          });
+        });
+        return allKorean;
+      }
+
+      // 더미 데이터 사용
+      pagesToUse.forEach((page) => {
         page.koreanText
           .split("\n")
           .filter((line) => line.trim())
@@ -253,38 +373,61 @@ By combining the best of both traditional and digital methods, we can create mor
     }, 0);
   }, [currentPage, filterMode]);
 
-  // 프로필 메뉴 토글
-  const handleProfileMenuToggle = () => {
-    setShowProfileMenu(!showProfileMenu);
-  };
+  // 프로필 메뉴 토글 (향후 사용 예정)
+  // const handleProfileMenuToggle = () => {
+  //   setShowProfileMenu(!showProfileMenu);
+  // };
 
-  // 프로필 메뉴 닫기
-  const closeProfileMenu = () => {
-    setShowProfileMenu(false);
-  };
+  // 프로필 메뉴 닫기 (향후 사용 예정)
+  // const closeProfileMenu = () => {
+  //   setShowProfileMenu(false);
+  // };
 
   // 페이지 변경 핸들러
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
+  // 사이드바 토글 핸들러
+  const handleToggleSidebar = () => {
+    setShowSidebar((prev) => !prev);
+  };
+
   return (
     <div className={styles.container}>
-      <ReadHeader />
+      <ReadHeader
+        currentPage={currentPage}
+        totalPages={pagesToUse.length}
+        onPageChange={handlePageChange}
+        onToggleSidebar={handleToggleSidebar}
+      />
       {/* ==================== 메인 콘텐츠 ==================== */}
       <div className={styles.contentWrapper}>
+        {/* 로딩 상태 */}
+        {isLoading && (
+          <div style={{ padding: "20px", textAlign: "center" }}>
+            번역된 문서를 불러오는 중...
+          </div>
+        )}
+
+        {/* 에러 상태 */}
+        {error && (
+          <div style={{ padding: "20px", textAlign: "center", color: "red" }}>
+            오류: {error}
+          </div>
+        )}
+
         {/* 왼쪽 사이드바: 페이지 썸네일 (토글 가능) */}
-        {showSidebar && (
+        {showSidebar && !isLoading && !error && (
           <aside className={styles.sidebar}>
             <div className={styles.pageThumbContainer}>
-              {mockPages.map((page) => (
+              {pagesToUse.map((page) => (
                 <button
                   key={page.pageNumber}
-                  className={`${styles.pageThumb} ${
-                    currentPage === page.pageNumber
-                      ? styles.pageThumbActive
-                      : ""
-                  }`}
+                  className={`${styles.pageThumb} ${currentPage === page.pageNumber
+                    ? styles.pageThumbActive
+                    : ""
+                    }`}
                   onClick={() => handlePageChange(page.pageNumber)}>
                   <div className={styles.pageThumbPreview}></div>
                   <span className={styles.pageThumbNumber}>

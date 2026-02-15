@@ -19,7 +19,7 @@ interface UploadingFile {
 }
 
 export default function NewDocumentPage() {
-  const [isDragging, setIsDragging] = useState(false);
+  const [, setIsDragging] = useState(false);
   const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [documentId, setDocumentId] = useState<string>("");
@@ -109,8 +109,12 @@ export default function NewDocumentPage() {
         formData.append("languageTgt", "en");
         formData.append("file", currentFile?.file);
 
-        const response = await postDocuments(formData);
-        setDocumentId(response.data.documentId);
+        if (!accessToken) {
+          throw new Error("인증이 필요합니다. 로그인해주세요.");
+        }
+
+        const response = await postDocuments(formData, accessToken);
+        setDocumentId(response.documentId);
 
         setUploadingFiles((prev) =>
           prev.map((file) =>
@@ -119,7 +123,9 @@ export default function NewDocumentPage() {
               : file
           )
         );
-      } catch {
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "파일 업로드에 실패했습니다.";
+        alert(message);
         setUploadingFiles((prev) =>
           prev.map((file) =>
             file.id === currentFile.id
@@ -131,24 +137,25 @@ export default function NewDocumentPage() {
     };
 
     uploadFile();
-  }, [uploadingFiles.length, userInfo?.userId, accessToken]);
+  }, [uploadingFiles, accessToken, userInfo?.userId]);
 
   // 업로드가 성공해 documentId가 생긴 뒤에만 번역 요청
   useEffect(() => {
-    if (!documentId) {
+    if (!documentId || !uploadingFiles[0]?.file || !accessToken) {
       return;
     }
 
     const requestTranslation = async () => {
       try {
-        const res = await requestLLM(uploadingFiles[0].file);
+        const res = await requestLLM(uploadingFiles[0].file, accessToken);
         setTranslatedText(res?.data ?? res ?? "");
       } catch (e) {
         console.error("LLM 요청 실패", e);
       }
     };
+
     requestTranslation();
-  }, [documentId]);
+  }, [documentId, accessToken, uploadingFiles]);
 
   return (
     <main className={styles.container}>
