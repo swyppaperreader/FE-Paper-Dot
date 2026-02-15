@@ -28,6 +28,7 @@ export default function ReadList() {
 
   const [selectedPageIndex, setSelectedPageIndex] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
+  const [showSidebar, setShowSidebar] = useState(true);
   const contentScrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -84,11 +85,28 @@ export default function ReadList() {
     el.scrollTo({ top: pageIndex * pageHeight, behavior: "smooth" });
   };
 
+  const handlePageChange = (page: number) => {
+    const pageIndex = Math.max(0, Math.min(page - 1, totalPages - 1));
+    scrollToPage(pageIndex);
+    setSelectedPageIndex(pageIndex);
+  };
+
+  const handleToggleSidebar = () => {
+    setShowSidebar((prev) => !prev);
+  };
+
   return (
     <main className={styles.container}>
-      <ReadHeader fileName={fileName} />
+      <ReadHeader
+        fileName={fileName}
+        currentPage={selectedPageIndex + 1}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+        onToggleSidebar={handleToggleSidebar}
+      />
       <div className={styles.content}>
-        <aside className={styles.sidebar}>
+        {showSidebar && (
+          <aside className={styles.sidebar}>
           <ul className={styles.pageList}>
             {Array.from({ length: totalPages }, (_, index) => (
               <li key={index} className={styles.pageListItem}>
@@ -106,11 +124,13 @@ export default function ReadList() {
             ))}
           </ul>
         </aside>
+        )}
         <div
           ref={contentScrollRef}
           className={styles.docUnitId}
           role="region"
-          aria-label="문서 본문">
+          aria-label="문서 본문"
+          style={showSidebar ? {} : { width: "100%" }}>
           {data.map((item) => (
             <div className={styles.docUnitIdItem} key={item.docUnitId}>
               <p className={styles.sourceText}>{item.sourceText}</p>
