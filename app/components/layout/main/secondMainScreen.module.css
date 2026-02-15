@@ -9,16 +9,20 @@
 
 .contentContainer {
   box-sizing: border-box;
-  width: calc(100% - 72px);
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
   height: 591px;
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 40px;
   padding-left: 36px;
+  padding-right: 0;
   border-radius: 40px;
   border: 1px solid #dee3eb;
   background: #fff;
+  overflow: hidden;
 }
 
 .contentLeftContainer {
@@ -51,6 +55,7 @@
   position: relative;
   flex: 1;
   height: 100%;
+  margin-right: 0;
 }
 
 .secondMainScreenImage {
