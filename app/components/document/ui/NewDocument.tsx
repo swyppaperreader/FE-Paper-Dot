@@ -4,7 +4,11 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import styles from "./NewDocument.module.css";
 import { formatFileSize } from "@/app/utils/useFormatFileSize";
-import { postDocuments } from "@/app/services/document";
+import {
+  postDocuments,
+  postTranslation,
+  requestLLM,
+} from "@/app/services/document";
 import { useAccessTokenStore, useLoginStore } from "@/app/store/useLogin";
 
 interface UploadingFile {
@@ -19,6 +23,7 @@ export default function NewDocumentPage() {
   const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [documentId, setDocumentId] = useState<string>("");
+  const [translatedText, setTranslatedText] = useState<string>("");
   const userInfo = useLoginStore((state) => state.userInfo);
   const accessToken = useAccessTokenStore((state) => state.accessToken);
 
@@ -134,33 +139,22 @@ export default function NewDocumentPage() {
     uploadFile();
   }, [uploadingFiles, accessToken, userInfo?.userId]);
 
+  // 업로드가 성공해 documentId가 생긴 뒤에만 번역 요청
   useEffect(() => {
-    if (!documentId) {
+    if (!documentId || !uploadingFiles[0]?.file || !accessToken) {
       return;
     }
 
-    const requestLLM = async () => {
+    const requestTranslation = async () => {
       try {
-        const formData = new FormData();
-        formData.append("file", uploadingFiles[0].file);
-
-        const res = await fetch("https://be-paper-dot.store/api/llm/chat-pdf", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-          credentials: "include",
-          body: formData,
-        });
-
-        const data = await res.json();
-        console.log("LLM 응답:", data);
+        const res = await requestLLM(uploadingFiles[0].file, accessToken);
+        setTranslatedText(res?.data ?? res ?? "");
       } catch (e) {
         console.error("LLM 요청 실패", e);
       }
     };
 
-    requestLLM();
+    requestTranslation();
   }, [documentId, accessToken, uploadingFiles]);
 
   return (

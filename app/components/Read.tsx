@@ -30,7 +30,7 @@ export default function Read({ translatedUnits, documentId }: ReadProps = {}) {
   const [currentPage, setCurrentPage] = useState(1);
   const [filterMode] = useState<"all" | "korean" | "english">("all");
   // const [showProfileMenu, setShowProfileMenu] = useState(false); // 향후 사용 예정
-  const [showSidebar] = useState(true);
+  const [showSidebar, setShowSidebar] = useState(true);
   const contentBoxRef = useRef<HTMLDivElement>(null);
   const pageStartRefs = useRef<Map<number, HTMLDivElement>>(new Map());
 
@@ -388,9 +388,19 @@ By combining the best of both traditional and digital methods, we can create mor
     setCurrentPage(page);
   };
 
+  // 사이드바 토글 핸들러
+  const handleToggleSidebar = () => {
+    setShowSidebar((prev) => !prev);
+  };
+
   return (
     <div className={styles.container}>
-      <ReadHeader />
+      <ReadHeader
+        currentPage={currentPage}
+        totalPages={pagesToUse.length}
+        onPageChange={handlePageChange}
+        onToggleSidebar={handleToggleSidebar}
+      />
       {/* ==================== 메인 콘텐츠 ==================== */}
       <div className={styles.contentWrapper}>
         {/* 로딩 상태 */}
