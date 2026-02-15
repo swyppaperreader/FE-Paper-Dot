@@ -8,6 +8,15 @@ import { useAccessTokenStore, useLoginStore } from "@/app/store/useLogin";
 import { logout } from "@/app/services/logout";
 import { withdraw } from "@/app/services/withdraw";
 
+// HTTP URL을 HTTPS로 변환하는 유틸 함수
+const ensureHttps = (url: string): string => {
+  if (!url) return url;
+  if (url.startsWith("http://")) {
+    return url.replace("http://", "https://");
+  }
+  return url;
+};
+
 export default function MyAccount() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [agreeChecked, setAgreeChecked] = useState(false);
@@ -121,7 +130,7 @@ export default function MyAccount() {
           <div className={styles.accountProfileImageSmallContainer}>
             {userInfo?.profileImageUrl?.includes("http") ? (
               <Image
-                src={userInfo.profileImageUrl}
+                src={ensureHttps(userInfo.profileImageUrl)}
                 alt="profile"
                 width={80}
                 height={80}
@@ -236,21 +245,19 @@ export default function MyAccount() {
 
                 {/* 🔥 커스텀 드롭다운 */}
                 <div
-                  className={`${styles.selectWrapper} ${
-                    !agreeChecked ? styles.disabled : ""
-                  }`}
+                  className={`${styles.selectWrapper} ${!agreeChecked ? styles.disabled : ""
+                    }`}
                   ref={dropdownRef}>
                   <div
-                    className={`${styles.customSelectValue} ${
-                      isDropdownOpen ? styles.open : ""
-                    }`}
+                    className={`${styles.customSelectValue} ${isDropdownOpen ? styles.open : ""
+                      }`}
                     onClick={() =>
                       agreeChecked && setIsDropdownOpen(!isDropdownOpen)
                     }>
                     {deleteReason
                       ? deleteReasonOptions.find(
-                          (opt) => opt.value === deleteReason
-                        )?.label
+                        (opt) => opt.value === deleteReason
+                      )?.label
                       : "선택해주세요"}{" "}
                     {/* ← 이렇게 변경 */}
                     <svg

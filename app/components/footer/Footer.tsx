@@ -21,11 +21,21 @@ export default function Footer() {
         {/* 2줄: 링크 | 저작권 | 이메일 */}
         <div className={styles.contentSection}>
           <div className={styles.linkGroup}>
-            <Link href="/privacy" className={styles.link}>
+            <Link
+              href="https://www.notion.so/2f4eb2f40de7802f8539e4762234b41d?source=copy_link"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.link}
+              prefetch={false}>
               개인정보처리방침
             </Link>
             <span className={styles.divider}>|</span>
-            <Link href="/terms" className={styles.link}>
+            <Link
+              href="https://www.notion.so/2fbeb2f40de780c5b996fc19312ca446?source=copy_link"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.link}
+              prefetch={false}>
               이용약관
             </Link>
           </div>

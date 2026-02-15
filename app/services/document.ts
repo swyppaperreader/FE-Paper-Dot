@@ -60,6 +60,10 @@ export const getTranslatedDocument = async (
     }
 
     if (!response.ok) {
+      // 404는 아직 번역이 완료되지 않았을 수 있으므로 특별 처리
+      if (response.status === 404) {
+        return []; // 빈 배열 반환 (폴링 로직에서 계속 시도)
+      }
       if (response.status === 401 || response.status === 403) {
         throw new Error("인증이 필요합니다. 로그인해주세요.");
       }
@@ -69,6 +73,11 @@ export const getTranslatedDocument = async (
     const data: TranslatedDocumentUnit[] = await response.json();
     return data;
   } catch (error) {
+    // 네트워크 오류나 기타 에러는 그대로 throw
+    // 404는 빈 배열로 처리하기 위해 에러를 다시 throw하지 않음
+    if ((error as Error).message.includes("404")) {
+      return [];
+    }
     throw new Error(
       (error as Error).message || "번역된 문서를 가져오는데 실패했습니다!"
     );
