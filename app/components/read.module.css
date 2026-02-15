@@ -384,6 +384,24 @@
   animation: slideIn 0.3s ease;
 }
 
+/* PDF 뷰어 */
+.pdfViewer {
+  width: 50%;
+  flex-shrink: 0;
+  border-right: 1px solid #e0e0e0;
+  background-color: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.pdfIframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background-color: #ffffff;
+}
+
 .pageThumbContainer {
   display: flex;
   flex-direction: column;
@@ -421,6 +439,17 @@
   background-color: #ffffff;
   border: 1px solid #d0d0d0;
   border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.pageThumbIframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  transform: scale(0.25);
+  transform-origin: top left;
+  pointer-events: none;
 }
 
 /* 활성화된 페이지 용지에만 파란 테두리 */
