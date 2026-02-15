@@ -17,6 +17,16 @@
   position: relative;
 }
 
+.readHeaderLeftControls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: absolute;
+  left: 25%;
+  transform: translateX(-50%);
+  flex-shrink: 0;
+}
+
 .link {
   display: flex;
   align-items: center;
@@ -37,6 +47,7 @@
   padding: 0;
   align-items: center;
   justify-content: center;
+
   &:hover {
     opacity: 0.5;
   }
@@ -133,6 +144,7 @@
   background: #fff;
   height: 32px;
   gap: 4px;
+
   &:hover {
     opacity: 0.5;
   }
@@ -149,6 +161,7 @@
   border-radius: 8px;
   height: 32px;
   gap: 4px;
+
   &:hover {
     opacity: 0.5;
   }
