@@ -5,7 +5,6 @@ import styles from "@/app/components/mypage/ui/MyPage.module.css";
 import Button from "@/app/components/button/Button";
 import Image from "next/image";
 import { useAccessTokenStore, useLoginStore } from "@/app/store/useLogin";
-import { useRouter } from "next/navigation";
 import { logout } from "@/app/services/logout";
 import { withdraw } from "@/app/services/withdraw";
 
@@ -20,8 +19,6 @@ export default function MyAccount() {
   const setUserInfoState = useLoginStore((state) => state.setUserInfo);
   const accessToken = useAccessTokenStore((state) => state.accessToken);
   const setAccessToken = useAccessTokenStore((state) => state.setAccessToken);
-
-  const router = useRouter();
 
   // 드롭다운 외부 클릭 시 닫기
   useEffect(() => {
@@ -123,12 +120,13 @@ export default function MyAccount() {
         <div className={styles.accountProfileBar}>
           <div className={styles.accountProfileImageSmallContainer}>
             {userInfo?.profileImageUrl?.includes("http") ? (
-              <img
-                src={userInfo?.profileImageUrl}
+              <Image
+                src={userInfo.profileImageUrl}
                 alt="profile"
                 width={80}
                 height={80}
                 className={styles.accountProfileImage}
+                unoptimized
               />
             ) : (
               <Image

@@ -1,0 +1,126 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.content {
+  display: flex;
+  height: calc(100% - 61px);
+  overflow-y: auto;
+  width: 100%;
+}
+
+.sidebar {
+  width: 226px;
+  padding-top: 24px;
+  padding-inline: 12px;
+  background: #f0f4fa;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.pageList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 40px;
+  width: 100%;
+}
+
+.pageListItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.pageCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  background: #ffffff;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  overflow: hidden;
+  height: 140px;
+  aspect-ratio: 27/35;
+}
+
+.pageCard:hover {
+  border-color: rgba(71, 135, 255, 0.4);
+}
+
+.pageCardSelected {
+  border-color: #4787ff;
+  box-shadow: 0 0 0 1px #4787ff;
+}
+
+.pagePreview {
+  display: flex;
+  width: 108px;
+  padding-top: 24px;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.pageNumber {
+  position: absolute;
+  bottom: -18%;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 150%;
+  letter-spacing: -0.26px;
+}
+
+.pageListItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.docUnitId {
+  display: flex;
+  width: calc(100% - 226px);
+  flex-direction: column;
+  gap: 48px;
+  padding-top: 36px;
+  padding-inline: 120px;
+  overflow-y: auto;
+}
+
+.docUnitIdItem {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sourceText {
+  color: #21232a;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 150%;
+  letter-spacing: -0.32px;
+}
+
+.translatedText {
+  color: #4b4d55;
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 150%;
+  letter-spacing: -0.32px;
+  text-transform: capitalize;
+}

@@ -12,11 +12,7 @@ export const postDocuments = async (formData: FormData, accessToken?: string) =>
       credentials: "include",
     });
 
-    // HTML 응답 감지 (인증 실패 시 로그인 페이지 반환)
-    const contentType = response.headers.get("content-type") || "";
-    if (contentType.includes("text/html")) {
-      throw new Error("인증이 필요합니다. 로그인해주세요.");
-    }
+    console.log("response", response);
 
     if (!response.ok) {
       if (response.status === 401 || response.status === 403) {
@@ -161,13 +157,21 @@ export const postTranslation = async (documentId: string, accessToken?: string) 
     }
 
     const data = await response.json();
-    console.log("data", data);
     return data;
+
   } catch (error) {
     throw new Error(
       (error as Error).message || "번역 요청에 실패했습니다!"
     );
   }
+};
+
+// 번역 결과 조회 (getTranslatedDocument의 별칭)
+export const getTranslation = async (
+  documentId: string | number,
+  accessToken?: string
+): Promise<TranslatedDocumentUnit[]> => {
+  return getTranslatedDocument(documentId, accessToken);
 };
 
 // 문서 상세 정보 가져오기

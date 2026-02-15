@@ -5,11 +5,12 @@ import Image from "next/image";
 import styles from "./NewDocument.module.css";
 import { formatFileSize } from "@/app/utils/useFormatFileSize";
 import {
+  getTranslation,
   postDocuments,
   postTranslation,
-  requestLLM,
 } from "@/app/services/document";
 import { useAccessTokenStore, useLoginStore } from "@/app/store/useLogin";
+import { useRouter } from "next/navigation";
 
 interface UploadingFile {
   id: string;
@@ -18,14 +19,34 @@ interface UploadingFile {
   status: "uploading" | "completed" | "error";
 }
 
+interface Document {
+  documentId: string;
+  fileId: string | null;
+  fileSizeBytes: number;
+  fileType: string;
+  mimeType: string;
+  originalFilename: string;
+  status: string;
+  storagePath: string;
+}
+
+interface TranslationPair {
+  docUnitId: number;
+  sourceText: string;
+  translatedText: string;
+}
+
 export default function NewDocumentPage() {
   const [, setIsDragging] = useState(false);
   const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [documentId, setDocumentId] = useState<string>("");
-  const [translatedText, setTranslatedText] = useState<string>("");
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [document, setDocument] = useState<Document | null>(null);
+  const [translatedText, setTranslatedText] = useState<TranslationPair[]>([]);
+
   const userInfo = useLoginStore((state) => state.userInfo);
   const accessToken = useAccessTokenStore((state) => state.accessToken);
+  const router = useRouter();
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -109,17 +130,19 @@ export default function NewDocumentPage() {
         formData.append("languageTgt", "en");
         formData.append("file", currentFile?.file);
 
-        if (!accessToken) {
-          throw new Error("인증이 필요합니다. 로그인해주세요.");
+        const response = await postDocuments(formData);
+        // API 응답 형태: { data: { ... } } | { document: { ... } } | { documentId, ... }
+        const doc = response?.data ?? response?.document ?? response;
+        if (doc?.documentId != null) {
+          const documentIdStr = String(doc.documentId);
+          setDocument({ ...doc, documentId: documentIdStr });
+          sessionStorage.setItem("documentId", documentIdStr);
         }
-
-        const response = await postDocuments(formData, accessToken);
-        setDocumentId(response.documentId);
 
         setUploadingFiles((prev) =>
           prev.map((file) =>
             file.id === currentFile?.id
-              ? { ...file, status: "completed", progress: 100 }
+              ? { ...file, status: "completed", progress: 80 }
               : file
           )
         );
@@ -139,23 +162,58 @@ export default function NewDocumentPage() {
     uploadFile();
   }, [uploadingFiles, accessToken, userInfo?.userId]);
 
-  // 업로드가 성공해 documentId가 생긴 뒤에만 번역 요청
+  // 업로드가 성공해 document가 생긴 뒤: 1) postTranslation → 2) getTranslation
   useEffect(() => {
-    if (!documentId || !uploadingFiles[0]?.file || !accessToken) {
+    if (!document || !uploadingFiles[0]?.file || !accessToken) {
       return;
     }
 
     const requestTranslation = async () => {
       try {
-        const res = await requestLLM(uploadingFiles[0].file, accessToken);
-        setTranslatedText(res?.data ?? res ?? "");
+        setIsTranslating(true);
+        // 1) 문서 처리 파이프라인 (서버가 비동기로 처리함)
+        await postTranslation(document.documentId);
+        // 2) 처리 완료될 때까지 주기적으로 조회 (폴링)
+        const maxAttempts = 20;
+        const intervalMs = 3000;
+        for (let attempt = 0; attempt < maxAttempts; attempt++) {
+          await new Promise((r) => setTimeout(r, intervalMs));
+          const raw = await getTranslation(document.documentId);
+          const list = Array.isArray(raw) ? raw : [];
+          if (list.length > 0) {
+            const pairs: TranslationPair[] = list.map(
+              (pair: TranslationPair) => ({
+                docUnitId: pair.docUnitId,
+                sourceText: pair.sourceText ?? "",
+                translatedText: pair.translatedText ?? "",
+              })
+            );
+            setTranslatedText(pairs);
+            sessionStorage.setItem("translationPairs", JSON.stringify(list));
+            sessionStorage.setItem("fileName", uploadingFiles[0].file.name);
+            setUploadingFiles((prev) =>
+              prev.map((f) =>
+                f.status === "completed" ? { ...f, progress: 100 } : f
+              )
+            );
+            return;
+          }
+        }
+        console.warn(
+          "번역 결과를 가져오지 못했습니다. 잠시 후 새로고침 후 다시 시도해보세요."
+        );
       } catch (e) {
-        console.error("LLM 요청 실패", e);
+        console.error("번역 요청/조회 실패", e);
+      } finally {
+        setIsTranslating(false);
       }
     };
 
     requestTranslation();
-  }, [documentId, accessToken, uploadingFiles]);
+  }, [document?.documentId]);
+
+  console.log(document);
+  console.log("translatedText", translatedText);
 
   return (
     <main className={styles.container}>
@@ -203,6 +261,15 @@ export default function NewDocumentPage() {
                 <Image src="/close.svg" alt="close" width={12} height={12} />
               </button>
             </div>
+          )}
+
+          {translatedText.length > 0 && document && (
+            <button
+              type="button"
+              className={styles.viewResultButton}
+              onClick={() => router.push(`/read`)}>
+              번역 결과 보기
+            </button>
           )}
 
           {uploadingFiles.length === 0 && (
