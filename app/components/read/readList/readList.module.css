@@ -109,6 +109,7 @@
 }
 
 .docUnitId {
+  position: relative;
   display: flex;
   width: calc(100% - 226px);
   flex-direction: column;

@@ -112,6 +112,8 @@ export default function ReadList() {
   const [pageImages, setPageImages] = useState<Map<number, string>>(new Map());
   // PDF 페이지 번호(1-based) → 해당 페이지 첫 번째 data 인덱스(0-based)
   const [pageToDataIndex, setPageToDataIndex] = useState<Map<number, number>>(new Map());
+  // 각 data 인덱스가 속한 PDF 페이지 번호(1-based)
+  const [dataToPage, setDataToPage] = useState<number[]>([]);
   const contentScrollRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   const accessToken = useAccessTokenStore((state) => state.accessToken);
@@ -261,6 +263,7 @@ export default function ReadList() {
         }
 
         setPageToDataIndex(mapping);
+        setDataToPage(assigned);
       } catch (error) {
         console.warn("페이지-텍스트 매핑 실패:", error);
       }
@@ -303,45 +306,35 @@ export default function ReadList() {
   // 스크롤 시 현재 페이지 인덱스 갱신 (보이는 첫 항목 기준)
   useEffect(() => {
     const el = contentScrollRef.current;
-    if (!el || pageToDataIndex.size === 0) return;
-
-    // data index → page number 역매핑 생성
-    const dataIndexToPage = new Map<number, number>();
-    pageToDataIndex.forEach((dataIdx, pageNum) => {
-      dataIndexToPage.set(dataIdx, pageNum);
-    });
-    // 모든 data index에 대해 소속 페이지 채우기
-    const sortedEntries = Array.from(pageToDataIndex.entries()).sort((a, b) => a[1] - b[1]);
+    if (!el || dataToPage.length === 0) return;
 
     const onScroll = () => {
-      const scrollTop = el.scrollTop;
-      // 현재 보이는 첫 번째 항목 찾기
+      const containerRect = el.getBoundingClientRect();
+      // 컨테이너 상단 + 약간의 오프셋 지점에 걸쳐있는 항목 찾기
+      const checkY = containerRect.top + 30;
+
       let visibleIdx = 0;
       for (let i = 0; i < itemRefs.current.length; i++) {
         const ref = itemRefs.current[i];
-        if (ref && ref.offsetTop + ref.offsetHeight > scrollTop + 10) {
+        if (!ref) continue;
+        const rect = ref.getBoundingClientRect();
+        if (rect.bottom > checkY) {
           visibleIdx = i;
           break;
         }
       }
-      // 해당 항목이 속한 페이지 찾기
-      let currentPage = 1;
-      for (let j = sortedEntries.length - 1; j >= 0; j--) {
-        if (visibleIdx >= sortedEntries[j][1]) {
-          currentPage = sortedEntries[j][0];
-          break;
-        }
-      }
-      setSelectedPageIndex(currentPage - 1);
+
+      const pageNum = dataToPage[visibleIdx] ?? 1;
+      setSelectedPageIndex(pageNum - 1);
     };
 
     el.addEventListener("scroll", onScroll, { passive: true });
     return () => el.removeEventListener("scroll", onScroll);
-  }, [pageToDataIndex]);
+  }, [dataToPage]);
 
   // 페이지 매핑이 없을 때 폴백: 뷰포트 높이 기반 스크롤 추적
   useEffect(() => {
-    if (pageToDataIndex.size > 0) return;
+    if (dataToPage.length > 0) return;
     const el = contentScrollRef.current;
     if (!el) return;
 
@@ -356,7 +349,7 @@ export default function ReadList() {
 
     el.addEventListener("scroll", onScroll, { passive: true });
     return () => el.removeEventListener("scroll", onScroll);
-  }, [totalPages, pageToDataIndex]);
+  }, [totalPages, dataToPage]);
 
   const scrollToPage = (pageIndex: number) => {
     const pageNum = pageIndex + 1; // 1-based
