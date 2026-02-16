@@ -1,34 +1,35 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Button from "../../button/Button";
 import styles from "../readHeader.module.css";
 
-export default function HeaderToggle() {
-  const [toggle, setToggle] = useState<"all" | "korean" | "english">("all");
-  const buttonList = [
-    { id: 1, mode: "all", text: "전체" },
-    { id: 2, mode: "korean", text: "한글" },
-    { id: 3, mode: "english", text: "영어" },
-  ];
+interface HeaderToggleProps {
+  filterMode: "all" | "korean" | "english";
+  onFilterChange: (mode: "all" | "korean" | "english") => void;
+}
 
-  const handleToggle = (mode: "all" | "korean" | "english") => {
-    setToggle(mode);
-  };
+export default function HeaderToggle({
+  filterMode,
+  onFilterChange,
+}: HeaderToggleProps) {
+  const buttonList = [
+    { id: 1, mode: "all" as const, text: "전체" },
+    { id: 2, mode: "korean" as const, text: "한글" },
+    { id: 3, mode: "english" as const, text: "영어" },
+  ];
 
   return (
     <div className={styles.readHeaderFileNameContainer}>
       {buttonList.map((item) => (
         <Button
           className={
-            toggle === item.mode
+            filterMode === item.mode
               ? styles.readHeaderFileNameButtonActive
               : styles.readHeaderFileNameButton
           }
           key={item.id}
-          onClick={() =>
-            handleToggle(item.mode as "all" | "korean" | "english")
-          }>
+          onClick={() => onFilterChange(item.mode)}>
           {item.text}
         </Button>
       ))}
