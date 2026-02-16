@@ -43,6 +43,7 @@ export default function NewDocumentPage() {
   const [isTranslating, setIsTranslating] = useState(false);
   const [document, setDocument] = useState<Document | null>(null);
   const [translatedText, setTranslatedText] = useState<TranslationPair[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const userInfo = useLoginStore((state) => state.userInfo);
   const accessToken = useAccessTokenStore((state) => state.accessToken);
@@ -147,7 +148,10 @@ export default function NewDocumentPage() {
           )
         );
       } catch (error) {
-        const message = error instanceof Error ? error.message : "파일 업로드에 실패했습니다.";
+        const message =
+          error instanceof Error
+            ? error.message
+            : "파일 업로드에 실패했습니다.";
         alert(message);
         setUploadingFiles((prev) =>
           prev.map((file) =>
@@ -174,68 +178,16 @@ export default function NewDocumentPage() {
         // 1) 문서 처리 파이프라인 (서버가 비동기로 처리함)
         await postTranslation(document.documentId);
         // 2) 처리 완료될 때까지 주기적으로 조회 (폴링)
-        const maxAttempts = 20;
-        const intervalMs = 3000;
-        let lastError: Error | null = null;
-
-        for (let attempt = 0; attempt < maxAttempts; attempt++) {
-          try {
-            await new Promise((r) => setTimeout(r, intervalMs));
-            const raw = await getTranslation(document.documentId);
-            const list = Array.isArray(raw) ? raw : [];
-            if (list.length > 0) {
-              const pairs: TranslationPair[] = list.map(
-                (pair: TranslationPair) => ({
-                  docUnitId: pair.docUnitId,
-                  sourceText: pair.sourceText ?? "",
-                  translatedText: pair.translatedText ?? "",
-                })
-              );
-              setTranslatedText(pairs);
-              sessionStorage.setItem("translationPairs", JSON.stringify(list));
-              sessionStorage.setItem("fileName", uploadingFiles[0].file.name);
-              setUploadingFiles((prev) =>
-                prev.map((f) =>
-                  f.status === "completed" ? { ...f, progress: 100 } : f
-                )
-              );
-              return; // 성공 시 종료
-            }
-            // 빈 배열이면 계속 시도 (404는 정상적인 상태)
-          } catch (e) {
-            const error = e as Error;
-            // 404는 아직 처리 중이므로 무시하고 계속 시도
-            if (error.message.includes("404") || error.message.includes("번역된 문서를 가져오는데 실패")) {
-              lastError = null; // 404는 에러로 간주하지 않음
-              continue;
-            }
-            // 다른 에러는 저장하고 계속 시도
-            lastError = error;
-            console.warn(`번역 조회 시도 ${attempt + 1}/${maxAttempts} 실패:`, error.message);
-          }
+        const data = await getTranslation(document.documentId);
+        setTranslatedText(data);
+        if (data.length === 0) {
+          setIsLoading(true);
         }
-
-        // 최종 실패 시 사용자에게 알림
-        if (lastError) {
-          alert(
-            `번역 처리 중 오류가 발생했습니다: ${lastError.message}\n\n잠시 후 새로고침하여 다시 시도해주세요.`
-          );
-        } else {
-          alert(
-            "번역 처리가 완료되지 않았습니다. 잠시 후 새로고침하여 다시 시도해주세요."
-          );
-        }
-        console.warn(
-          "번역 결과를 가져오지 못했습니다. 잠시 후 새로고침 후 다시 시도해보세요."
-        );
-      } catch (e) {
-        const error = e as Error;
-        console.error("번역 요청/조회 실패", error);
-        alert(
-          `번역 요청에 실패했습니다: ${error.message}\n\n다시 시도해주세요.`
-        );
-      } finally {
-        setIsTranslating(false);
+        setIsLoading(false);
+        console.log("data", data);
+      } catch (error) {
+        console.error("번역 요청 실패:", error);
+        throw error;
       }
     };
 
@@ -255,6 +207,12 @@ export default function NewDocumentPage() {
               페이퍼닷이 번역하고, 한 줄 한 줄 읽기 쉽게 정리해드릴게요.
             </p>
           </div>
+
+          {isLoading && (
+            <div className="flex justify-center items-center h-screen">
+              <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
+            </div>
+          )}
 
           {uploadingFiles.length > 0 && (
             <div className={styles.uploadingFilesWrapper}>
