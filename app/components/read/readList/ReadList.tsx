@@ -106,10 +106,52 @@ export default function ReadList() {
   const [showSidebar, setShowSidebar] = useState(true);
   const [filterMode, setFilterMode] = useState<"all" | "korean" | "english">("all");
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+  const [actualPdfPages, setActualPdfPages] = useState<number | null>(null);
   const contentScrollRef = useRef<HTMLDivElement>(null);
   const accessToken = useAccessTokenStore((state) => state.accessToken);
 
+  // 실제 PDF 페이지 수 가져오기
   useEffect(() => {
+    const fetchPdfPages = async () => {
+      if (!pdfUrl) return;
+
+      try {
+        // PDF.js를 사용하여 페이지 수 가져오기
+        const pdfjsLib = await import("pdfjs-dist");
+        pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+
+        const loadingTask = pdfjsLib.getDocument({
+          url: pdfUrl,
+          withCredentials: true,
+        });
+        const pdf = await loadingTask.promise;
+        const numPages = pdf.numPages;
+        setActualPdfPages(numPages);
+        setTotalPages(numPages);
+      } catch (error) {
+        console.warn("PDF 페이지 수를 가져오는데 실패했습니다:", error);
+        // 실패 시 기존 로직 사용
+        const el = contentScrollRef.current;
+        if (el && data.length > 0) {
+          const { scrollHeight, clientHeight } = el;
+          const maxScrollTop = scrollHeight - clientHeight;
+          const threshold = clientHeight * 0.15;
+          const pages =
+            maxScrollTop <= 0
+              ? 1
+              : Math.floor((maxScrollTop + threshold) / clientHeight) + 1;
+          setTotalPages(pages);
+        }
+      }
+    };
+
+    fetchPdfPages();
+  }, [pdfUrl, data.length]);
+
+  // PDF 페이지 수가 없을 때만 스크롤 기반 페이지 계산
+  useEffect(() => {
+    if (actualPdfPages !== null) return; // 실제 PDF 페이지 수가 있으면 스킵
+
     const el = contentScrollRef.current;
     if (!el || data.length === 0) return;
 
@@ -130,13 +172,12 @@ export default function ReadList() {
     updateTotalPages();
 
     const ro = new ResizeObserver(() => {
-      // 🔒 스크롤 중 연쇄 방지
       requestAnimationFrame(updateTotalPages);
     });
 
     ro.observe(el);
     return () => ro.disconnect();
-  }, [data]);
+  }, [data, actualPdfPages]);
 
   // 스크롤 시 현재 페이지 인덱스 갱신 (한 화면 = 1페이지)
   useEffect(() => {
