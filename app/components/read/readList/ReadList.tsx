@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import ReadHeader from "../../header/ReadHeader";
 import styles from "./readList.module.css";
@@ -13,7 +13,7 @@ interface TranslationPair {
   translatedText: string;
 }
 
-// 테스트용 샘플 데이터
+// 테스트용 샘플 데이터 (페이지 1: 1~5, 페이지 2: 6~10)
 const SAMPLE_DATA: TranslationPair[] = [
   {
     docUnitId: 1,
@@ -67,38 +67,53 @@ const SAMPLE_DATA: TranslationPair[] = [
   },
 ];
 
+// 샘플 데이터용 페이지 매핑 (페이지 1: index 0~4, 페이지 2: index 5~9)
+const SAMPLE_DATA_TO_PAGE = [1, 1, 1, 1, 1, 2, 2, 2, 2, 2];
+
 const SAMPLE_FILE_NAME = "This is the test pdf.pdf";
+
+/** 텍스트 정규화: 소문자 + 영숫자/공백만 남김 */
+function normalize(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
 export default function ReadList() {
   const [data] = useState<TranslationPair[]>(() => {
     if (typeof window === "undefined") return SAMPLE_DATA;
     try {
       const stored = sessionStorage.getItem("translationPairs");
-      // sessionStorage에 실제 데이터가 있으면 우선 사용 (배포 환경에서 파일 업로드 시)
       if (stored) {
         const parsed = JSON.parse(stored) as TranslationPair[];
-        // 실제 데이터가 있고 유효하면 실제 데이터 사용
         if (Array.isArray(parsed) && parsed.length > 0) {
           return parsed;
         }
       }
-      // 실제 데이터가 없을 때만 샘플 데이터 사용 (로컬 테스트용)
       return SAMPLE_DATA;
-    } catch (error) {
-      console.warn("Failed to parse translationPairs from sessionStorage:", error);
-      // 파싱 실패 시 샘플 데이터 사용
+    } catch {
       return SAMPLE_DATA;
     }
+  });
+
+  const [isSampleMode] = useState(() => {
+    if (typeof window === "undefined") return true;
+    const stored = sessionStorage.getItem("translationPairs");
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) return false;
+      } catch { /* ignore */ }
+    }
+    return true;
   });
 
   const [fileName] = useState(() => {
     if (typeof window === "undefined") return SAMPLE_FILE_NAME;
     const stored = sessionStorage.getItem("fileName");
-    // sessionStorage에 실제 파일명이 있으면 우선 사용
-    if (stored && stored.trim() !== "") {
-      return stored;
-    }
-    // 실제 파일명이 없을 때만 샘플 파일명 사용
+    if (stored && stored.trim() !== "") return stored;
     return SAMPLE_FILE_NAME;
   });
 
@@ -107,309 +122,283 @@ export default function ReadList() {
   const [showSidebar, setShowSidebar] = useState(true);
   const [filterMode, setFilterMode] = useState<"all" | "korean" | "english">("all");
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
-  const [actualPdfPages, setActualPdfPages] = useState<number | null>(null);
   const [pdfDocument, setPdfDocument] = useState<import("pdfjs-dist").PDFDocumentProxy | null>(null);
   const [pageImages, setPageImages] = useState<Map<number, string>>(new Map());
-  // PDF 페이지 번호(1-based) → 해당 페이지 첫 번째 data 인덱스(0-based)
-  const [pageToDataIndex, setPageToDataIndex] = useState<Map<number, number>>(new Map());
-  // 각 data 인덱스가 속한 PDF 페이지 번호(1-based)
+
+  // 핵심 매핑: 각 data index → 소속 페이지(1-based)
   const [dataToPage, setDataToPage] = useState<number[]>([]);
+  // 페이지(1-based) → 해당 페이지 첫 data index
+  const [pageToFirstIdx, setPageToFirstIdx] = useState<Map<number, number>>(new Map());
+
   const contentScrollRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   const accessToken = useAccessTokenStore((state) => state.accessToken);
 
-  // 실제 PDF 문서 로드 및 페이지 수 가져오기
+  // ─── 1. 샘플 모드: PDF 없이 바로 매핑 설정 ───
+  useEffect(() => {
+    if (!isSampleMode) return;
+    const d2p = SAMPLE_DATA_TO_PAGE.slice(0, data.length);
+    // 전체 항목에 대해 페이지 할당이 안 된 경우 보정
+    while (d2p.length < data.length) d2p.push(d2p[d2p.length - 1] ?? 1);
+
+    const maxPage = Math.max(...d2p);
+    setTotalPages(maxPage);
+    setDataToPage(d2p);
+
+    const p2i = new Map<number, number>();
+    for (let i = 0; i < d2p.length; i++) {
+      if (!p2i.has(d2p[i])) p2i.set(d2p[i], i);
+    }
+    setPageToFirstIdx(p2i);
+  }, [isSampleMode, data]);
+
+  // ─── 2. PDF 로드 ───
   useEffect(() => {
     const loadPdf = async () => {
       try {
         const pdfjsLib = await import("pdfjs-dist");
         pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
 
-        // 1순위: sessionStorage에 저장된 PDF 데이터 사용
         const pdfDataUrl = sessionStorage.getItem("pdfFileData");
         let pdf: import("pdfjs-dist").PDFDocumentProxy | null = null;
 
         if (pdfDataUrl) {
           const base64 = pdfDataUrl.split(",")[1];
-          const binaryString = atob(base64);
-          const bytes = new Uint8Array(binaryString.length);
-          for (let i = 0; i < binaryString.length; i++) {
-            bytes[i] = binaryString.charCodeAt(i);
-          }
+          const bin = atob(base64);
+          const bytes = new Uint8Array(bin.length);
+          for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
           pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
         } else if (pdfUrl) {
-          // 2순위: 서버 URL에서 로드
-          pdf = await pdfjsLib.getDocument({
-            url: pdfUrl,
-            withCredentials: true,
-          }).promise;
+          pdf = await pdfjsLib.getDocument({ url: pdfUrl, withCredentials: true }).promise;
         }
 
         if (!pdf) return;
-
         setPdfDocument(pdf);
-        setActualPdfPages(pdf.numPages);
         setTotalPages(pdf.numPages);
       } catch (error) {
-        console.warn("PDF 문서를 로드하는데 실패했습니다:", error);
+        console.warn("PDF 로드 실패:", error);
       }
     };
 
-    loadPdf();
-  }, [pdfUrl]);
+    if (!isSampleMode) loadPdf();
+  }, [pdfUrl, isSampleMode]);
 
-  // 각 페이지를 이미지로 렌더링
+  // ─── 3. PDF 썸네일 렌더링 ───
   useEffect(() => {
     const renderPages = async () => {
-      if (!pdfDocument || !actualPdfPages) return;
+      if (!pdfDocument) return;
+      const numPages = pdfDocument.numPages;
+      const images = new Map<number, string>();
 
-      try {
-        const newPageImages = new Map<number, string>();
+      for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+        try {
+          const page = await pdfDocument.getPage(pageNum);
+          const vp = page.getViewport({ scale: 1.0 });
+          const scale = 216 / vp.width; // 108 * 2 레티나
+          const scaled = page.getViewport({ scale });
 
-        for (let pageNum = 1; pageNum <= actualPdfPages; pageNum++) {
-          try {
-            const page = await pdfDocument.getPage(pageNum);
+          const canvas = document.createElement("canvas");
+          canvas.width = scaled.width;
+          canvas.height = scaled.height;
+          const ctx = canvas.getContext("2d", { alpha: false });
+          if (!ctx) continue;
 
-            // 썸네일 해상도를 위해 2배 스케일로 렌더링
-            const viewport = page.getViewport({ scale: 1.0 });
-            const thumbWidth = 216; // 108 * 2 (레티나 대응)
-            const scale = thumbWidth / viewport.width;
-            const scaledViewport = page.getViewport({ scale });
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            const canvas = document.createElement("canvas");
-            canvas.width = scaledViewport.width;
-            canvas.height = scaledViewport.height;
-
-            const context = canvas.getContext("2d", { alpha: false });
-            if (!context) continue;
-
-            context.fillStyle = "#ffffff";
-            context.fillRect(0, 0, canvas.width, canvas.height);
-
-            await page.render({
-              canvas,
-              canvasContext: context,
-              viewport: scaledViewport,
-            }).promise;
-
-            newPageImages.set(pageNum, canvas.toDataURL("image/png"));
-          } catch (error) {
-            console.warn(`페이지 ${pageNum} 렌더링 실패:`, error);
-          }
+          await page.render({ canvas, canvasContext: ctx, viewport: scaled }).promise;
+          images.set(pageNum, canvas.toDataURL("image/png"));
+        } catch (e) {
+          console.warn(`페이지 ${pageNum} 렌더링 실패:`, e);
         }
-
-        setPageImages(newPageImages);
-      } catch (error) {
-        console.error("PDF 페이지 렌더링 중 오류:", error);
       }
+      setPageImages(images);
     };
 
     renderPages();
-  }, [pdfDocument, actualPdfPages]);
+  }, [pdfDocument]);
 
-  // PDF 페이지별 텍스트 추출 → 번역 항목 매핑
+  // ─── 4. PDF 텍스트 추출 → 번역 항목 매핑 ───
   useEffect(() => {
-    const buildPageMapping = async () => {
-      if (!pdfDocument || !actualPdfPages || data.length === 0) return;
+    const buildMapping = async () => {
+      if (!pdfDocument || isSampleMode || data.length === 0) return;
+      const numPages = pdfDocument.numPages;
 
-      try {
-        // 각 페이지의 텍스트를 추출
-        const pageTexts: string[] = [];
-        for (let pageNum = 1; pageNum <= actualPdfPages; pageNum++) {
-          const page = await pdfDocument.getPage(pageNum);
-          const textContent = await page.getTextContent();
-          const text = textContent.items
-            .map((item) => ("str" in item ? item.str : ""))
-            .join(" ")
-            .replace(/\s+/g, " ")
-            .toLowerCase();
-          pageTexts.push(text);
-        }
+      // 4-1. 각 페이지 텍스트 추출
+      const pageTexts: string[] = [];
+      for (let p = 1; p <= numPages; p++) {
+        const page = await pdfDocument.getPage(p);
+        const tc = await page.getTextContent();
+        const raw = tc.items.map((it) => ("str" in it ? it.str : "")).join(" ");
+        pageTexts.push(normalize(raw));
+      }
 
-        // 각 번역 항목의 sourceText가 어느 페이지에 속하는지 매칭
-        const mapping = new Map<number, number>();
-        const assigned = new Array<number>(data.length).fill(0);
+      // 4-2. 각 항목을 페이지에 매칭
+      const assigned = new Array<number>(data.length).fill(0);
 
-        for (let i = 0; i < data.length; i++) {
-          // sourceText에서 검색용 키워드 추출 (앞 40자 정도)
-          const source = data[i].sourceText.replace(/\s+/g, " ").toLowerCase();
-          const searchKey = source.slice(0, 40).trim();
-          if (!searchKey) continue;
+      for (let i = 0; i < data.length; i++) {
+        const src = normalize(data[i].sourceText);
+        if (!src) continue;
 
+        // 전략 1: 연속 단어 3~5개로 검색 (가장 정확)
+        const words = src.split(" ").filter(Boolean);
+        let found = false;
+
+        for (let wLen = Math.min(5, words.length); wLen >= 3 && !found; wLen--) {
+          const phrase = words.slice(0, wLen).join(" ");
           for (let p = 0; p < pageTexts.length; p++) {
-            if (pageTexts[p].includes(searchKey)) {
-              assigned[i] = p + 1; // 1-based page number
+            if (pageTexts[p].includes(phrase)) {
+              assigned[i] = p + 1;
+              found = true;
               break;
             }
           }
         }
 
-        // 매칭 안 된 항목은 이전 항목과 같은 페이지로 보정
-        for (let i = 0; i < assigned.length; i++) {
-          if (assigned[i] === 0 && i > 0) {
-            assigned[i] = assigned[i - 1];
-          }
-          if (assigned[i] === 0) {
-            assigned[i] = 1;
-          }
-        }
-
-        // 페이지별 첫 번째 data 인덱스 기록
-        for (let i = 0; i < assigned.length; i++) {
-          const pageNum = assigned[i];
-          if (!mapping.has(pageNum)) {
-            mapping.set(pageNum, i);
+        // 전략 2: 단어 1~2개라면 전체 문자열로 검색
+        if (!found && words.length > 0) {
+          const phrase = words.slice(0, Math.min(2, words.length)).join(" ");
+          for (let p = 0; p < pageTexts.length; p++) {
+            if (pageTexts[p].includes(phrase)) {
+              assigned[i] = p + 1;
+              found = true;
+              break;
+            }
           }
         }
-
-        setPageToDataIndex(mapping);
-        setDataToPage(assigned);
-      } catch (error) {
-        console.warn("페이지-텍스트 매핑 실패:", error);
       }
+
+      // 4-3. 매칭 안 된 항목 보정: 이전 항목과 같은 페이지
+      for (let i = 0; i < assigned.length; i++) {
+        if (assigned[i] === 0) {
+          assigned[i] = i > 0 ? assigned[i - 1] : 1;
+        }
+      }
+
+      // 4-4. state 반영
+      setDataToPage(assigned);
+      const p2i = new Map<number, number>();
+      for (let i = 0; i < assigned.length; i++) {
+        if (!p2i.has(assigned[i])) p2i.set(assigned[i], i);
+      }
+      setPageToFirstIdx(p2i);
     };
 
-    buildPageMapping();
-  }, [pdfDocument, actualPdfPages, data]);
+    buildMapping().catch(console.error);
+  }, [pdfDocument, isSampleMode, data]);
 
-  // 실제 PDF 페이지 수가 없을 때만 스크롤 기반 페이지 계산 (폴백)
-  useEffect(() => {
-    if (actualPdfPages !== null) return; // 실제 PDF 페이지 수가 있으면 스킵
-
-    const el = contentScrollRef.current;
-    if (!el || data.length === 0) return;
-
-    const updateTotalPages = () => {
-      const { scrollHeight, clientHeight } = el;
-
-      const maxScrollTop = scrollHeight - clientHeight;
-      const threshold = clientHeight * 0.15;
-
-      const pages =
-        maxScrollTop <= 0
-          ? 1
-          : Math.floor((maxScrollTop + threshold) / clientHeight) + 1;
-
-      setTotalPages((prev) => (prev === pages ? prev : pages));
-    };
-
-    updateTotalPages();
-
-    const ro = new ResizeObserver(() => {
-      requestAnimationFrame(updateTotalPages);
-    });
-
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [data, actualPdfPages]);
-
-  // 스크롤 시 현재 페이지 인덱스 갱신 (보이는 첫 항목 기준)
+  // ─── 5. 스크롤 → 현재 페이지 감지 ───
   useEffect(() => {
     const el = contentScrollRef.current;
     if (!el || dataToPage.length === 0) return;
 
-    const onScroll = () => {
-      const containerRect = el.getBoundingClientRect();
-      // 컨테이너 상단 + 약간의 오프셋 지점에 걸쳐있는 항목 찾기
-      const checkY = containerRect.top + 30;
+    // 페이지 경계: 각 페이지의 첫 번째 항목 index (오름차순)
+    const boundaries: { pageNum: number; dataIdx: number }[] = [];
+    const seen = new Set<number>();
+    for (let i = 0; i < dataToPage.length; i++) {
+      const p = dataToPage[i];
+      if (!seen.has(p)) {
+        seen.add(p);
+        boundaries.push({ pageNum: p, dataIdx: i });
+      }
+    }
+    if (boundaries.length === 0) return;
 
-      let visibleIdx = 0;
-      for (let i = 0; i < itemRefs.current.length; i++) {
-        const ref = itemRefs.current[i];
+    let rafId = 0;
+
+    const detect = () => {
+      const scrollTop = el.scrollTop;
+
+      // 역순 탐색: scrollTop이 해당 항목의 offsetTop을 지났으면 그 페이지
+      let currentPage = boundaries[0].pageNum;
+      for (let b = boundaries.length - 1; b >= 0; b--) {
+        const ref = itemRefs.current[boundaries[b].dataIdx];
         if (!ref) continue;
-        const rect = ref.getBoundingClientRect();
-        if (rect.bottom > checkY) {
-          visibleIdx = i;
+        // offsetTop = 항목의 스크롤 컨테이너(position:relative) 기준 위치
+        if (scrollTop + 60 >= ref.offsetTop) {
+          currentPage = boundaries[b].pageNum;
           break;
         }
       }
 
-      const pageNum = dataToPage[visibleIdx] ?? 1;
-      setSelectedPageIndex(pageNum - 1);
+      setSelectedPageIndex(currentPage - 1);
     };
-
-    el.addEventListener("scroll", onScroll, { passive: true });
-    return () => el.removeEventListener("scroll", onScroll);
-  }, [dataToPage]);
-
-  // 페이지 매핑이 없을 때 폴백: 뷰포트 높이 기반 스크롤 추적
-  useEffect(() => {
-    if (dataToPage.length > 0) return;
-    const el = contentScrollRef.current;
-    if (!el) return;
 
     const onScroll = () => {
-      const { scrollTop, clientHeight } = el;
-      const pageIndex = Math.min(
-        totalPages - 1,
-        Math.floor(scrollTop / clientHeight)
-      );
-      setSelectedPageIndex(pageIndex);
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = 0;
+        detect();
+      });
     };
 
     el.addEventListener("scroll", onScroll, { passive: true });
-    return () => el.removeEventListener("scroll", onScroll);
-  }, [totalPages, dataToPage]);
+    detect(); // 초기 상태
+    return () => {
+      el.removeEventListener("scroll", onScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, [dataToPage]);
 
-  const scrollToPage = (pageIndex: number) => {
-    const pageNum = pageIndex + 1; // 1-based
-    const dataIdx = pageToDataIndex.get(pageNum);
+  // ─── 6. 페이지 이동 ───
+  const scrollToPage = useCallback((pageIndex: number) => {
+    const pageNum = pageIndex + 1;
+    const dataIdx = pageToFirstIdx.get(pageNum);
 
-    // 매핑이 있으면 해당 번역 항목으로 스크롤
     if (dataIdx !== undefined && itemRefs.current[dataIdx]) {
-      itemRefs.current[dataIdx]!.scrollIntoView({ behavior: "smooth", block: "start" });
+      const el = contentScrollRef.current;
+      const target = itemRefs.current[dataIdx];
+      if (el && target) {
+        // scrollIntoView 대신 직접 계산 (스크롤 컨테이너 내부 정확한 위치)
+        const containerRect = el.getBoundingClientRect();
+        const targetRect = target.getBoundingClientRect();
+        const offset = targetRect.top - containerRect.top + el.scrollTop;
+        el.scrollTo({ top: offset, behavior: "smooth" });
+      }
       setSelectedPageIndex(pageIndex);
       return;
     }
 
-    // 폴백: 뷰포트 높이 기반 스크롤
+    // 폴백
     const el = contentScrollRef.current;
-    if (!el) return;
-    el.scrollTo({ top: pageIndex * el.clientHeight, behavior: "smooth" });
+    if (el) {
+      el.scrollTo({ top: pageIndex * el.clientHeight, behavior: "smooth" });
+    }
     setSelectedPageIndex(pageIndex);
-  };
+  }, [pageToFirstIdx]);
 
-  const handlePageChange = (page: number) => {
+  const handlePageChange = useCallback((page: number) => {
     const pageIndex = Math.max(0, Math.min(page - 1, totalPages - 1));
     scrollToPage(pageIndex);
-  };
+  }, [totalPages, scrollToPage]);
 
-  const handleToggleSidebar = () => {
-    setShowSidebar((prev) => !prev);
-  };
+  const handleToggleSidebar = () => setShowSidebar((prev) => !prev);
+  const handleFilterChange = (mode: "all" | "korean" | "english") => setFilterMode(mode);
 
-  const handleFilterChange = (mode: "all" | "korean" | "english") => {
-    setFilterMode(mode);
-  };
-
-  // PDF URL 가져오기
+  // ─── 7. PDF URL 가져오기 ───
   useEffect(() => {
+    if (isSampleMode) return;
     const fetchPdfUrl = async () => {
       try {
         const documentId = sessionStorage.getItem("documentId");
         if (!documentId) return;
 
-        const documentDetail = await getDocumentDetail(
-          documentId,
-          accessToken ?? undefined
-        );
-
-        if (documentDetail.storagePath) {
+        const detail = await getDocumentDetail(documentId, accessToken ?? undefined);
+        if (detail.storagePath) {
           const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://be-paper-dot.store";
-          // storagePath가 이미 전체 URL인지 확인
-          const url = documentDetail.storagePath.startsWith("http")
-            ? documentDetail.storagePath
-            : `${apiUrl}${documentDetail.storagePath.startsWith("/") ? "" : "/"}${documentDetail.storagePath}`;
+          const url = detail.storagePath.startsWith("http")
+            ? detail.storagePath
+            : `${apiUrl}${detail.storagePath.startsWith("/") ? "" : "/"}${detail.storagePath}`;
           setPdfUrl(url);
         }
       } catch (error) {
-        console.warn("PDF URL을 가져오는데 실패했습니다:", error);
+        console.warn("PDF URL 가져오기 실패:", error);
       }
     };
-
     fetchPdfUrl();
-  }, [accessToken]);
+  }, [accessToken, isSampleMode]);
 
+  // ─── 렌더링 ───
   return (
     <main className={styles.container}>
       <ReadHeader
@@ -429,8 +418,9 @@ export default function ReadList() {
                 <li key={index} className={styles.pageListItem}>
                   <button
                     type="button"
-                    className={`${styles.pageCard} ${index === selectedPageIndex ? styles.pageCardSelected : ""
-                      }`}
+                    className={`${styles.pageCard} ${
+                      index === selectedPageIndex ? styles.pageCardSelected : ""
+                    }`}
                     onClick={() => scrollToPage(index)}
                     aria-pressed={index === selectedPageIndex}>
                     <div className={styles.pagePreview}>
@@ -460,29 +450,39 @@ export default function ReadList() {
           role="region"
           aria-label="문서 본문"
           style={showSidebar ? {} : { width: "100%" }}>
-          {data.map((item, index) => (
-            <div
-              className={styles.docUnitIdItem}
-              key={item.docUnitId}
-              ref={(el) => { itemRefs.current[index] = el; }}>
-              {filterMode === "all" && (
-                <>
-                  <p className={styles.sourceText}>{item.sourceText}</p>
-                  <p className={styles.translatedText}>
-                    {item.translatedText}
-                  </p>
-                </>
-              )}
-              {filterMode === "english" && (
-                <p className={styles.sourceText}>{item.sourceText}</p>
-              )}
-              {filterMode === "korean" && (
-                <p className={styles.translatedText}>
-                  {item.translatedText}
-                </p>
-              )}
-            </div>
-          ))}
+          {data.map((item, index) => {
+            // 이전 항목과 페이지가 다르면 구분선 표시 (첫 항목 제외)
+            const showDivider =
+              dataToPage.length > 0 &&
+              index > 0 &&
+              dataToPage[index] !== dataToPage[index - 1];
+
+            return (
+              <div key={item.docUnitId}>
+                {showDivider && (
+                  <div className={styles.pageDivider}>
+                    Page {dataToPage[index]}
+                  </div>
+                )}
+                <div
+                  className={styles.docUnitIdItem}
+                  ref={(el) => { itemRefs.current[index] = el; }}>
+                  {filterMode === "all" && (
+                    <>
+                      <p className={styles.sourceText}>{item.sourceText}</p>
+                      <p className={styles.translatedText}>{item.translatedText}</p>
+                    </>
+                  )}
+                  {filterMode === "english" && (
+                    <p className={styles.sourceText}>{item.sourceText}</p>
+                  )}
+                  {filterMode === "korean" && (
+                    <p className={styles.translatedText}>{item.translatedText}</p>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </main>
