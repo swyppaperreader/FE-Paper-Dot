@@ -67,13 +67,29 @@
 
 .pagePreview {
   display: flex;
-  width: 108px;
-  padding-top: 24px;
+  width: 100%;
+  height: 100%;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   border-radius: 4px;
   background: #fff;
+  overflow: hidden;
+  position: relative;
+}
+
+.pageThumbIframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  pointer-events: none;
+}
+
+.pagePreviewPlaceholder {
+  width: 100%;
+  height: 100%;
+  background: #f0f4fa;
 }
 
 .pageNumber {
