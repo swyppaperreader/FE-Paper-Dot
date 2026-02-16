@@ -3,6 +3,8 @@
 import { useState, useRef, useEffect } from "react";
 import ReadHeader from "../../header/ReadHeader";
 import styles from "./readList.module.css";
+import { getDocumentDetail } from "@/app/services/document";
+import { useAccessTokenStore } from "@/app/store/useLogin";
 
 interface TranslationPair {
   docUnitId: number;
@@ -103,7 +105,9 @@ export default function ReadList() {
   const [totalPages, setTotalPages] = useState(1);
   const [showSidebar, setShowSidebar] = useState(true);
   const [filterMode, setFilterMode] = useState<"all" | "korean" | "english">("all");
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const contentScrollRef = useRef<HTMLDivElement>(null);
+  const accessToken = useAccessTokenStore((state) => state.accessToken);
 
   useEffect(() => {
     const el = contentScrollRef.current;
@@ -173,6 +177,34 @@ export default function ReadList() {
     setFilterMode(mode);
   };
 
+  // PDF URL 가져오기
+  useEffect(() => {
+    const fetchPdfUrl = async () => {
+      try {
+        const documentId = sessionStorage.getItem("documentId");
+        if (!documentId) return;
+
+        const documentDetail = await getDocumentDetail(
+          documentId,
+          accessToken ?? undefined
+        );
+
+        if (documentDetail.storagePath) {
+          const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://be-paper-dot.store";
+          // storagePath가 이미 전체 URL인지 확인
+          const url = documentDetail.storagePath.startsWith("http")
+            ? documentDetail.storagePath
+            : `${apiUrl}${documentDetail.storagePath.startsWith("/") ? "" : "/"}${documentDetail.storagePath}`;
+          setPdfUrl(url);
+        }
+      } catch (error) {
+        console.warn("PDF URL을 가져오는데 실패했습니다:", error);
+      }
+    };
+
+    fetchPdfUrl();
+  }, [accessToken]);
+
   return (
     <main className={styles.container}>
       <ReadHeader
@@ -196,7 +228,17 @@ export default function ReadList() {
                       }`}
                     onClick={() => scrollToPage(index)}
                     aria-pressed={index === selectedPageIndex}>
-                    <span className={styles.pagePreview} />
+                    <div className={styles.pagePreview}>
+                      {pdfUrl ? (
+                        <iframe
+                          src={`${pdfUrl}#page=${index + 1}&zoom=25`}
+                          className={styles.pageThumbIframe}
+                          title={`Page ${index + 1}`}
+                        />
+                      ) : (
+                        <div className={styles.pagePreviewPlaceholder} />
+                      )}
+                    </div>
                     <span className={styles.pageNumber}>{index + 1}</span>
                   </button>
                 </li>
