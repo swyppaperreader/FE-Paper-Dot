@@ -110,7 +110,10 @@ export default function ReadList() {
   const [actualPdfPages, setActualPdfPages] = useState<number | null>(null);
   const [pdfDocument, setPdfDocument] = useState<import("pdfjs-dist").PDFDocumentProxy | null>(null);
   const [pageImages, setPageImages] = useState<Map<number, string>>(new Map());
+  // PDF 페이지 번호(1-based) → 해당 페이지 첫 번째 data 인덱스(0-based)
+  const [pageToDataIndex, setPageToDataIndex] = useState<Map<number, number>>(new Map());
   const contentScrollRef = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   const accessToken = useAccessTokenStore((state) => state.accessToken);
 
   // 실제 PDF 문서 로드 및 페이지 수 가져오기
@@ -202,6 +205,70 @@ export default function ReadList() {
     renderPages();
   }, [pdfDocument, actualPdfPages]);
 
+  // PDF 페이지별 텍스트 추출 → 번역 항목 매핑
+  useEffect(() => {
+    const buildPageMapping = async () => {
+      if (!pdfDocument || !actualPdfPages || data.length === 0) return;
+
+      try {
+        // 각 페이지의 텍스트를 추출
+        const pageTexts: string[] = [];
+        for (let pageNum = 1; pageNum <= actualPdfPages; pageNum++) {
+          const page = await pdfDocument.getPage(pageNum);
+          const textContent = await page.getTextContent();
+          const text = textContent.items
+            .map((item) => ("str" in item ? item.str : ""))
+            .join(" ")
+            .replace(/\s+/g, " ")
+            .toLowerCase();
+          pageTexts.push(text);
+        }
+
+        // 각 번역 항목의 sourceText가 어느 페이지에 속하는지 매칭
+        const mapping = new Map<number, number>();
+        const assigned = new Array<number>(data.length).fill(0);
+
+        for (let i = 0; i < data.length; i++) {
+          // sourceText에서 검색용 키워드 추출 (앞 40자 정도)
+          const source = data[i].sourceText.replace(/\s+/g, " ").toLowerCase();
+          const searchKey = source.slice(0, 40).trim();
+          if (!searchKey) continue;
+
+          for (let p = 0; p < pageTexts.length; p++) {
+            if (pageTexts[p].includes(searchKey)) {
+              assigned[i] = p + 1; // 1-based page number
+              break;
+            }
+          }
+        }
+
+        // 매칭 안 된 항목은 이전 항목과 같은 페이지로 보정
+        for (let i = 0; i < assigned.length; i++) {
+          if (assigned[i] === 0 && i > 0) {
+            assigned[i] = assigned[i - 1];
+          }
+          if (assigned[i] === 0) {
+            assigned[i] = 1;
+          }
+        }
+
+        // 페이지별 첫 번째 data 인덱스 기록
+        for (let i = 0; i < assigned.length; i++) {
+          const pageNum = assigned[i];
+          if (!mapping.has(pageNum)) {
+            mapping.set(pageNum, i);
+          }
+        }
+
+        setPageToDataIndex(mapping);
+      } catch (error) {
+        console.warn("페이지-텍스트 매핑 실패:", error);
+      }
+    };
+
+    buildPageMapping();
+  }, [pdfDocument, actualPdfPages, data]);
+
   // 실제 PDF 페이지 수가 없을 때만 스크롤 기반 페이지 계산 (폴백)
   useEffect(() => {
     if (actualPdfPages !== null) return; // 실제 PDF 페이지 수가 있으면 스킵
@@ -233,8 +300,48 @@ export default function ReadList() {
     return () => ro.disconnect();
   }, [data, actualPdfPages]);
 
-  // 스크롤 시 현재 페이지 인덱스 갱신 (한 화면 = 1페이지)
+  // 스크롤 시 현재 페이지 인덱스 갱신 (보이는 첫 항목 기준)
   useEffect(() => {
+    const el = contentScrollRef.current;
+    if (!el || pageToDataIndex.size === 0) return;
+
+    // data index → page number 역매핑 생성
+    const dataIndexToPage = new Map<number, number>();
+    pageToDataIndex.forEach((dataIdx, pageNum) => {
+      dataIndexToPage.set(dataIdx, pageNum);
+    });
+    // 모든 data index에 대해 소속 페이지 채우기
+    const sortedEntries = Array.from(pageToDataIndex.entries()).sort((a, b) => a[1] - b[1]);
+
+    const onScroll = () => {
+      const scrollTop = el.scrollTop;
+      // 현재 보이는 첫 번째 항목 찾기
+      let visibleIdx = 0;
+      for (let i = 0; i < itemRefs.current.length; i++) {
+        const ref = itemRefs.current[i];
+        if (ref && ref.offsetTop + ref.offsetHeight > scrollTop + 10) {
+          visibleIdx = i;
+          break;
+        }
+      }
+      // 해당 항목이 속한 페이지 찾기
+      let currentPage = 1;
+      for (let j = sortedEntries.length - 1; j >= 0; j--) {
+        if (visibleIdx >= sortedEntries[j][1]) {
+          currentPage = sortedEntries[j][0];
+          break;
+        }
+      }
+      setSelectedPageIndex(currentPage - 1);
+    };
+
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, [pageToDataIndex]);
+
+  // 페이지 매핑이 없을 때 폴백: 뷰포트 높이 기반 스크롤 추적
+  useEffect(() => {
+    if (pageToDataIndex.size > 0) return;
     const el = contentScrollRef.current;
     if (!el) return;
 
@@ -249,19 +356,29 @@ export default function ReadList() {
 
     el.addEventListener("scroll", onScroll, { passive: true });
     return () => el.removeEventListener("scroll", onScroll);
-  }, [totalPages]);
+  }, [totalPages, pageToDataIndex]);
 
   const scrollToPage = (pageIndex: number) => {
+    const pageNum = pageIndex + 1; // 1-based
+    const dataIdx = pageToDataIndex.get(pageNum);
+
+    // 매핑이 있으면 해당 번역 항목으로 스크롤
+    if (dataIdx !== undefined && itemRefs.current[dataIdx]) {
+      itemRefs.current[dataIdx]!.scrollIntoView({ behavior: "smooth", block: "start" });
+      setSelectedPageIndex(pageIndex);
+      return;
+    }
+
+    // 폴백: 뷰포트 높이 기반 스크롤
     const el = contentScrollRef.current;
     if (!el) return;
-    const pageHeight = el.clientHeight;
-    el.scrollTo({ top: pageIndex * pageHeight, behavior: "smooth" });
+    el.scrollTo({ top: pageIndex * el.clientHeight, behavior: "smooth" });
+    setSelectedPageIndex(pageIndex);
   };
 
   const handlePageChange = (page: number) => {
     const pageIndex = Math.max(0, Math.min(page - 1, totalPages - 1));
     scrollToPage(pageIndex);
-    setSelectedPageIndex(pageIndex);
   };
 
   const handleToggleSidebar = () => {
@@ -350,8 +467,11 @@ export default function ReadList() {
           role="region"
           aria-label="문서 본문"
           style={showSidebar ? {} : { width: "100%" }}>
-          {data.map((item) => (
-            <div className={styles.docUnitIdItem} key={item.docUnitId}>
+          {data.map((item, index) => (
+            <div
+              className={styles.docUnitIdItem}
+              key={item.docUnitId}
+              ref={(el) => { itemRefs.current[index] = el; }}>
               {filterMode === "all" && (
                 <>
                   <p className={styles.sourceText}>{item.sourceText}</p>
