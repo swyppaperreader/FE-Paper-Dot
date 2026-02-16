@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import ReadHeader from "../../header/ReadHeader";
 import styles from "./readList.module.css";
 import { getDocumentDetail } from "@/app/services/document";
@@ -107,7 +108,7 @@ export default function ReadList() {
   const [filterMode, setFilterMode] = useState<"all" | "korean" | "english">("all");
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [actualPdfPages, setActualPdfPages] = useState<number | null>(null);
-  const [pdfDocument, setPdfDocument] = useState<any>(null);
+  const [pdfDocument, setPdfDocument] = useState<import("pdfjs-dist").PDFDocumentProxy | null>(null);
   const [pageImages, setPageImages] = useState<Map<number, string>>(new Map());
   const contentScrollRef = useRef<HTMLDivElement>(null);
   const accessToken = useAccessTokenStore((state) => state.accessToken);
@@ -180,6 +181,7 @@ export default function ReadList() {
             await page.render({
               canvasContext: context,
               viewport: scaledViewport,
+              canvas: canvas,
             }).promise;
 
             // Canvas를 이미지 데이터 URL로 변환
@@ -322,10 +324,13 @@ export default function ReadList() {
                     aria-pressed={index === selectedPageIndex}>
                     <div className={styles.pagePreview}>
                       {pageImages.has(index + 1) ? (
-                        <img
-                          src={pageImages.get(index + 1)}
+                        <Image
+                          src={pageImages.get(index + 1) || ""}
                           alt={`Page ${index + 1}`}
+                          width={108}
+                          height={140}
                           className={styles.pageThumbImage}
+                          unoptimized
                         />
                       ) : (
                         <div className={styles.pagePreviewPlaceholder} />
