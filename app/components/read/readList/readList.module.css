@@ -119,6 +119,25 @@
   overflow-y: auto;
 }
 
+.pageDivider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 0;
+  color: #8b95a8;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.26px;
+}
+
+.pageDivider::before,
+.pageDivider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #d4dbe8;
+}
+
 .docUnitIdItem {
   display: flex;
   flex-direction: column;
