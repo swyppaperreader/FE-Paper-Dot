@@ -139,6 +139,17 @@ export default function NewDocumentPage() {
           sessionStorage.setItem("documentId", documentIdStr);
         }
 
+        // PDF 파일 데이터를 sessionStorage에 저장 (읽기 페이지에서 사용)
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            sessionStorage.setItem("pdfFileData", reader.result as string);
+          } catch (e) {
+            console.warn("PDF 데이터 저장 실패 (파일이 너무 큼):", e);
+          }
+        };
+        reader.readAsDataURL(currentFile.file);
+
         setUploadingFiles((prev) =>
           prev.map((file) =>
             file.id === currentFile?.id

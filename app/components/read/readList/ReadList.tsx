@@ -116,23 +116,35 @@ export default function ReadList() {
   // 실제 PDF 문서 로드 및 페이지 수 가져오기
   useEffect(() => {
     const loadPdf = async () => {
-      if (!pdfUrl) return;
-
       try {
-        // PDF.js를 사용하여 PDF 문서 로드
         const pdfjsLib = await import("pdfjs-dist");
-        pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
 
-        const loadingTask = pdfjsLib.getDocument({
-          url: pdfUrl,
-          withCredentials: true,
-        });
-        const pdf = await loadingTask.promise;
-        const numPages = pdf.numPages;
+        // 1순위: sessionStorage에 저장된 PDF 데이터 사용
+        const pdfDataUrl = sessionStorage.getItem("pdfFileData");
+        let pdf: import("pdfjs-dist").PDFDocumentProxy | null = null;
+
+        if (pdfDataUrl) {
+          const base64 = pdfDataUrl.split(",")[1];
+          const binaryString = atob(base64);
+          const bytes = new Uint8Array(binaryString.length);
+          for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+          }
+          pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
+        } else if (pdfUrl) {
+          // 2순위: 서버 URL에서 로드
+          pdf = await pdfjsLib.getDocument({
+            url: pdfUrl,
+            withCredentials: true,
+          }).promise;
+        }
+
+        if (!pdf) return;
 
         setPdfDocument(pdf);
-        setActualPdfPages(numPages);
-        setTotalPages(numPages); // 실제 PDF 페이지 수로 설정
+        setActualPdfPages(pdf.numPages);
+        setTotalPages(pdf.numPages);
       } catch (error) {
         console.warn("PDF 문서를 로드하는데 실패했습니다:", error);
       }
@@ -149,44 +161,33 @@ export default function ReadList() {
       try {
         const newPageImages = new Map<number, string>();
 
-        // 각 페이지를 순차적으로 렌더링
         for (let pageNum = 1; pageNum <= actualPdfPages; pageNum++) {
           try {
             const page = await pdfDocument.getPage(pageNum);
 
-            // 카드 크기에 맞는 스케일 계산 (카드 너비 약 108px, 높이 140px)
+            // 썸네일 해상도를 위해 2배 스케일로 렌더링
             const viewport = page.getViewport({ scale: 1.0 });
-            const cardWidth = 108;
-            const cardHeight = 140;
-
-            // 비율을 유지하면서 카드에 맞게 스케일 계산
-            const scaleX = cardWidth / viewport.width;
-            const scaleY = cardHeight / viewport.height;
-            const scale = Math.min(scaleX, scaleY) * 0.95; // 약간의 여백을 위해 0.95 배율
-
+            const thumbWidth = 216; // 108 * 2 (레티나 대응)
+            const scale = thumbWidth / viewport.width;
             const scaledViewport = page.getViewport({ scale });
 
             const canvas = document.createElement("canvas");
-            const context = canvas.getContext("2d", { alpha: false });
+            canvas.width = scaledViewport.width;
+            canvas.height = scaledViewport.height;
 
+            const context = canvas.getContext("2d", { alpha: false });
             if (!context) continue;
 
-            canvas.height = scaledViewport.height;
-            canvas.width = scaledViewport.width;
-
-            // 배경을 흰색으로 설정
             context.fillStyle = "#ffffff";
             context.fillRect(0, 0, canvas.width, canvas.height);
 
             await page.render({
+              canvas,
               canvasContext: context,
               viewport: scaledViewport,
-              canvas: canvas,
             }).promise;
 
-            // Canvas를 이미지 데이터 URL로 변환
-            const imageUrl = canvas.toDataURL("image/png");
-            newPageImages.set(pageNum, imageUrl);
+            newPageImages.set(pageNum, canvas.toDataURL("image/png"));
           } catch (error) {
             console.warn(`페이지 ${pageNum} 렌더링 실패:`, error);
           }
