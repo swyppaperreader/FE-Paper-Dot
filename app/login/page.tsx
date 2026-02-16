@@ -3,7 +3,6 @@
 import React from "react";
 import Image from "next/image";
 import styles from "./login.module.css";
-import Link from "next/link";
 
 export default function LoginPage() {
   // const REST_API_KEY = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID;

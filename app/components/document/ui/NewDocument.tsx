@@ -180,7 +180,7 @@ export default function NewDocumentPage() {
         const maxAttempts = 20;
         const intervalMs = 3000;
         let lastError: Error | null = null;
-        
+
         for (let attempt = 0; attempt < maxAttempts; attempt++) {
           try {
             await new Promise((r) => setTimeout(r, intervalMs));
@@ -217,7 +217,7 @@ export default function NewDocumentPage() {
             console.warn(`번역 조회 시도 ${attempt + 1}/${maxAttempts} 실패:`, error.message);
           }
         }
-        
+
         // 최종 실패 시 사용자에게 알림
         if (lastError) {
           alert(
@@ -243,7 +243,7 @@ export default function NewDocumentPage() {
     };
 
     requestTranslation();
-  }, [document?.documentId, accessToken, uploadingFiles]);
+  }, [document, accessToken, uploadingFiles]);
 
   console.log(document);
   console.log("translatedText", translatedText);
