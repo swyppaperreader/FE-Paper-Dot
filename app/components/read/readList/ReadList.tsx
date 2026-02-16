@@ -107,16 +107,18 @@ export default function ReadList() {
   const [filterMode, setFilterMode] = useState<"all" | "korean" | "english">("all");
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [actualPdfPages, setActualPdfPages] = useState<number | null>(null);
+  const [pdfDocument, setPdfDocument] = useState<any>(null);
+  const [pageImages, setPageImages] = useState<Map<number, string>>(new Map());
   const contentScrollRef = useRef<HTMLDivElement>(null);
   const accessToken = useAccessTokenStore((state) => state.accessToken);
 
-  // 실제 PDF 페이지 수 가져오기
+  // 실제 PDF 문서 로드 및 페이지 수 가져오기
   useEffect(() => {
-    const fetchPdfPages = async () => {
+    const loadPdf = async () => {
       if (!pdfUrl) return;
 
       try {
-        // PDF.js를 사용하여 페이지 수 가져오기
+        // PDF.js를 사용하여 PDF 문서 로드
         const pdfjsLib = await import("pdfjs-dist");
         pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 
@@ -126,29 +128,78 @@ export default function ReadList() {
         });
         const pdf = await loadingTask.promise;
         const numPages = pdf.numPages;
+
+        setPdfDocument(pdf);
         setActualPdfPages(numPages);
-        setTotalPages(numPages);
+        setTotalPages(numPages); // 실제 PDF 페이지 수로 설정
       } catch (error) {
-        console.warn("PDF 페이지 수를 가져오는데 실패했습니다:", error);
-        // 실패 시 기존 로직 사용
-        const el = contentScrollRef.current;
-        if (el && data.length > 0) {
-          const { scrollHeight, clientHeight } = el;
-          const maxScrollTop = scrollHeight - clientHeight;
-          const threshold = clientHeight * 0.15;
-          const pages =
-            maxScrollTop <= 0
-              ? 1
-              : Math.floor((maxScrollTop + threshold) / clientHeight) + 1;
-          setTotalPages(pages);
-        }
+        console.warn("PDF 문서를 로드하는데 실패했습니다:", error);
       }
     };
 
-    fetchPdfPages();
-  }, [pdfUrl, data.length]);
+    loadPdf();
+  }, [pdfUrl]);
 
-  // PDF 페이지 수가 없을 때만 스크롤 기반 페이지 계산
+  // 각 페이지를 이미지로 렌더링
+  useEffect(() => {
+    const renderPages = async () => {
+      if (!pdfDocument || !actualPdfPages) return;
+
+      try {
+        const newPageImages = new Map<number, string>();
+
+        // 각 페이지를 순차적으로 렌더링
+        for (let pageNum = 1; pageNum <= actualPdfPages; pageNum++) {
+          try {
+            const page = await pdfDocument.getPage(pageNum);
+
+            // 카드 크기에 맞는 스케일 계산 (카드 너비 약 108px, 높이 140px)
+            const viewport = page.getViewport({ scale: 1.0 });
+            const cardWidth = 108;
+            const cardHeight = 140;
+
+            // 비율을 유지하면서 카드에 맞게 스케일 계산
+            const scaleX = cardWidth / viewport.width;
+            const scaleY = cardHeight / viewport.height;
+            const scale = Math.min(scaleX, scaleY) * 0.95; // 약간의 여백을 위해 0.95 배율
+
+            const scaledViewport = page.getViewport({ scale });
+
+            const canvas = document.createElement("canvas");
+            const context = canvas.getContext("2d", { alpha: false });
+
+            if (!context) continue;
+
+            canvas.height = scaledViewport.height;
+            canvas.width = scaledViewport.width;
+
+            // 배경을 흰색으로 설정
+            context.fillStyle = "#ffffff";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+
+            await page.render({
+              canvasContext: context,
+              viewport: scaledViewport,
+            }).promise;
+
+            // Canvas를 이미지 데이터 URL로 변환
+            const imageUrl = canvas.toDataURL("image/png");
+            newPageImages.set(pageNum, imageUrl);
+          } catch (error) {
+            console.warn(`페이지 ${pageNum} 렌더링 실패:`, error);
+          }
+        }
+
+        setPageImages(newPageImages);
+      } catch (error) {
+        console.error("PDF 페이지 렌더링 중 오류:", error);
+      }
+    };
+
+    renderPages();
+  }, [pdfDocument, actualPdfPages]);
+
+  // 실제 PDF 페이지 수가 없을 때만 스크롤 기반 페이지 계산 (폴백)
   useEffect(() => {
     if (actualPdfPages !== null) return; // 실제 PDF 페이지 수가 있으면 스킵
 
@@ -270,11 +321,11 @@ export default function ReadList() {
                     onClick={() => scrollToPage(index)}
                     aria-pressed={index === selectedPageIndex}>
                     <div className={styles.pagePreview}>
-                      {pdfUrl ? (
-                        <iframe
-                          src={`${pdfUrl}#page=${index + 1}&zoom=25`}
-                          className={styles.pageThumbIframe}
-                          title={`Page ${index + 1}`}
+                      {pageImages.has(index + 1) ? (
+                        <img
+                          src={pageImages.get(index + 1)}
+                          alt={`Page ${index + 1}`}
+                          className={styles.pageThumbImage}
                         />
                       ) : (
                         <div className={styles.pagePreviewPlaceholder} />
@@ -298,14 +349,18 @@ export default function ReadList() {
               {filterMode === "all" && (
                 <>
                   <p className={styles.sourceText}>{item.sourceText}</p>
-                  <p className={styles.translatedText}>{item.translatedText}</p>
+                  <p className={styles.translatedText}>
+                    {item.translatedText}
+                  </p>
                 </>
               )}
               {filterMode === "english" && (
                 <p className={styles.sourceText}>{item.sourceText}</p>
               )}
               {filterMode === "korean" && (
-                <p className={styles.translatedText}>{item.translatedText}</p>
+                <p className={styles.translatedText}>
+                  {item.translatedText}
+                </p>
               )}
             </div>
           ))}
