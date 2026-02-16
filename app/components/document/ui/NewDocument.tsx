@@ -43,7 +43,6 @@ export default function NewDocumentPage() {
   const [isTranslating, setIsTranslating] = useState(false);
   const [document, setDocument] = useState<Document | null>(null);
   const [translatedText, setTranslatedText] = useState<TranslationPair[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
 
   const userInfo = useLoginStore((state) => state.userInfo);
   const accessToken = useAccessTokenStore((state) => state.accessToken);
@@ -175,19 +174,23 @@ export default function NewDocumentPage() {
     const requestTranslation = async () => {
       try {
         setIsTranslating(true);
-        // 1) 문서 처리 파이프라인 (서버가 비동기로 처리함)
         await postTranslation(document.documentId);
-        // 2) 처리 완료될 때까지 주기적으로 조회 (폴링)
         const data = await getTranslation(document.documentId);
-        setTranslatedText(data);
-        if (data.length === 0) {
-          setIsLoading(true);
+        const list = Array.isArray(data) ? data : [];
+        setTranslatedText(list);
+        if (list.length > 0 && uploadingFiles[0]) {
+          sessionStorage.setItem("translationPairs", JSON.stringify(list));
+          sessionStorage.setItem("fileName", uploadingFiles[0].file.name);
+          setUploadingFiles((prev) =>
+            prev.map((f) =>
+              f.status === "completed" ? { ...f, progress: 100 } : f
+            )
+          );
         }
-        setIsLoading(false);
-        console.log("data", data);
       } catch (error) {
         console.error("번역 요청 실패:", error);
-        throw error;
+      } finally {
+        setIsTranslating(false);
       }
     };
 
@@ -208,9 +211,10 @@ export default function NewDocumentPage() {
             </p>
           </div>
 
-          {isLoading && (
-            <div className="flex justify-center items-center h-screen">
-              <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
+          {document && translatedText.length === 0 && isTranslating && (
+            <div className={styles.loadingOverlay}>
+              <div className={styles.loadingSpinner} aria-hidden />
+              <p className={styles.loadingText}>문서를 불러오는 중입니다...</p>
             </div>
           )}
 
