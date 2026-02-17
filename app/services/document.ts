@@ -141,31 +141,42 @@ export const requestLLM = async (file: File, accessToken?: string) => {
   }
 };
 
-export const getTranslationStatus = async (documentId: string) => {
+export interface TranslationEvent {
+  type: string;
+  data: {
+    documentId: string;
+    status: string;
+    progress: number;
+    message: string;
+  };
+}
+
+export const getTranslationStatus = async (
+  documentId: string,
+  onMessage: (event: TranslationEvent) => void,
+  onError: (err: Event) => void
+) => {
   const url = `https://be-paper-dot.store/api/v1/documents/${documentId}/translation-events`;
-  try {
-    const response = await fetch(url, {
-      method: "GET",
-      credentials: "include",
-    });
-    if (!response.ok) {
-      let bodyText = "";
-      try {
-        bodyText = await response.text();
-      } catch {
-        bodyText = "(body 읽기 실패)";
-      }
-      const msg = `getTranslationStatus 실패: status=${response.status} ${
-        response.statusText
-      }, url=${url}, body=${bodyText.slice(0, 200)}`;
-      throw new Error(msg);
+  const eventSource = new EventSource(url, {
+    withCredentials: true,
+  });
+
+  eventSource.onmessage = (event) => {
+    try {
+      const parsed = JSON.parse(event.data);
+      onMessage(parsed);
+    } catch (e) {
+      console.error("JSON 파싱 실패:", e);
     }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    if (error instanceof Error) throw error;
-    throw new Error(String(error));
-  }
+  };
+
+  eventSource.onerror = (err) => {
+    console.error("SSE 에러:", err);
+    if (onError) onError(err);
+    eventSource.close();
+  };
+
+  return eventSource;
 };
 
 export const postTranslation = async (
