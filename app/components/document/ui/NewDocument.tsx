@@ -179,6 +179,7 @@ export default function NewDocumentPage() {
   // 업로드 성공 후: postTranslation → 응답 온 뒤 getTranslation 폴링 (404 = 아직 처리 중)
   useEffect(() => {
     if (!document || !uploadingFiles[0]?.file || !accessToken) return;
+    console.log("document", document.documentId);
 
     const applyResult = (list: TranslationPair[]) => {
       if (list.length === 0) return false;
@@ -199,9 +200,9 @@ export default function NewDocumentPage() {
       try {
         setIsTranslating(true);
         await postTranslation(document.documentId);
-        // 번역이 준비될 때까지 폴링 (404면 서버가 아직 처리 중)
-        const maxAttempts = 25;
-        const intervalMs = 3000;
+        // 번역이 준비될 때까지 폴링 (404 = 아직 처리 중, 간격 넉넉히)
+        const maxAttempts = 20;
+        const intervalMs = 6000;
         for (let i = 0; i < maxAttempts; i++) {
           await new Promise((r) => setTimeout(r, intervalMs));
           const data = await getTranslation(document.documentId, accessToken);
@@ -212,7 +213,7 @@ export default function NewDocumentPage() {
           }
         }
         console.warn(
-          "번역 결과를 가져오지 못했습니다. 잠시 후 새로고침 후 다시 시도해보세요."
+          "번역 결과를 가져오지 못했습니다. 새로고침 후 다시 시도해주세요."
         );
       } catch (e) {
         console.error("번역 요청/조회 실패:", e);
