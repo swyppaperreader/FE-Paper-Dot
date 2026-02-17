@@ -1,5 +1,3 @@
-import { EventSourcePolyfill } from "event-source-polyfill";
-
 export const postDocuments = async (
   formData: FormData,
   accessToken?: string
@@ -52,14 +50,13 @@ export const getTranslatedDocument = async (
       headers["Authorization"] = `Bearer ${accessToken}`;
     }
 
-    const response = await fetch(
-      `${apiUrl}/api/v1/documents/${documentId}/translation-pairs`,
-      {
-        method: "GET",
-        headers,
-        credentials: "include",
-      }
-    );
+    const url = `${apiUrl}/api/v1/documents/${documentId}/translation-pairs`;
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers,
+      credentials: "include",
+    });
 
     // HTML 응답 감지 (인증 실패 시 로그인 페이지 반환)
     const contentType = response.headers.get("content-type") || "";
@@ -143,96 +140,51 @@ export const requestLLM = async (file: File, accessToken?: string) => {
   }
 };
 
-export interface TranslationSubscribedEvent {
-  type: "subscribed";
-  data: { documentId: number };
+/** 폴링용: 번역 상태 1회 조회. 상태 API가 없으면 404 시 { state: "PENDING" } 반환 */
+export interface TranslationStatusPollResult {
+  state: string; // STARTED | COMPLETED | FAILED | NO_CONTENT | PENDING
+  translated?: number;
+  total?: number;
+  message?: string;
 }
 
-export interface TranslationStateEvent {
-  type: "state";
-  data: {
-    documentId: number;
-    state: string; // STARTED | COMPLETED | FAILED | NO_CONTENT
-    message?: string;
-  };
-}
-
-export interface TranslationProgressEvent {
-  type: "progress";
-  data: {
-    documentId: number;
-    translated: number;
-    total: number;
-  };
-}
-
-export interface TranslationBatchFailedEvent {
-  type: "batch_failed";
-  data: {
-    documentId: number;
-    start: number;
-    end: number;
-    reason: string;
-  };
-}
-
-export type TranslationStreamEvent =
-  | TranslationSubscribedEvent
-  | TranslationStateEvent
-  | TranslationProgressEvent
-  | TranslationBatchFailedEvent;
-
-const parseEvent = (
-  eventType: string,
-  dataStr: string
-): TranslationStreamEvent | null => {
-  try {
-    const data = JSON.parse(dataStr);
-    return {
-      type: eventType as TranslationStreamEvent["type"],
-      data,
-    } as TranslationStreamEvent;
-  } catch (e) {
-    console.error("SSE JSON 파싱 실패:", e);
-    return null;
-  }
-};
-
-export const getTranslationStatus = (
-  documentId: string,
-  onMessage: (event: TranslationStreamEvent) => void,
-  onError: (err: Event) => void,
+export const getTranslationStatusPoll = async (
+  documentId: string | number,
   accessToken?: string
-): EventSourcePolyfill => {
-  const url = `https://be-paper-dot.store/api/v1/documents/${documentId}/translation-events`;
-  const eventSource = new EventSourcePolyfill(url, {
-    withCredentials: true,
-    heartbeatTimeout: 120000, // 2분 (서버가 45초 안에 첫 이벤트를 안 보내도 끊기지 않도록)
-    ...(accessToken && {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    }),
-  });
-
-  ["subscribed", "state", "progress", "batch_failed"].forEach((eventType) => {
-    eventSource.addEventListener(eventType, (e: MessageEvent) => {
-      const parsed = parseEvent(eventType, e.data);
-      if (parsed) onMessage(parsed);
-    });
-  });
-
-  eventSource.onerror = (err) => {
-    const state = eventSource.readyState; // 0=CONNECTING, 1=OPEN, 2=CLOSED
-    const stateText = ["CONNECTING", "OPEN", "CLOSED"][state] ?? String(state);
-    console.error(
-      "[SSE 에러]",
-      { url, documentId, readyState: stateText },
-      err
-    );
-    if (onError) onError(err);
-    eventSource.close();
+): Promise<TranslationStatusPollResult> => {
+  const apiUrl = "https://be-paper-dot.store";
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
   };
+  if (accessToken) {
+    headers["Authorization"] = `Bearer ${accessToken}`;
+  }
 
-  return eventSource;
+  const response = await fetch(
+    `${apiUrl}/api/v1/documents/${documentId}/translation-status`,
+    { method: "GET", headers, credentials: "include" }
+  );
+
+  if (response.status === 404) {
+    return { state: "PENDING" };
+  }
+
+  const contentType = response.headers.get("content-type") || "";
+  if (contentType.includes("text/html")) {
+    throw new Error("인증이 필요합니다. 로그인해주세요.");
+  }
+
+  if (!response.ok) {
+    throw new Error("번역 상태 조회에 실패했습니다.");
+  }
+
+  const data = await response.json();
+  return {
+    state: (data.state ?? "PENDING").toUpperCase(),
+    translated: data.translated,
+    total: data.total,
+    message: data.message,
+  };
 };
 
 export const postTranslation = async (

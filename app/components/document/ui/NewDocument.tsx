@@ -6,7 +6,6 @@ import styles from "./NewDocument.module.css";
 import { formatFileSize } from "@/app/utils/useFormatFileSize";
 import {
   getTranslation,
-  getTranslationStatus,
   postDocuments,
   postTranslation,
 } from "@/app/services/document";
@@ -41,18 +40,18 @@ export default function NewDocumentPage() {
   const [, setIsDragging] = useState(false);
   const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isTranslating, setIsTranslating] = useState(false);
   const [document, setDocument] = useState<Document | null>(null);
-  const [translatedText, setTranslatedText] = useState<TranslationPair[]>([]);
+  const [isTranslating, setIsTranslating] = useState(false);
   const [translationProgress, setTranslationProgress] = useState<{
     translated: number;
     total: number;
   } | null>(null);
+  const [translatedText, setTranslatedText] = useState<TranslationPair[]>([]);
   const [batchFailures, setBatchFailures] = useState<
     { start: number; end: number; reason: string }[]
   >([]);
   const [translationError, setTranslationError] = useState<string | null>(null);
-  const eventSourceRef = useRef<ReturnType<typeof getTranslationStatus> | null>(
+  const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(
     null
   );
   const cancelledRef = useRef(false);
@@ -190,141 +189,64 @@ export default function NewDocumentPage() {
     uploadFile();
   }, [uploadingFiles, accessToken, userInfo?.userId]);
 
-  // documentId가 바뀔 때만 이전 에러/배치실패 메시지 초기화 (set-state-in-effect 회피)
+  // document 올라오면 번역 시작 → translation-pairs 계속 재호출, 값 있으면 로딩 멈추고 결과 표시
   useEffect(() => {
-    if (document?.documentId) {
-      setTranslationError(null);
-      setBatchFailures([]);
-    }
-  }, [document?.documentId]);
+    if (!document?.documentId || !uploadingFiles[0]?.file || !accessToken)
+      return;
 
-  // 업로드 성공 후: postTranslation → SSE(getTranslationStatus)로 완료 이벤트 수신 → getTranslation으로 결과 적용
-  useEffect(() => {
-    if (!document || !uploadingFiles[0]?.file || !accessToken) return;
-
-    cancelledRef.current = false;
+    const POLL_MS = 3000;
 
     const applyResult = (list: TranslationPair[]) => {
-      if (list.length === 0) return false;
+      if (list.length === 0) return;
       setTranslatedText(list);
-      if (uploadingFiles[0]) {
-        sessionStorage.setItem("translationPairs", JSON.stringify(list));
-        sessionStorage.setItem("fileName", uploadingFiles[0].file.name);
-        setUploadingFiles((prev) =>
-          prev.map((f) =>
-            f.status === "completed" ? { ...f, progress: 100 } : f
-          )
-        );
-      }
-      return true;
+      sessionStorage.setItem("translationPairs", JSON.stringify(list));
+      sessionStorage.setItem("fileName", uploadingFiles[0].file.name);
+      setUploadingFiles((prev) =>
+        prev.map((f) =>
+          f.status === "completed" ? { ...f, progress: 100 } : f
+        )
+      );
     };
 
     const run = async () => {
       try {
         setIsTranslating(true);
+        setTranslationError(null);
         await postTranslation(document.documentId, accessToken);
-        if (cancelledRef.current) return;
-
-        setTranslationProgress(null);
-        const eventSource = getTranslationStatus(
-          document.documentId,
-          async (event) => {
-            if (cancelledRef.current) return;
-            if (event.type === "progress") {
-              setTranslationProgress({
-                translated: event.data.translated,
-                total: event.data.total,
-              });
-            }
-            if (event.type === "batch_failed") {
-              setBatchFailures((prev) => [
-                ...prev,
-                {
-                  start: event.data.start,
-                  end: event.data.end,
-                  reason: event.data.reason ?? "",
-                },
-              ]);
-            }
-            if (event.type === "state") {
-              const state = event.data.state?.toUpperCase?.() ?? "";
-              if (state === "COMPLETED") {
-                eventSource.close();
-                eventSourceRef.current = null;
-                setTranslationProgress(null);
-                if (cancelledRef.current) return;
-                try {
-                  const PAGE_SIZE = 20;
-                  const MAX_PAGES = 100;
-                  const all: TranslationPair[] = [];
-                  for (let page = 1; page <= MAX_PAGES; page += 1) {
-                    if (cancelledRef.current) return;
-                    const chunk = await getTranslation(
-                      document.documentId,
-                      accessToken
-                    );
-                    const arr = Array.isArray(chunk) ? chunk : [];
-                    all.push(...arr);
-                    if (arr.length < PAGE_SIZE) break;
-                  }
-                  if (!cancelledRef.current && applyResult(all))
-                    setIsTranslating(false);
-                } catch (e) {
-                  if (!cancelledRef.current) {
-                    console.error("[번역 결과 조회 실패]", e);
-                    setTranslationError("번역 결과를 불러오지 못했어요.");
-                    setIsTranslating(false);
-                  }
-                }
-              }
-              if (state === "FAILED" || state === "NO_CONTENT") {
-                eventSource.close();
-                eventSourceRef.current = null;
-                setTranslationProgress(null);
-                if (!cancelledRef.current) {
-                  setTranslationError(
-                    event.data.message ??
-                      (state === "NO_CONTENT"
-                        ? "번역할 내용이 없어요."
-                        : "번역에 실패했어요.")
-                  );
-                  setIsTranslating(false);
-                }
-              }
-            }
-          },
-          () => {
-            eventSource.close();
-            eventSourceRef.current = null;
-            if (!cancelledRef.current) {
-              setTranslationProgress(null);
-              setTranslationError((prev) => prev ?? "연결이 끊어졌어요.");
-              setIsTranslating(false);
-            }
-          },
-          accessToken
-        );
-        eventSourceRef.current = eventSource;
       } catch (e) {
-        if (!cancelledRef.current) {
-          const err = e instanceof Error ? e : new Error(String(e));
-          console.error("[번역 요청 실패]", err.message);
-          if (err.stack) console.error(err.stack);
-          setIsTranslating(false);
-        }
+        console.error("[번역 시작 실패]", e);
+        setIsTranslating(false);
+        setTranslationError("번역을 시작하지 못했어요.");
+        return;
       }
+
+      const poll = async () => {
+        try {
+          const data = await getTranslation(document.documentId, accessToken);
+          if (!Array.isArray(data) || data.length === 0) return;
+
+          clearInterval(intervalId);
+          pollingIntervalRef.current = null;
+          applyResult(data);
+          setIsTranslating(false);
+        } catch (e) {
+          console.error("[번역 결과 조회]", e);
+        }
+      };
+
+      poll();
+      const intervalId = setInterval(poll, POLL_MS);
+      pollingIntervalRef.current = intervalId;
     };
 
     run();
 
     return () => {
-      cancelledRef.current = true;
-      if (eventSourceRef.current) {
-        eventSourceRef.current.close();
-        eventSourceRef.current = null;
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+        pollingIntervalRef.current = null;
       }
     };
-    // documentId 기준으로 1회만 실행. accessToken/document/uploadingFiles 포함 시 중간에 effect 재실행되어 SSE가 끊길 수 있음
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [document?.documentId]);
 
