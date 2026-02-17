@@ -48,6 +48,10 @@ export default function NewDocumentPage() {
     translated: number;
     total: number;
   } | null>(null);
+  const [batchFailures, setBatchFailures] = useState<
+    { start: number; end: number; reason: string }[]
+  >([]);
+  const [translationError, setTranslationError] = useState<string | null>(null);
   const eventSourceRef = useRef<ReturnType<typeof getTranslationStatus> | null>(
     null
   );
@@ -118,7 +122,8 @@ export default function NewDocumentPage() {
 
   const handleRemoveFile = () => {
     setUploadingFiles([]);
-    console.log("uploadingFiles", uploadingFiles);
+    setTranslationError(null);
+    setBatchFailures([]);
   };
 
   // 파일이 추가되면 자동으로 업로드 시작
@@ -190,6 +195,8 @@ export default function NewDocumentPage() {
     if (!document || !uploadingFiles[0]?.file || !accessToken) return;
 
     cancelledRef.current = false;
+    setTranslationError(null);
+    setBatchFailures([]);
 
     const applyResult = (list: TranslationPair[]) => {
       if (list.length === 0) return false;
@@ -223,13 +230,19 @@ export default function NewDocumentPage() {
                 total: event.data.total,
               });
             }
+            if (event.type === "batch_failed") {
+              setBatchFailures((prev) => [
+                ...prev,
+                {
+                  start: event.data.start,
+                  end: event.data.end,
+                  reason: event.data.reason ?? "",
+                },
+              ]);
+            }
             if (event.type === "state") {
               const state = event.data.state?.toUpperCase?.() ?? "";
-              if (
-                state === "COMPLETED" ||
-                state === "DONE" ||
-                state === "SUCCESS"
-              ) {
+              if (state === "COMPLETED") {
                 eventSource.close();
                 eventSourceRef.current = null;
                 setTranslationProgress(null);
@@ -253,8 +266,23 @@ export default function NewDocumentPage() {
                 } catch (e) {
                   if (!cancelledRef.current) {
                     console.error("[번역 결과 조회 실패]", e);
+                    setTranslationError("번역 결과를 불러오지 못했어요.");
                     setIsTranslating(false);
                   }
+                }
+              }
+              if (state === "FAILED" || state === "NO_CONTENT") {
+                eventSource.close();
+                eventSourceRef.current = null;
+                setTranslationProgress(null);
+                if (!cancelledRef.current) {
+                  setTranslationError(
+                    event.data.message ??
+                      (state === "NO_CONTENT"
+                        ? "번역할 내용이 없어요."
+                        : "번역에 실패했어요.")
+                  );
+                  setIsTranslating(false);
                 }
               }
             }
@@ -264,6 +292,7 @@ export default function NewDocumentPage() {
             eventSourceRef.current = null;
             if (!cancelledRef.current) {
               setTranslationProgress(null);
+              setTranslationError((prev) => prev ?? "연결이 끊어졌어요.");
               setIsTranslating(false);
             }
           },
@@ -355,16 +384,28 @@ export default function NewDocumentPage() {
                   <Image src="/close.svg" alt="close" width={12} height={12} />
                 </button>
               </div>
+              {translationError && !isTranslating && (
+                <p className={styles.translationError} role="alert">
+                  {translationError}
+                </p>
+              )}
             </div>
           )}
 
           {translatedText.length > 0 && document && (
-            <button
-              type="button"
-              className={styles.viewResultButton}
-              onClick={() => router.push(`/read`)}>
-              번역 결과 보기
-            </button>
+            <>
+              {batchFailures.length > 0 && (
+                <p className={styles.batchFailureNotice} role="status">
+                  일부 구간 번역에 실패했어요. 나머지 결과는 확인할 수 있습니다.
+                </p>
+              )}
+              <button
+                type="button"
+                className={styles.viewResultButton}
+                onClick={() => router.push(`/read`)}>
+                번역 결과 보기
+              </button>
+            </>
           )}
 
           {uploadingFiles.length === 0 && (

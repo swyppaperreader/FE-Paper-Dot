@@ -2,6 +2,8 @@ declare module "event-source-polyfill" {
   export interface EventSourcePolyfillInit {
     withCredentials?: boolean;
     headers?: Record<string, string>;
+    /** 응답 대기 타임아웃(ms). 기본 45000. 번역 파이프라인 대기 시 더 크게 설정 */
+    heartbeatTimeout?: number;
   }
 
   export interface EventSourcePolyfillInstance {
