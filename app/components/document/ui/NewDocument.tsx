@@ -202,7 +202,15 @@ export default function NewDocumentPage() {
         setIsTranslating(true);
         await postTranslation(document.documentId);
         // 서버가 번역을 시작할 시간을 주고 나서 첫 조회 (바로 GET하면 404 → 콘솔에 Failed to load 404 로그)
-        const data = await getTranslationStatus(document.documentId);
+        const data = await getTranslationStatus(
+          document.documentId,
+          (event) => {
+            console.log("event", event);
+          },
+          (err) => {
+            console.error("error", err);
+          }
+        );
         console.log("data", data);
       } catch (e) {
         const err = e instanceof Error ? e : new Error(String(e));
