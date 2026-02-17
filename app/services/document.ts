@@ -1,3 +1,5 @@
+import { EventSourcePolyfill } from "event-source-polyfill";
+
 export const postDocuments = async (
   formData: FormData,
   accessToken?: string
@@ -39,7 +41,7 @@ export interface TranslatedDocumentUnit {
 
 export const getTranslatedDocument = async (
   documentId: string | number,
-  accessToken?: string
+  accessToken?: string,
 ): Promise<TranslatedDocumentUnit[]> => {
   try {
     const apiUrl = "https://be-paper-dot.store";
@@ -188,11 +190,15 @@ const parseEvent = (
 export const getTranslationStatus = (
   documentId: string,
   onMessage: (event: TranslationStreamEvent) => void,
-  onError: (err: Event) => void
-): EventSource => {
+  onError: (err: Event) => void,
+  accessToken?: string
+): EventSourcePolyfill => {
   const url = `https://be-paper-dot.store/api/v1/documents/${documentId}/translation-events`;
-  const eventSource = new EventSource(url, {
+  const eventSource = new EventSourcePolyfill(url, {
     withCredentials: true,
+    ...(accessToken && {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    }),
   });
 
   ["subscribed", "state", "progress"].forEach((eventType) => {
@@ -202,7 +208,7 @@ export const getTranslationStatus = (
     });
   });
 
-  eventSource.onerror = (err) => {
+  eventSource.onerror = (err: Event) => {
     const state = eventSource.readyState; // 0=CONNECTING, 1=OPEN, 2=CLOSED
     const stateText = ["CONNECTING", "OPEN", "CLOSED"][state] ?? String(state);
     console.error(
@@ -262,6 +268,8 @@ export const postTranslation = async (
 export const getTranslation = async (
   documentId: string | number,
   accessToken?: string
+  page?: number;
+  size?: number;
 ): Promise<TranslatedDocumentUnit[]> => {
   return getTranslatedDocument(documentId, accessToken);
 };

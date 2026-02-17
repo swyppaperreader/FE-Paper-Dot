@@ -249,7 +249,8 @@ export default function NewDocumentPage() {
             eventSource.close();
             setTranslationProgress(null);
             setIsTranslating(false);
-          }
+          },
+          accessToken
         );
       } catch (e) {
         const err = e instanceof Error ? e : new Error(String(e));
