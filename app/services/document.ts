@@ -142,23 +142,29 @@ export const requestLLM = async (file: File, accessToken?: string) => {
 };
 
 export const getTranslationStatus = async (documentId: string) => {
+  const url = `https://be-paper-dot.store/api/v1/documents/${documentId}/translation-events`;
   try {
-    const response = await fetch(
-      `https://be-paper-dot.store/api/v1/documents/${documentId}/translation-events`,
-      {
-        method: "GET",
-        credentials: "include",
-      }
-    );
+    const response = await fetch(url, {
+      method: "GET",
+      credentials: "include",
+    });
     if (!response.ok) {
-      throw new Error("번역 상태를 가져오는데 실패했습니다!");
+      let bodyText = "";
+      try {
+        bodyText = await response.text();
+      } catch {
+        bodyText = "(body 읽기 실패)";
+      }
+      const msg = `getTranslationStatus 실패: status=${response.status} ${
+        response.statusText
+      }, url=${url}, body=${bodyText.slice(0, 200)}`;
+      throw new Error(msg);
     }
     const data = await response.json();
     return data;
   } catch (error) {
-    throw new Error(
-      (error as Error).message || "번역 상태를 가져오는데 실패했습니다!"
-    );
+    if (error instanceof Error) throw error;
+    throw new Error(String(error));
   }
 };
 

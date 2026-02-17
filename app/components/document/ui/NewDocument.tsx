@@ -205,7 +205,9 @@ export default function NewDocumentPage() {
         const data = await getTranslationStatus(document.documentId);
         console.log("data", data);
       } catch (e) {
-        console.error("번역 요청/조회 실패:", e);
+        const err = e instanceof Error ? e : new Error(String(e));
+        console.error("[번역 요청/조회 실패]", err.message);
+        if (err.stack) console.error(err.stack);
       } finally {
         setIsTranslating(false);
       }
@@ -231,15 +233,6 @@ export default function NewDocumentPage() {
               페이퍼닷이 번역하고, 한 줄 한 줄 읽기 쉽게 정리해드릴게요.
             </p>
           </div>
-
-          {isUploading && (
-            <div className={styles.loadingOverlay}>
-              <div className={styles.loadingSpinner} aria-hidden />
-              <p className={styles.loadingText}>
-                파일을 업로드하는 중입니다...
-              </p>
-            </div>
-          )}
 
           {uploadingFiles.length > 0 && (
             <div className={styles.uploadSection}>
