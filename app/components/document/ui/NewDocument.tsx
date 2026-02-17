@@ -232,15 +232,6 @@ export default function NewDocumentPage() {
             </p>
           </div>
 
-          {isUploading && (
-            <div className={styles.loadingOverlay}>
-              <div className={styles.loadingSpinner} aria-hidden />
-              <p className={styles.loadingText}>
-                파일을 업로드하는 중입니다...
-              </p>
-            </div>
-          )}
-
           {uploadingFiles.length > 0 && (
             <div className={styles.uploadSection}>
               {isTranslationLoading && (
