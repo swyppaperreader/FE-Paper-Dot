@@ -41,7 +41,7 @@ export interface TranslatedDocumentUnit {
 
 export const getTranslatedDocument = async (
   documentId: string | number,
-  accessToken?: string,
+  accessToken?: string
 ): Promise<TranslatedDocumentUnit[]> => {
   try {
     const apiUrl = "https://be-paper-dot.store";
@@ -208,7 +208,7 @@ export const getTranslationStatus = (
     });
   });
 
-  eventSource.onerror = (err: Event) => {
+  eventSource.onerror = (err) => {
     const state = eventSource.readyState; // 0=CONNECTING, 1=OPEN, 2=CLOSED
     const stateText = ["CONNECTING", "OPEN", "CLOSED"][state] ?? String(state);
     console.error(
@@ -268,8 +268,6 @@ export const postTranslation = async (
 export const getTranslation = async (
   documentId: string | number,
   accessToken?: string
-  page?: number;
-  size?: number;
 ): Promise<TranslatedDocumentUnit[]> => {
   return getTranslatedDocument(documentId, accessToken);
 };

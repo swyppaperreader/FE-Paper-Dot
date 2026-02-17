@@ -48,6 +48,10 @@ export default function NewDocumentPage() {
     translated: number;
     total: number;
   } | null>(null);
+  const eventSourceRef = useRef<ReturnType<typeof getTranslationStatus> | null>(
+    null
+  );
+  const cancelledRef = useRef(false);
 
   const userInfo = useLoginStore((state) => state.userInfo);
   const accessToken = useAccessTokenStore((state) => state.accessToken);
@@ -185,6 +189,8 @@ export default function NewDocumentPage() {
   useEffect(() => {
     if (!document || !uploadingFiles[0]?.file || !accessToken) return;
 
+    cancelledRef.current = false;
+
     const applyResult = (list: TranslationPair[]) => {
       if (list.length === 0) return false;
       setTranslatedText(list);
@@ -204,11 +210,13 @@ export default function NewDocumentPage() {
       try {
         setIsTranslating(true);
         await postTranslation(document.documentId, accessToken);
+        if (cancelledRef.current) return;
 
         setTranslationProgress(null);
         const eventSource = getTranslationStatus(
           document.documentId,
           async (event) => {
+            if (cancelledRef.current) return;
             if (event.type === "progress") {
               setTranslationProgress({
                 translated: event.data.translated,
@@ -223,12 +231,15 @@ export default function NewDocumentPage() {
                 state === "SUCCESS"
               ) {
                 eventSource.close();
+                eventSourceRef.current = null;
                 setTranslationProgress(null);
+                if (cancelledRef.current) return;
                 try {
                   const PAGE_SIZE = 20;
                   const MAX_PAGES = 100;
                   const all: TranslationPair[] = [];
                   for (let page = 1; page <= MAX_PAGES; page += 1) {
+                    if (cancelledRef.current) return;
                     const chunk = await getTranslation(
                       document.documentId,
                       accessToken
@@ -237,30 +248,47 @@ export default function NewDocumentPage() {
                     all.push(...arr);
                     if (arr.length < PAGE_SIZE) break;
                   }
-                  if (applyResult(all)) setIsTranslating(false);
+                  if (!cancelledRef.current && applyResult(all))
+                    setIsTranslating(false);
                 } catch (e) {
-                  console.error("[번역 결과 조회 실패]", e);
-                  setIsTranslating(false);
+                  if (!cancelledRef.current) {
+                    console.error("[번역 결과 조회 실패]", e);
+                    setIsTranslating(false);
+                  }
                 }
               }
             }
           },
           () => {
             eventSource.close();
-            setTranslationProgress(null);
-            setIsTranslating(false);
+            eventSourceRef.current = null;
+            if (!cancelledRef.current) {
+              setTranslationProgress(null);
+              setIsTranslating(false);
+            }
           },
           accessToken
         );
+        eventSourceRef.current = eventSource;
       } catch (e) {
-        const err = e instanceof Error ? e : new Error(String(e));
-        console.error("[번역 요청 실패]", err.message);
-        if (err.stack) console.error(err.stack);
-        setIsTranslating(false);
+        if (!cancelledRef.current) {
+          const err = e instanceof Error ? e : new Error(String(e));
+          console.error("[번역 요청 실패]", err.message);
+          if (err.stack) console.error(err.stack);
+          setIsTranslating(false);
+        }
       }
     };
 
     run();
+
+    return () => {
+      cancelledRef.current = true;
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+        eventSourceRef.current = null;
+      }
+    };
   }, [document?.documentId]);
 
   console.log("translatedText", translatedText);
