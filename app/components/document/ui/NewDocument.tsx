@@ -139,6 +139,17 @@ export default function NewDocumentPage() {
           sessionStorage.setItem("documentId", documentIdStr);
         }
 
+        // PDF 파일 데이터를 sessionStorage에 저장 (읽기 페이지에서 사용)
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            sessionStorage.setItem("pdfFileData", reader.result as string);
+          } catch (e) {
+            console.warn("PDF 데이터 저장 실패 (파일이 너무 큼):", e);
+          }
+        };
+        reader.readAsDataURL(currentFile.file);
+
         setUploadingFiles((prev) =>
           prev.map((file) =>
             file.id === currentFile?.id
@@ -165,8 +176,7 @@ export default function NewDocumentPage() {
     uploadFile();
   }, [uploadingFiles, accessToken, userInfo?.userId]);
 
-  console.log(document?.documentId);
-
+  // 업로드가 성공해 document가 생긴 뒤: 1) postTranslation → 2) getTranslation (폴링)
   useEffect(() => {
     if (!document || !uploadingFiles[0]?.file || !accessToken) {
       return;
@@ -175,6 +185,7 @@ export default function NewDocumentPage() {
     const requestTranslation = async () => {
       try {
         setIsTranslating(true);
+        // 1) 문서 처리 파이프라인 (서버가 비동기로 처리함)
         await postTranslation(document.documentId);
         // const data = await getTranslation(document.documentId);
         // const list = Array.isArray(data) ? data : [];
@@ -196,7 +207,7 @@ export default function NewDocumentPage() {
     };
 
     requestTranslation();
-  }, [document?.documentId]);
+  }, [document, accessToken, uploadingFiles]);
 
   console.log(document);
   console.log("translatedText", translatedText);

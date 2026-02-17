@@ -76,6 +76,8 @@
   padding: 8px;
   width: 60px;
   height: 60px;
+  display: block;
+  object-fit: contain;
 }
 
 /* ==================== UPLOAD TEXT SECTION ==================== */

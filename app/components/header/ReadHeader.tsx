@@ -14,6 +14,8 @@ interface ReadHeaderProps {
   totalPages: number;
   onPageChange: (page: number) => void;
   onToggleSidebar: () => void;
+  filterMode: "all" | "korean" | "english";
+  onFilterChange: (mode: "all" | "korean" | "english") => void;
 }
 
 export default function ReadHeader({
@@ -22,6 +24,8 @@ export default function ReadHeader({
   totalPages,
   onPageChange,
   onToggleSidebar,
+  filterMode,
+  onFilterChange,
 }: ReadHeaderProps) {
   const [inputValue, setInputValue] = useState<string>(String(currentPage));
   const inputRef = useRef<HTMLInputElement>(null);
@@ -99,7 +103,7 @@ export default function ReadHeader({
           <p className={styles.readHeaderFileName}>{fileName}</p>
         )}
         <div className={styles.readHeaderRightSection}>
-          <HeaderToggle />
+          <HeaderToggle filterMode={filterMode} onFilterChange={onFilterChange} />
           <HeaderModal isReadHeader={true} className={styles.readHeaderModal} />
         </div>
       </div>

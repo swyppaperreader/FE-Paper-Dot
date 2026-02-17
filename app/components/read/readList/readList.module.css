@@ -67,13 +67,29 @@
 
 .pagePreview {
   display: flex;
-  width: 108px;
-  padding-top: 24px;
+  width: 100%;
+  height: 100%;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   border-radius: 4px;
   background: #fff;
+  overflow: hidden;
+  position: relative;
+}
+
+.pageThumbImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.pagePreviewPlaceholder {
+  width: 100%;
+  height: 100%;
+  background: #f0f4fa;
 }
 
 .pageNumber {
@@ -93,6 +109,7 @@
 }
 
 .docUnitId {
+  position: relative;
   display: flex;
   width: calc(100% - 226px);
   flex-direction: column;
@@ -100,6 +117,25 @@
   padding-top: 36px;
   padding-inline: 120px;
   overflow-y: auto;
+}
+
+.pageDivider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 0;
+  color: #8b95a8;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.26px;
+}
+
+.pageDivider::before,
+.pageDivider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #d4dbe8;
 }
 
 .docUnitIdItem {
