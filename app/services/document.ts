@@ -42,8 +42,7 @@ export const getTranslatedDocument = async (
   accessToken?: string
 ): Promise<TranslatedDocumentUnit[]> => {
   try {
-    const apiUrl =
-      process.env.NEXT_PUBLIC_API_URL || "https://be-paper-dot.store";
+    const apiUrl = "https://be-paper-dot.store";
     const headers: HeadersInit = {
       "Content-Type": "application/json",
     };
