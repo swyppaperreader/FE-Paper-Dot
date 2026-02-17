@@ -151,11 +151,11 @@ export interface TranslationEvent {
   };
 }
 
-export const getTranslationStatus = async (
+export const getTranslationStatus = (
   documentId: string,
   onMessage: (event: TranslationEvent) => void,
   onError: (err: Event) => void
-) => {
+): EventSource => {
   const url = `https://be-paper-dot.store/api/v1/documents/${documentId}/translation-events`;
   const eventSource = new EventSource(url, {
     withCredentials: true,

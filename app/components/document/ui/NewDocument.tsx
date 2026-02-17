@@ -177,10 +177,9 @@ export default function NewDocumentPage() {
     uploadFile();
   }, [uploadingFiles, accessToken, userInfo?.userId]);
 
-  // 업로드 성공 후: postTranslation → 응답 온 뒤 getTranslation 폴링 (404 = 아직 처리 중)
+  // 업로드 성공 후: postTranslation → SSE(getTranslationStatus)로 완료 이벤트 수신 → getTranslation으로 결과 적용
   useEffect(() => {
     if (!document || !uploadingFiles[0]?.file || !accessToken) return;
-    console.log("document", document.documentId);
 
     const applyResult = (list: TranslationPair[]) => {
       if (list.length === 0) return false;
@@ -200,23 +199,40 @@ export default function NewDocumentPage() {
     const run = async () => {
       try {
         setIsTranslating(true);
-        await postTranslation(document.documentId);
-        // 서버가 번역을 시작할 시간을 주고 나서 첫 조회 (바로 GET하면 404 → 콘솔에 Failed to load 404 로그)
-        const data = await getTranslationStatus(
+        await postTranslation(document.documentId, accessToken);
+
+        const eventSource = getTranslationStatus(
           document.documentId,
-          (event) => {
-            console.log("event", event);
+          async (event) => {
+            const status = event?.data?.status?.toLowerCase?.() ?? "";
+            if (
+              status === "completed" ||
+              status === "done" ||
+              status === "success"
+            ) {
+              eventSource.close();
+              try {
+                const list = await getTranslation(
+                  document.documentId,
+                  accessToken
+                );
+                const arr = Array.isArray(list) ? list : [];
+                if (applyResult(arr)) setIsTranslating(false);
+              } catch (e) {
+                console.error("[번역 결과 조회 실패]", e);
+                setIsTranslating(false);
+              }
+            }
           },
-          (err) => {
-            console.error("error", err);
+          () => {
+            eventSource.close();
+            setIsTranslating(false);
           }
         );
-        console.log("data", data);
       } catch (e) {
         const err = e instanceof Error ? e : new Error(String(e));
-        console.error("[번역 요청/조회 실패]", err.message);
+        console.error("[번역 요청 실패]", err.message);
         if (err.stack) console.error(err.stack);
-      } finally {
         setIsTranslating(false);
       }
     };
@@ -226,8 +242,6 @@ export default function NewDocumentPage() {
 
   console.log("translatedText", translatedText);
 
-  const isUploading =
-    uploadingFiles.length > 0 && uploadingFiles[0]?.status === "uploading";
   const isTranslationLoading =
     document != null && translatedText.length === 0 && isTranslating;
 
