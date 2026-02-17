@@ -205,7 +205,9 @@ export default function NewDocumentPage() {
         const data = await getTranslationStatus(document.documentId);
         console.log("data", data);
       } catch (e) {
-        console.error("번역 요청/조회 실패:", e);
+        const err = e instanceof Error ? e : new Error(String(e));
+        console.error("[번역 요청/조회 실패]", err.message);
+        if (err.stack) console.error(err.stack);
       } finally {
         setIsTranslating(false);
       }
