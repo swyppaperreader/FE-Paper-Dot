@@ -141,6 +141,26 @@ export const requestLLM = async (file: File, accessToken?: string) => {
   }
 };
 
+export const getTranslationStatus = async (documentId: string) => {
+  try {
+    const response = await fetch(
+      `https://be-paper-dot.store/api/v1/documents/${documentId}/translation-events`,
+      {
+        method: "GET",
+      }
+    );
+    if (!response.ok) {
+      throw new Error("번역 상태를 가져오는데 실패했습니다!");
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(
+      (error as Error).message || "번역 상태를 가져오는데 실패했습니다!"
+    );
+  }
+};
+
 export const postTranslation = async (
   documentId: string,
   accessToken?: string
