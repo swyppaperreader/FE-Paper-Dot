@@ -6,6 +6,7 @@ import styles from "./NewDocument.module.css";
 import { formatFileSize } from "@/app/utils/useFormatFileSize";
 import {
   getTranslation,
+  getTranslationStatus,
   postDocuments,
   postTranslation,
 } from "@/app/services/document";
@@ -200,21 +201,9 @@ export default function NewDocumentPage() {
       try {
         setIsTranslating(true);
         await postTranslation(document.documentId);
-        // 번역이 준비될 때까지 폴링 (404 = 아직 처리 중, 간격 넉넉히)
-        const maxAttempts = 20;
-        const intervalMs = 6000;
-        for (let i = 0; i < maxAttempts; i++) {
-          await new Promise((r) => setTimeout(r, intervalMs));
-          const data = await getTranslation(document.documentId, accessToken);
-          const list = Array.isArray(data) ? data : [];
-          if (applyResult(list)) {
-            setIsTranslating(false);
-            return;
-          }
-        }
-        console.warn(
-          "번역 결과를 가져오지 못했습니다. 새로고침 후 다시 시도해주세요."
-        );
+        // 서버가 번역을 시작할 시간을 주고 나서 첫 조회 (바로 GET하면 404 → 콘솔에 Failed to load 404 로그)
+        const data = await getTranslationStatus(document.documentId);
+        console.log("data", data);
       } catch (e) {
         console.error("번역 요청/조회 실패:", e);
       } finally {
