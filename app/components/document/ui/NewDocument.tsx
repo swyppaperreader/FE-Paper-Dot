@@ -165,7 +165,8 @@ export default function NewDocumentPage() {
     uploadFile();
   }, [uploadingFiles, accessToken, userInfo?.userId]);
 
-  // 업로드가 성공해 document가 생긴 뒤: 1) postTranslation → 2) getTranslation
+  console.log(document?.documentId);
+
   useEffect(() => {
     if (!document || !uploadingFiles[0]?.file || !accessToken) {
       return;
@@ -175,18 +176,18 @@ export default function NewDocumentPage() {
       try {
         setIsTranslating(true);
         await postTranslation(document.documentId);
-        const data = await getTranslation(document.documentId);
-        const list = Array.isArray(data) ? data : [];
-        setTranslatedText(list);
-        if (list.length > 0 && uploadingFiles[0]) {
-          sessionStorage.setItem("translationPairs", JSON.stringify(list));
-          sessionStorage.setItem("fileName", uploadingFiles[0].file.name);
-          setUploadingFiles((prev) =>
-            prev.map((f) =>
-              f.status === "completed" ? { ...f, progress: 100 } : f
-            )
-          );
-        }
+        // const data = await getTranslation(document.documentId);
+        // const list = Array.isArray(data) ? data : [];
+        // setTranslatedText(list);
+        // if (list.length > 0 && uploadingFiles[0]) {
+        //   sessionStorage.setItem("translationPairs", JSON.stringify(list));
+        //   sessionStorage.setItem("fileName", uploadingFiles[0].file.name);
+        //   setUploadingFiles((prev) =>
+        //     prev.map((f) =>
+        //       f.status === "completed" ? { ...f, progress: 100 } : f
+        //     )
+        //   );
+        // }
       } catch (error) {
         console.error("번역 요청 실패:", error);
       } finally {
@@ -199,6 +200,7 @@ export default function NewDocumentPage() {
 
   console.log(document);
   console.log("translatedText", translatedText);
+  console.log("isTranslating", isTranslating);
 
   return (
     <main className={styles.container}>
