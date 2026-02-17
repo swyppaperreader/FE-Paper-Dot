@@ -224,6 +224,8 @@ export default function NewDocumentPage() {
     run();
   }, [document?.documentId]);
 
+  console.log("translatedText", translatedText);
+
   const isUploading =
     uploadingFiles.length > 0 && uploadingFiles[0]?.status === "uploading";
   const isTranslationLoading =
