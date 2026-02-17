@@ -145,14 +145,14 @@ export const requestLLM = async (file: File, accessToken?: string) => {
 
 export interface TranslationSubscribedEvent {
   type: "subscribed";
-  data: { documentId: string };
+  data: { documentId: number };
 }
 
 export interface TranslationStateEvent {
   type: "state";
   data: {
-    state: string;
-    documentId: string;
+    documentId: number;
+    state: string; // STARTED | COMPLETED | FAILED | NO_CONTENT
     message?: string;
   };
 }
@@ -160,16 +160,27 @@ export interface TranslationStateEvent {
 export interface TranslationProgressEvent {
   type: "progress";
   data: {
-    total: number;
+    documentId: number;
     translated: number;
-    documentId: string;
+    total: number;
+  };
+}
+
+export interface TranslationBatchFailedEvent {
+  type: "batch_failed";
+  data: {
+    documentId: number;
+    start: number;
+    end: number;
+    reason: string;
   };
 }
 
 export type TranslationStreamEvent =
   | TranslationSubscribedEvent
   | TranslationStateEvent
-  | TranslationProgressEvent;
+  | TranslationProgressEvent
+  | TranslationBatchFailedEvent;
 
 const parseEvent = (
   eventType: string,
@@ -196,12 +207,13 @@ export const getTranslationStatus = (
   const url = `https://be-paper-dot.store/api/v1/documents/${documentId}/translation-events`;
   const eventSource = new EventSourcePolyfill(url, {
     withCredentials: true,
+    heartbeatTimeout: 120000, // 2분 (서버가 45초 안에 첫 이벤트를 안 보내도 끊기지 않도록)
     ...(accessToken && {
       headers: { Authorization: `Bearer ${accessToken}` },
     }),
   });
 
-  ["subscribed", "state", "progress"].forEach((eventType) => {
+  ["subscribed", "state", "progress", "batch_failed"].forEach((eventType) => {
     eventSource.addEventListener(eventType, (e: MessageEvent) => {
       const parsed = parseEvent(eventType, e.data);
       if (parsed) onMessage(parsed);
