@@ -42,6 +42,7 @@ export default function NewDocumentPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isTranslating, setIsTranslating] = useState(false);
   const [document, setDocument] = useState<Document | null>(null);
+  const [postTranslationResponse, setPostTranslationResponse] = useState(null);
   const [translatedText, setTranslatedText] = useState<TranslationPair[]>([]);
 
   const userInfo = useLoginStore((state) => state.userInfo);
@@ -186,20 +187,8 @@ export default function NewDocumentPage() {
       try {
         setIsTranslating(true);
         // 1) 문서 처리 파이프라인 (서버가 비동기로 처리함)
-        await postTranslation(document.documentId);
-        const data = await getTranslation(document.documentId);
-        console.log("data", data);
-        // const list = Array.isArray(data) ? data : [];
-        // setTranslatedText(list);
-        // if (list.length > 0 && uploadingFiles[0]) {
-        //   sessionStorage.setItem("translationPairs", JSON.stringify(list));
-        //   sessionStorage.setItem("fileName", uploadingFiles[0].file.name);
-        //   setUploadingFiles((prev) =>
-        //     prev.map((f) =>
-        //       f.status === "completed" ? { ...f, progress: 100 } : f
-        //     )
-        //   );
-        // }
+        const data = await postTranslation(document.documentId);
+        setPostTranslationResponse(data);
       } catch (error) {
         console.error("번역 요청 실패:", error);
       } finally {
@@ -210,9 +199,22 @@ export default function NewDocumentPage() {
     requestTranslation();
   }, [document, accessToken, uploadingFiles]);
 
-  console.log(document);
+  useEffect(() => {
+    if (postTranslationResponse && document?.documentId && accessToken) {
+      const requestTranslation = async () => {
+        try {
+          const data = await getTranslation(document?.documentId, accessToken);
+          setTranslatedText(data);
+          console.log("data", data);
+        } catch (error) {
+          console.error("번역 결과 조회 실패:", error);
+        }
+      };
+      requestTranslation();
+    }
+  }, [postTranslationResponse]);
+
   console.log("translatedText", translatedText);
-  console.log("isTranslating", isTranslating);
 
   return (
     <main className={styles.container}>
