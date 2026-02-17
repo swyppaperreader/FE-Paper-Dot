@@ -1,4 +1,7 @@
-export const postDocuments = async (formData: FormData, accessToken?: string) => {
+export const postDocuments = async (
+  formData: FormData,
+  accessToken?: string
+) => {
   try {
     const headers: HeadersInit = {};
     if (accessToken) {
@@ -39,7 +42,8 @@ export const getTranslatedDocument = async (
   accessToken?: string
 ): Promise<TranslatedDocumentUnit[]> => {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://be-paper-dot.store";
+    const apiUrl =
+      process.env.NEXT_PUBLIC_API_URL || "https://be-paper-dot.store";
     const headers: HeadersInit = {
       "Content-Type": "application/json",
     };
@@ -47,11 +51,14 @@ export const getTranslatedDocument = async (
       headers["Authorization"] = `Bearer ${accessToken}`;
     }
 
-    const response = await fetch(`${apiUrl}/api/v1/documents/${documentId}/translation-pairs`, {
-      method: "GET",
-      headers,
-      credentials: "include",
-    });
+    const response = await fetch(
+      `${apiUrl}/api/v1/documents/${documentId}/translation-pairs`,
+      {
+        method: "GET",
+        headers,
+        credentials: "include",
+      }
+    );
 
     // HTML 응답 감지 (인증 실패 시 로그인 페이지 반환)
     const contentType = response.headers.get("content-type") || "";
@@ -91,12 +98,15 @@ export const requestLLM = async (file: File, accessToken?: string) => {
       headers["Authorization"] = `Bearer ${accessToken}`;
     }
 
-    const response = await fetch("https://be-paper-dot.store/api/llm/chat-pdf", {
-      method: "POST",
-      headers,
-      body: file,
-      credentials: "include",
-    });
+    const response = await fetch(
+      "https://be-paper-dot.store/api/llm/chat-pdf",
+      {
+        method: "POST",
+        headers,
+        body: file,
+        credentials: "include",
+      }
+    );
 
     const text = await response.text();
 
@@ -128,13 +138,14 @@ export const requestLLM = async (file: File, accessToken?: string) => {
       return { data: text };
     }
   } catch (error) {
-    throw new Error(
-      (error as Error).message || "LLM 요청에 실패했습니다."
-    );
+    throw new Error((error as Error).message || "LLM 요청에 실패했습니다.");
   }
 };
 
-export const postTranslation = async (documentId: string, accessToken?: string) => {
+export const postTranslation = async (
+  documentId: string,
+  accessToken?: string
+) => {
   try {
     const headers: HeadersInit = {
       "Content-Type": "application/json",
@@ -167,11 +178,8 @@ export const postTranslation = async (documentId: string, accessToken?: string) 
 
     const data = await response.json();
     return data;
-
   } catch (error) {
-    throw new Error(
-      (error as Error).message || "번역 요청에 실패했습니다!"
-    );
+    throw new Error((error as Error).message || "번역 요청에 실패했습니다!");
   }
 };
 
@@ -205,7 +213,8 @@ export const getDocumentDetail = async (
   accessToken?: string
 ): Promise<DocumentDetail> => {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://be-paper-dot.store";
+    const apiUrl =
+      process.env.NEXT_PUBLIC_API_URL || "https://be-paper-dot.store";
     const headers: HeadersInit = {
       "Content-Type": "application/json",
     };
