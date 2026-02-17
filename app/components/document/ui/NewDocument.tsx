@@ -190,13 +190,19 @@ export default function NewDocumentPage() {
     uploadFile();
   }, [uploadingFiles, accessToken, userInfo?.userId]);
 
+  // documentId가 바뀔 때만 이전 에러/배치실패 메시지 초기화 (set-state-in-effect 회피)
+  useEffect(() => {
+    if (document?.documentId) {
+      setTranslationError(null);
+      setBatchFailures([]);
+    }
+  }, [document?.documentId]);
+
   // 업로드 성공 후: postTranslation → SSE(getTranslationStatus)로 완료 이벤트 수신 → getTranslation으로 결과 적용
   useEffect(() => {
     if (!document || !uploadingFiles[0]?.file || !accessToken) return;
 
     cancelledRef.current = false;
-    setTranslationError(null);
-    setBatchFailures([]);
 
     const applyResult = (list: TranslationPair[]) => {
       if (list.length === 0) return false;
@@ -318,6 +324,8 @@ export default function NewDocumentPage() {
         eventSourceRef.current = null;
       }
     };
+    // documentId 기준으로 1회만 실행. accessToken/document/uploadingFiles 포함 시 중간에 effect 재실행되어 SSE가 끊길 수 있음
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [document?.documentId]);
 
   console.log("translatedText", translatedText);
