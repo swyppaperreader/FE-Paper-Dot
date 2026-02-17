@@ -147,6 +147,7 @@ export const getTranslationStatus = async (documentId: string) => {
       `https://be-paper-dot.store/api/v1/documents/${documentId}/translation-events`,
       {
         method: "GET",
+        credentials: "include",
       }
     );
     if (!response.ok) {

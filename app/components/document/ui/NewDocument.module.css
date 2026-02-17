@@ -175,6 +175,25 @@
 }
 
 /* ==================== UPLOADING CONTAINER ==================== */
+.uploadSection {
+  position: relative;
+  width: 100%;
+}
+
+.loadingOverlayOnTop {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 8px;
+  border: 1px solid #dee3eb;
+}
+
 .uploadingFilesWrapper {
   display: flex;
   flex-direction: row;
