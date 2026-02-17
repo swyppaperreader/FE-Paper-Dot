@@ -42,7 +42,6 @@ export default function NewDocumentPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isTranslating, setIsTranslating] = useState(false);
   const [document, setDocument] = useState<Document | null>(null);
-  const [postTranslationResponse, setPostTranslationResponse] = useState(null);
   const [translatedText, setTranslatedText] = useState<TranslationPair[]>([]);
 
   const userInfo = useLoginStore((state) => state.userInfo);
@@ -177,44 +176,60 @@ export default function NewDocumentPage() {
     uploadFile();
   }, [uploadingFiles, accessToken, userInfo?.userId]);
 
-  // 업로드가 성공해 document가 생긴 뒤: 1) postTranslation → 2) getTranslation (폴링)
+  // 업로드 성공 후: postTranslation → 응답 온 뒤 getTranslation 폴링 (404 = 아직 처리 중)
   useEffect(() => {
-    if (!document || !uploadingFiles[0]?.file || !accessToken) {
-      return;
-    }
+    if (!document || !uploadingFiles[0]?.file || !accessToken) return;
 
-    const requestTranslation = async () => {
+    const applyResult = (list: TranslationPair[]) => {
+      if (list.length === 0) return false;
+      setTranslatedText(list);
+      if (uploadingFiles[0]) {
+        sessionStorage.setItem("translationPairs", JSON.stringify(list));
+        sessionStorage.setItem("fileName", uploadingFiles[0].file.name);
+        setUploadingFiles((prev) =>
+          prev.map((f) =>
+            f.status === "completed" ? { ...f, progress: 100 } : f
+          )
+        );
+      }
+      return true;
+    };
+
+    const run = async () => {
       try {
         setIsTranslating(true);
-        // 1) 문서 처리 파이프라인 (서버가 비동기로 처리함)
-        const data = await postTranslation(document.documentId);
-        setPostTranslationResponse(data);
-      } catch (error) {
-        console.error("번역 요청 실패:", error);
+        await postTranslation(document.documentId);
+        // 번역이 준비될 때까지 폴링 (404면 서버가 아직 처리 중)
+        const maxAttempts = 25;
+        const intervalMs = 3000;
+        for (let i = 0; i < maxAttempts; i++) {
+          await new Promise((r) => setTimeout(r, intervalMs));
+          const data = await getTranslation(document.documentId, accessToken);
+          const list = Array.isArray(data) ? data : [];
+          if (applyResult(list)) {
+            setIsTranslating(false);
+            return;
+          }
+        }
+        console.warn(
+          "번역 결과를 가져오지 못했습니다. 잠시 후 새로고침 후 다시 시도해보세요."
+        );
+      } catch (e) {
+        console.error("번역 요청/조회 실패:", e);
       } finally {
         setIsTranslating(false);
       }
     };
 
-    requestTranslation();
-  }, [document, accessToken, uploadingFiles]);
-
-  useEffect(() => {
-    if (postTranslationResponse && document?.documentId && accessToken) {
-      const requestTranslation = async () => {
-        try {
-          const data = await getTranslation(document?.documentId, accessToken);
-          setTranslatedText(data);
-          console.log("data", data);
-        } catch (error) {
-          console.error("번역 결과 조회 실패:", error);
-        }
-      };
-      requestTranslation();
-    }
-  }, [postTranslationResponse]);
+    run();
+  }, [document?.documentId]);
 
   console.log("translatedText", translatedText);
+
+  const isUploading =
+    uploadingFiles.length > 0 && uploadingFiles[0]?.status === "uploading";
+  const isTranslationLoading =
+    document != null && translatedText.length === 0 && isTranslating;
 
   return (
     <main className={styles.container}>
@@ -227,10 +242,21 @@ export default function NewDocumentPage() {
             </p>
           </div>
 
-          {document && translatedText.length === 0 && isTranslating && (
+          {isUploading && (
             <div className={styles.loadingOverlay}>
               <div className={styles.loadingSpinner} aria-hidden />
-              <p className={styles.loadingText}>문서를 불러오는 중입니다...</p>
+              <p className={styles.loadingText}>
+                파일을 업로드하는 중입니다...
+              </p>
+            </div>
+          )}
+
+          {isTranslationLoading && (
+            <div className={styles.loadingOverlay}>
+              <div className={styles.loadingSpinner} aria-hidden />
+              <p className={styles.loadingText}>
+                번역 중입니다. 잠시만 기다려주세요...
+              </p>
             </div>
           )}
 
