@@ -241,49 +241,52 @@ export default function NewDocumentPage() {
             </div>
           )}
 
-          {isTranslationLoading && (
-            <div className={styles.loadingOverlay}>
-              <div className={styles.loadingSpinner} aria-hidden />
-              <p className={styles.loadingText}>
-                번역 중입니다. 잠시만 기다려주세요...
-              </p>
-            </div>
-          )}
-
           {uploadingFiles.length > 0 && (
-            <div className={styles.uploadingFilesWrapper}>
-              <Image src="/pdf.svg" alt="pdf" width={40} height={40} />
-              <div className={styles.uploadingItem}>
-                <p className={styles.fileName}>{uploadingFiles[0].file.name}</p>
-                <div className={styles.fileInfo}>
-                  <p className={styles.fileSize}>
-                    {formatFileSize(uploadingFiles[0].file.size)}
-                  </p>
-                  <div className={styles.progressBarContainer}>
-                    <div
-                      className={styles.progressBar}
-                      style={{
-                        width: `${uploadingFiles[0].progress}%`,
-                      }}
-                    />
-                  </div>
-                  <p className={styles.progressPercent}>
-                    {Math.round(uploadingFiles[0].progress)}%
+            <div className={styles.uploadSection}>
+              {isTranslationLoading && (
+                <div className={styles.loadingOverlayOnTop}>
+                  <div className={styles.loadingSpinner} aria-hidden />
+                  <p className={styles.loadingText}>
+                    번역 중입니다. 잠시만 기다려주세요...
                   </p>
                 </div>
+              )}
+              <div className={styles.uploadingFilesWrapper}>
+                <Image src="/pdf.svg" alt="pdf" width={40} height={40} />
+                <div className={styles.uploadingItem}>
+                  <p className={styles.fileName}>
+                    {uploadingFiles[0].file.name}
+                  </p>
+                  <div className={styles.fileInfo}>
+                    <p className={styles.fileSize}>
+                      {formatFileSize(uploadingFiles[0].file.size)}
+                    </p>
+                    <div className={styles.progressBarContainer}>
+                      <div
+                        className={styles.progressBar}
+                        style={{
+                          width: `${uploadingFiles[0].progress}%`,
+                        }}
+                      />
+                    </div>
+                    <p className={styles.progressPercent}>
+                      {Math.round(uploadingFiles[0].progress)}%
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  className={styles.closeIcon}
+                  onClick={handleRemoveFile}
+                  disabled={uploadingFiles[0]?.progress !== 100}
+                  style={
+                    uploadingFiles[0]?.status === "completed"
+                      ? { cursor: "pointer" }
+                      : { cursor: "not-allowed" }
+                  }>
+                  <Image src="/close.svg" alt="close" width={12} height={12} />
+                </button>
               </div>
-              <button
-                type="button"
-                className={styles.closeIcon}
-                onClick={handleRemoveFile}
-                disabled={uploadingFiles[0]?.progress !== 100}
-                style={
-                  uploadingFiles[0]?.status === "completed"
-                    ? { cursor: "pointer" }
-                    : { cursor: "not-allowed" }
-                }>
-                <Image src="/close.svg" alt="close" width={12} height={12} />
-              </button>
             </div>
           )}
 
