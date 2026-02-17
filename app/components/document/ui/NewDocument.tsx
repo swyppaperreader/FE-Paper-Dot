@@ -186,7 +186,8 @@ export default function NewDocumentPage() {
       try {
         setIsTranslating(true);
         // 1) 문서 처리 파이프라인 (서버가 비동기로 처리함)
-        await postTranslation(document.documentId);
+        const data = await postTranslation(document.documentId);
+        console.log("data", data);
         // const data = await getTranslation(document.documentId);
         // const list = Array.isArray(data) ? data : [];
         // setTranslatedText(list);
