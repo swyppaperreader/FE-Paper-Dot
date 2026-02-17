@@ -44,6 +44,14 @@ export default function NewDocumentPage() {
   const [isTranslating, setIsTranslating] = useState(false);
   const [document, setDocument] = useState<Document | null>(null);
   const [translatedText, setTranslatedText] = useState<TranslationPair[]>([]);
+  const [translationProgress, setTranslationProgress] = useState<{
+    translated: number;
+    total: number;
+  } | null>(null);
+  const eventSourceRef = useRef<ReturnType<typeof getTranslationStatus> | null>(
+    null
+  );
+  const cancelledRef = useRef(false);
 
   const userInfo = useLoginStore((state) => state.userInfo);
   const accessToken = useAccessTokenStore((state) => state.accessToken);
@@ -181,6 +189,8 @@ export default function NewDocumentPage() {
   useEffect(() => {
     if (!document || !uploadingFiles[0]?.file || !accessToken) return;
 
+    cancelledRef.current = false;
+
     const applyResult = (list: TranslationPair[]) => {
       if (list.length === 0) return false;
       setTranslatedText(list);
@@ -200,44 +210,85 @@ export default function NewDocumentPage() {
       try {
         setIsTranslating(true);
         await postTranslation(document.documentId, accessToken);
+        if (cancelledRef.current) return;
 
+        setTranslationProgress(null);
         const eventSource = getTranslationStatus(
           document.documentId,
           async (event) => {
-            const status = event?.data?.status?.toLowerCase?.() ?? "";
-            if (
-              status === "completed" ||
-              status === "done" ||
-              status === "success"
-            ) {
-              eventSource.close();
-              try {
-                const list = await getTranslation(
-                  document.documentId,
-                  accessToken
-                );
-                const arr = Array.isArray(list) ? list : [];
-                if (applyResult(arr)) setIsTranslating(false);
-              } catch (e) {
-                console.error("[번역 결과 조회 실패]", e);
-                setIsTranslating(false);
+            if (cancelledRef.current) return;
+            if (event.type === "progress") {
+              setTranslationProgress({
+                translated: event.data.translated,
+                total: event.data.total,
+              });
+            }
+            if (event.type === "state") {
+              const state = event.data.state?.toUpperCase?.() ?? "";
+              if (
+                state === "COMPLETED" ||
+                state === "DONE" ||
+                state === "SUCCESS"
+              ) {
+                eventSource.close();
+                eventSourceRef.current = null;
+                setTranslationProgress(null);
+                if (cancelledRef.current) return;
+                try {
+                  const PAGE_SIZE = 20;
+                  const MAX_PAGES = 100;
+                  const all: TranslationPair[] = [];
+                  for (let page = 1; page <= MAX_PAGES; page += 1) {
+                    if (cancelledRef.current) return;
+                    const chunk = await getTranslation(
+                      document.documentId,
+                      accessToken
+                    );
+                    const arr = Array.isArray(chunk) ? chunk : [];
+                    all.push(...arr);
+                    if (arr.length < PAGE_SIZE) break;
+                  }
+                  if (!cancelledRef.current && applyResult(all))
+                    setIsTranslating(false);
+                } catch (e) {
+                  if (!cancelledRef.current) {
+                    console.error("[번역 결과 조회 실패]", e);
+                    setIsTranslating(false);
+                  }
+                }
               }
             }
           },
           () => {
             eventSource.close();
-            setIsTranslating(false);
-          }
+            eventSourceRef.current = null;
+            if (!cancelledRef.current) {
+              setTranslationProgress(null);
+              setIsTranslating(false);
+            }
+          },
+          accessToken
         );
+        eventSourceRef.current = eventSource;
       } catch (e) {
-        const err = e instanceof Error ? e : new Error(String(e));
-        console.error("[번역 요청 실패]", err.message);
-        if (err.stack) console.error(err.stack);
-        setIsTranslating(false);
+        if (!cancelledRef.current) {
+          const err = e instanceof Error ? e : new Error(String(e));
+          console.error("[번역 요청 실패]", err.message);
+          if (err.stack) console.error(err.stack);
+          setIsTranslating(false);
+        }
       }
     };
 
     run();
+
+    return () => {
+      cancelledRef.current = true;
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+        eventSourceRef.current = null;
+      }
+    };
   }, [document?.documentId]);
 
   console.log("translatedText", translatedText);
@@ -262,7 +313,9 @@ export default function NewDocumentPage() {
                 <div className={styles.loadingOverlayOnTop}>
                   <div className={styles.loadingSpinner} aria-hidden />
                   <p className={styles.loadingText}>
-                    번역 중입니다. 잠시만 기다려주세요...
+                    {translationProgress != null
+                      ? `${translationProgress.translated}/${translationProgress.total} 번역 중...`
+                      : "번역 중입니다. 잠시만 기다려주세요..."}
                   </p>
                 </div>
               )}

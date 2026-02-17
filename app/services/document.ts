@@ -1,3 +1,5 @@
+import { EventSourcePolyfill } from "event-source-polyfill";
+
 export const postDocuments = async (
   formData: FormData,
   accessToken?: string
@@ -141,37 +143,79 @@ export const requestLLM = async (file: File, accessToken?: string) => {
   }
 };
 
-export interface TranslationEvent {
-  type: string;
+export interface TranslationSubscribedEvent {
+  type: "subscribed";
+  data: { documentId: string };
+}
+
+export interface TranslationStateEvent {
+  type: "state";
   data: {
+    state: string;
     documentId: string;
-    status: string;
-    progress: number;
-    message: string;
+    message?: string;
   };
 }
 
+export interface TranslationProgressEvent {
+  type: "progress";
+  data: {
+    total: number;
+    translated: number;
+    documentId: string;
+  };
+}
+
+export type TranslationStreamEvent =
+  | TranslationSubscribedEvent
+  | TranslationStateEvent
+  | TranslationProgressEvent;
+
+const parseEvent = (
+  eventType: string,
+  dataStr: string
+): TranslationStreamEvent | null => {
+  try {
+    const data = JSON.parse(dataStr);
+    return {
+      type: eventType as TranslationStreamEvent["type"],
+      data,
+    } as TranslationStreamEvent;
+  } catch (e) {
+    console.error("SSE JSON 파싱 실패:", e);
+    return null;
+  }
+};
+
 export const getTranslationStatus = (
   documentId: string,
-  onMessage: (event: TranslationEvent) => void,
-  onError: (err: Event) => void
-): EventSource => {
+  onMessage: (event: TranslationStreamEvent) => void,
+  onError: (err: Event) => void,
+  accessToken?: string
+): EventSourcePolyfill => {
   const url = `https://be-paper-dot.store/api/v1/documents/${documentId}/translation-events`;
-  const eventSource = new EventSource(url, {
+  const eventSource = new EventSourcePolyfill(url, {
     withCredentials: true,
+    ...(accessToken && {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    }),
   });
 
-  eventSource.onmessage = (event) => {
-    try {
-      const parsed = JSON.parse(event.data);
-      onMessage(parsed);
-    } catch (e) {
-      console.error("JSON 파싱 실패:", e);
-    }
-  };
+  ["subscribed", "state", "progress"].forEach((eventType) => {
+    eventSource.addEventListener(eventType, (e: MessageEvent) => {
+      const parsed = parseEvent(eventType, e.data);
+      if (parsed) onMessage(parsed);
+    });
+  });
 
   eventSource.onerror = (err) => {
-    console.error("SSE 에러:", err);
+    const state = eventSource.readyState; // 0=CONNECTING, 1=OPEN, 2=CLOSED
+    const stateText = ["CONNECTING", "OPEN", "CLOSED"][state] ?? String(state);
+    console.error(
+      "[SSE 에러]",
+      { url, documentId, readyState: stateText },
+      err
+    );
     if (onError) onError(err);
     eventSource.close();
   };
