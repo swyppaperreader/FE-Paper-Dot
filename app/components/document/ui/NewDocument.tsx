@@ -195,7 +195,7 @@ export default function NewDocumentPage() {
 
   const eventSourceRef = useRef<EventSource | null>(null);
 
-  // document 올라오면 번역 시작 → SSE 한 번만 열고, progress 이벤트로 진행률 표시, state COMPLETED 시 getTranslation 한 번 호출 후 종료
+  // document 올라오면 번역 시작 → SSE(getTranslationStatus) → 서버가 스트림 닫으면 getTranslation 호출 → allTranslated면 끝, 아니면 SSE 다시 열고 반복
   useEffect(() => {
     if (!document?.documentId || !uploadingFiles[0]?.file || !accessToken)
       return;
@@ -214,93 +214,77 @@ export default function NewDocumentPage() {
       );
     };
 
+    const waitForStreamClose = (eventSource: EventSource): Promise<void> =>
+      new Promise((resolve) => {
+        eventSource.onerror = () => {
+          eventSource.close();
+          resolve();
+        };
+      });
+
     const run = async () => {
       try {
         setIsTranslating(true);
         setTranslationError(null);
-        setTranslationProgress(null);
         await postTranslation(document.documentId, accessToken);
         if (cancelledRef.current) return;
 
-        const eventSource = getTranslationStatus(document.documentId);
-        eventSourceRef.current = eventSource;
+        const MAX_RECONNECT = 60;
+        let reconnectCount = 0;
 
-        eventSource.addEventListener("progress", (event: MessageEvent) => {
-          if (cancelledRef.current) return;
-          try {
-            const data = JSON.parse(event.data);
-            if (data?.translated != null && data?.total != null) {
-              setTranslationProgress({
-                translated: data.translated,
-                total: data.total,
-              });
-            }
-          } catch {
-            /* ignore */
-          }
-        });
+        while (!cancelledRef.current && reconnectCount < MAX_RECONNECT) {
+          reconnectCount += 1;
+          const eventSource = getTranslationStatus(document.documentId);
+          eventSourceRef.current = eventSource;
 
-        eventSource.addEventListener("state", (event: MessageEvent) => {
-          if (cancelledRef.current) return;
-          try {
-            const data = JSON.parse(event.data);
-            const state = String(data?.state ?? "").toUpperCase();
-            console.log("state", state);
-            if (
-              state === "COMPLETED" ||
-              state === "DONE" ||
-              state === "SUCCESS"
-            ) {
-              eventSource.close();
-              eventSourceRef.current = null;
-              setTranslationProgress(null);
-              if (cancelledRef.current) return;
-              getTranslation(document.documentId, accessToken)
-                .then((list) => {
-                  if (cancelledRef.current) return;
-                  if (Array.isArray(list) && list.length > 0) applyResult(list);
-                  setIsTranslating(false);
-                })
-                .catch((e) => {
-                  if (!cancelledRef.current) {
-                    console.error("[번역 결과 조회 실패]", e);
-                    setTranslationError("번역 결과를 불러오지 못했어요.");
-                    setIsTranslating(false);
-                  }
+          eventSource.addEventListener("progress", (event: MessageEvent) => {
+            try {
+              const data = JSON.parse(event.data);
+              if (data?.translated != null && data?.total != null) {
+                setTranslationProgress({
+                  translated: data.translated,
+                  total: data.total,
                 });
-            }
-            if (state === "FAILED" || state === "NO_CONTENT") {
-              eventSource.close();
-              eventSourceRef.current = null;
-              setTranslationProgress(null);
-              if (!cancelledRef.current) {
-                setTranslationError(
-                  data?.message ??
-                    (state === "NO_CONTENT"
-                      ? "번역할 내용이 없어요."
-                      : "번역에 실패했어요.")
-                );
-                setIsTranslating(false);
               }
+            } catch {
+              /* ignore */
             }
-          } catch {
-            /* ignore */
-          }
-        });
+          });
 
-        eventSource.onerror = () => {
-          eventSource.close();
+          await waitForStreamClose(eventSource);
           eventSourceRef.current = null;
-          if (!cancelledRef.current) {
+          if (cancelledRef.current) return;
+
+          const data = await getTranslation(document.documentId, accessToken);
+          if (!Array.isArray(data) || data.length === 0) continue;
+
+          const translatedCount = data.filter(
+            (item) =>
+              item.translatedText != null &&
+              String(item.translatedText).trim() !== ""
+          ).length;
+          const total = data.length;
+          setTranslationProgress({ translated: translatedCount, total });
+
+          if (translatedCount === total) {
             setTranslationProgress(null);
-            setTranslationError("연결이 끊어졌어요.");
+            applyResult(data);
+            setIsTranslating(false);
+            return;
+          }
+
+          if (reconnectCount >= MAX_RECONNECT && !cancelledRef.current) {
+            setTranslationError(
+              "번역 대기 시간이 초과되었어요. 잠시 후 다시 시도해주세요."
+            );
             setIsTranslating(false);
           }
-        };
+          await new Promise((r) => setTimeout(r, 3000));
+        }
       } catch (e) {
         if (!cancelledRef.current) {
-          console.error("[번역 시작 실패]", e);
-          setTranslationError("번역을 시작하지 못했어요.");
+          console.error("[번역 시작/진행 실패]", e);
+          setTranslationError("번역을 진행하지 못했어요.");
           setIsTranslating(false);
         }
       }
