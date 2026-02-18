@@ -92,7 +92,6 @@ export default function NewDocumentPage() {
     }
   };
 
-  console.log("uploadingFiles", uploadingFiles);
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.currentTarget.files;
     if (files && files.length > 0) {
@@ -217,10 +216,7 @@ export default function NewDocumentPage() {
         setIsTranslating(true);
         setTranslationError(null);
         await postTranslation(document.documentId, accessToken);
-        const data = await getTranslationStatus(
-          document.documentId,
-          accessToken
-        );
+        const data = getTranslationStatus(document.documentId, accessToken);
         console.log("data", data);
       } catch (e) {
         console.error("[번역 시작 실패]", e);

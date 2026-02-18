@@ -187,25 +187,29 @@ export const getTranslationStatusPoll = async (
   };
 };
 
-export const getTranslationStatus = async (
+export const getTranslationStatus = (
   documentId: string | number,
   accessToken?: string
 ) => {
   const apiUrl = "https://be-paper-dot.store";
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-  };
-  if (accessToken) {
-    headers["Authorization"] = `Bearer ${accessToken}`;
-  }
-  const response = await fetch(
-    `${apiUrl}/api/v1/documents/${documentId}/translation-events`,
-    { method: "GET", headers, credentials: "include" }
-  );
-  const data = await response.json();
-  return data;
-};
 
+  const url = `${apiUrl}/api/v1/documents/${documentId}/translation-events`;
+
+  const eventSource = new EventSource(url, {
+    withCredentials: true,
+  });
+
+  eventSource.onmessage = (event) => {
+    console.log("SSE data:", event.data);
+  };
+
+  eventSource.onerror = (error) => {
+    console.error("SSE error:", error);
+    eventSource.close();
+  };
+
+  return eventSource;
+};
 export const postTranslation = async (
   documentId: string,
   accessToken?: string
