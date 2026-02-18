@@ -245,7 +245,12 @@ export default function NewDocumentPage() {
           try {
             const data = JSON.parse(event.data);
             const state = String(data?.state ?? "").toUpperCase();
-            if (state === "COMPLETED" || state === "DONE" || state === "SUCCESS") {
+            console.log("state", state);
+            if (
+              state === "COMPLETED" ||
+              state === "DONE" ||
+              state === "SUCCESS"
+            ) {
               eventSource.close();
               eventSourceRef.current = null;
               setTranslationProgress(null);
