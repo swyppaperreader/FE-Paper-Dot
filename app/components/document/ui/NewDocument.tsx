@@ -91,6 +91,7 @@ export default function NewDocumentPage() {
     }
   };
 
+  console.log("uploadingFiles", uploadingFiles);
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.currentTarget.files;
     if (files && files.length > 0) {
