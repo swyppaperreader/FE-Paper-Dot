@@ -211,12 +211,19 @@ export default function NewDocumentPage() {
     };
 
     const run = async () => {
-      setIsTranslating(true);
-      setTranslationError(null);
+      try {
+        setIsTranslating(true);
+        setTranslationError(null);
+        await postTranslation(document.documentId, accessToken);
+      } catch (e) {
+        console.error("[번역 시작 실패]", e);
+        setIsTranslating(false);
+        setTranslationError("번역을 시작하지 못했어요.");
+        return;
+      }
 
       const poll = async () => {
         try {
-          await postTranslation(document.documentId, accessToken);
           const data = await getTranslation(document.documentId, accessToken);
           if (!Array.isArray(data) || data.length === 0) return;
 
