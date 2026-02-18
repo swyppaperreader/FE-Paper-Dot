@@ -194,10 +194,6 @@ export default function NewDocumentPage() {
     uploadFile();
   }, [uploadingFiles, accessToken, userInfo?.userId]);
 
-  const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(
-    null
-  );
-
   // document 올라오면 번역 시작 → 폴링(getTranslation)만 사용. SSE 미사용이라 Content-Type 에러 없음
   useEffect(() => {
     if (!document?.documentId || !uploadingFiles[0]?.file || !accessToken)
@@ -229,10 +225,7 @@ export default function NewDocumentPage() {
         const poll = async () => {
           if (cancelledRef.current) return;
           try {
-            const data = await getTranslation(
-              document.documentId,
-              accessToken
-            );
+            const data = await getTranslation(document.documentId, accessToken);
             if (!Array.isArray(data) || data.length === 0) return;
 
             const translatedCount = data.filter(
