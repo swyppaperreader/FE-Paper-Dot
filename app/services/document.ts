@@ -200,7 +200,8 @@ export const getTranslationStatus = (
   });
 
   eventSource.onmessage = (event) => {
-    console.log("SSE data:", event.data);
+    const data = JSON.parse(event.data);
+    console.log("진행률:", data);
   };
 
   eventSource.onerror = (error) => {
