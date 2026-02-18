@@ -237,9 +237,6 @@ export default function NewDocumentPage() {
           const eventSource = getTranslationStatus(document.documentId);
           eventSourceRef.current = eventSource;
 
-          eventSource.addEventListener("state", (event: MessageEvent) => {
-            console.log("state", event);
-          });
           eventSource.addEventListener("progress", (event: MessageEvent) => {
             try {
               const data = JSON.parse(event.data);
