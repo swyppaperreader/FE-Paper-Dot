@@ -240,6 +240,7 @@ export default function NewDocumentPage() {
           eventSource.addEventListener("progress", (event: MessageEvent) => {
             try {
               const data = JSON.parse(event.data);
+              console.log("data", data);
               if (data?.translated != null && data?.total != null) {
                 setTranslationProgress({
                   translated: data.translated,
