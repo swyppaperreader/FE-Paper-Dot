@@ -225,8 +225,20 @@ export default function NewDocumentPage() {
           const data = await getTranslation(document.documentId, accessToken);
           if (!Array.isArray(data) || data.length === 0) return;
 
+          const translatedCount = data.filter(
+            (item) =>
+              item.translatedText != null &&
+              String(item.translatedText).trim() !== ""
+          ).length;
+          const total = data.length;
+          setTranslationProgress({ translated: translatedCount, total });
+
+          const allTranslated = translatedCount === total;
+          if (!allTranslated) return;
+
           clearInterval(intervalId);
           pollingIntervalRef.current = null;
+          setTranslationProgress(null);
           applyResult(data);
           setIsTranslating(false);
         } catch (e) {
@@ -273,7 +285,12 @@ export default function NewDocumentPage() {
                   <div className={styles.loadingSpinner} aria-hidden />
                   <p className={styles.loadingText}>
                     {translationProgress != null
-                      ? `${translationProgress.translated}/${translationProgress.total} 번역 중...`
+                      ? `${translationProgress.translated}/${
+                          translationProgress.total
+                        } (${Math.round(
+                          (100 * translationProgress.translated) /
+                            translationProgress.total
+                        )}%) 번역 중...`
                       : "번역 중입니다. 잠시만 기다려주세요..."}
                   </p>
                 </div>
