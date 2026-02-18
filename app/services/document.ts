@@ -192,9 +192,7 @@ export const getTranslationStatus = (documentId: string | number) => {
 
   const url = `${apiUrl}/api/v1/documents/${documentId}/translation-events`;
 
-  return new EventSource(url, {
-    withCredentials: true,
-  });
+  return new EventSource(url);
 };
 
 export const postTranslation = async (
