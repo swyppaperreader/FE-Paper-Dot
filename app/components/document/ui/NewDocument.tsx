@@ -6,13 +6,11 @@ import styles from "./NewDocument.module.css";
 import { formatFileSize } from "@/app/utils/useFormatFileSize";
 import {
   getTranslation,
-  getTranslationStatus,
   postDocuments,
   postTranslation,
 } from "@/app/services/document";
 import { useAccessTokenStore, useLoginStore } from "@/app/store/useLogin";
 import { useRouter } from "next/navigation";
-import { MessageEvent } from "event-source-polyfill";
 
 interface UploadingFile {
   id: string;
@@ -64,6 +62,18 @@ export default function NewDocumentPage() {
   const userInfo = useLoginStore((state) => state.userInfo);
   const accessToken = useAccessTokenStore((state) => state.accessToken);
   const router = useRouter();
+
+  // 뒤로 가기 등으로 이 페이지에 다시 들어오면 모두 초기화
+  useEffect(() => {
+    setDocument(null);
+    setUploadingFiles([]);
+    setIsTranslating(false);
+    setTranslationProgress(null);
+    setTranslationStatus(null);
+    setTranslatedText([]);
+    setBatchFailures([]);
+    setTranslationError(null);
+  }, []);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -181,13 +191,9 @@ export default function NewDocumentPage() {
             ? error.message
             : "파일 업로드에 실패했습니다.";
         alert(message);
-        setUploadingFiles((prev) =>
-          prev.map((file) =>
-            file.id === currentFile.id
-              ? { ...file, progress: 0, status: "error" }
-              : file
-          )
-        );
+        setDocument(null);
+        setTranslatedText([]);
+        setUploadingFiles([]);
       }
     };
 
@@ -206,12 +212,13 @@ export default function NewDocumentPage() {
       if (list.length === 0) return;
       setTranslatedText(list);
       sessionStorage.setItem("translationPairs", JSON.stringify(list));
-      sessionStorage.setItem("fileName", uploadingFiles[0].file.name);
       setUploadingFiles((prev) =>
-        prev.map((f) =>
-          f.status === "completed" ? { ...f, progress: 100 } : f
+        prev.map((f, i) =>
+          i === 0 ? { ...f, progress: 100, status: "completed" as const } : f
         )
       );
+      const name = uploadingFiles[0]?.file?.name;
+      if (name) sessionStorage.setItem("fileName", name);
     };
 
     const run = async () => {
@@ -256,8 +263,11 @@ export default function NewDocumentPage() {
       } catch (e) {
         if (!cancelledRef.current) {
           console.error("[번역 시작 실패]", e);
+          setTranslatedText([]);
           setTranslationError("번역을 시작하지 못했어요.");
           setIsTranslating(false);
+          setDocument(null);
+          setUploadingFiles([]);
         }
       }
     };
