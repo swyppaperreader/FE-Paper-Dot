@@ -196,12 +196,7 @@ export const getTranslationStatus = (
   const apiUrl = "https://be-paper-dot.store";
   const url = `${apiUrl}/api/v1/documents/${documentId}/translation-events`;
 
-  return new EventSourcePolyfill(url, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-    withCredentials: true,
-  });
+  return new EventSourcePolyfill(url);
 };
 
 export const postTranslation = async (

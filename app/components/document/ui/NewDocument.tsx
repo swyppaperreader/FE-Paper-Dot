@@ -194,14 +194,17 @@ export default function NewDocumentPage() {
     uploadFile();
   }, [uploadingFiles, accessToken, userInfo?.userId]);
 
-  const eventSourceRef = useRef<EventSource | null>(null);
+  const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(
+    null
+  );
 
-  // document 올라오면 번역 시작 → SSE(getTranslationStatus) → 서버가 스트림 닫으면 getTranslation 호출 → allTranslated면 끝, 아니면 SSE 다시 열고 반복
+  // document 올라오면 번역 시작 → 폴링(getTranslation)만 사용. SSE 미사용이라 Content-Type 에러 없음
   useEffect(() => {
     if (!document?.documentId || !uploadingFiles[0]?.file || !accessToken)
       return;
 
     cancelledRef.current = false;
+    const POLL_MS = 3000;
 
     const applyResult = (list: TranslationPair[]) => {
       if (list.length === 0) return;
@@ -215,80 +218,52 @@ export default function NewDocumentPage() {
       );
     };
 
-    const waitForStreamClose = (eventSource: EventSource): Promise<void> =>
-      new Promise((resolve) => {
-        eventSource.onerror = () => {
-          eventSource.close();
-          resolve();
-        };
-      });
-
     const run = async () => {
       try {
         setIsTranslating(true);
         setTranslationError(null);
+        setTranslationProgress(null);
         await postTranslation(document.documentId, accessToken);
         if (cancelledRef.current) return;
 
-        const MAX_RECONNECT = 60;
-        let reconnectCount = 0;
-
-        while (!cancelledRef.current && reconnectCount < MAX_RECONNECT) {
-          reconnectCount += 1;
-          const eventSource = getTranslationStatus(
-            document.documentId,
-            accessToken
-          );
-          eventSourceRef.current = eventSource;
-
-          eventSource.addEventListener("message", (event: MessageEvent) => {
-            try {
-              const data = JSON.parse(event.data);
-              if (data?.translated != null && data?.total != null) {
-                setTranslationProgress({
-                  translated: data.translated,
-                  total: data.total,
-                });
-              }
-            } catch {
-              /* ignore */
-            }
-          });
-
-          await waitForStreamClose(eventSource);
-          eventSourceRef.current = null;
+        const poll = async () => {
           if (cancelledRef.current) return;
-
-          const data = await getTranslation(document.documentId, accessToken);
-          if (!Array.isArray(data) || data.length === 0) continue;
-
-          const translatedCount = data.filter(
-            (item) =>
-              item.translatedText != null &&
-              String(item.translatedText).trim() !== ""
-          ).length;
-          const total = data.length;
-          setTranslationProgress({ translated: translatedCount, total });
-
-          if (translatedCount === total) {
-            setTranslationProgress(null);
-            applyResult(data);
-            setIsTranslating(false);
-            return;
-          }
-
-          if (reconnectCount >= MAX_RECONNECT && !cancelledRef.current) {
-            setTranslationError(
-              "번역 대기 시간이 초과되었어요. 잠시 후 다시 시도해주세요."
+          try {
+            const data = await getTranslation(
+              document.documentId,
+              accessToken
             );
-            setIsTranslating(false);
+            if (!Array.isArray(data) || data.length === 0) return;
+
+            const translatedCount = data.filter(
+              (item) =>
+                item.translatedText != null &&
+                String(item.translatedText).trim() !== ""
+            ).length;
+            const total = data.length;
+            setTranslationProgress({ translated: translatedCount, total });
+
+            if (translatedCount === total) {
+              if (pollingIntervalRef.current) {
+                clearInterval(pollingIntervalRef.current);
+                pollingIntervalRef.current = null;
+              }
+              setTranslationProgress(null);
+              applyResult(data);
+              setIsTranslating(false);
+            }
+          } catch (e) {
+            if (!cancelledRef.current) console.error("[번역 결과 조회]", e);
           }
-          await new Promise((r) => setTimeout(r, 3000));
-        }
+        };
+
+        poll();
+        if (cancelledRef.current) return;
+        pollingIntervalRef.current = setInterval(poll, POLL_MS);
       } catch (e) {
         if (!cancelledRef.current) {
-          console.error("[번역 시작/진행 실패]", e);
-          setTranslationError("번역을 진행하지 못했어요.");
+          console.error("[번역 시작 실패]", e);
+          setTranslationError("번역을 시작하지 못했어요.");
           setIsTranslating(false);
         }
       }
@@ -298,9 +273,9 @@ export default function NewDocumentPage() {
 
     return () => {
       cancelledRef.current = true;
-      if (eventSourceRef.current) {
-        eventSourceRef.current.close();
-        eventSourceRef.current = null;
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+        pollingIntervalRef.current = null;
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
