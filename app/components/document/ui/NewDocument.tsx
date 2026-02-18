@@ -54,7 +54,6 @@ export default function NewDocumentPage() {
   const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(
     null
   );
-  const cancelledRef = useRef(false);
 
   const userInfo = useLoginStore((state) => state.userInfo);
   const accessToken = useAccessTokenStore((state) => state.accessToken);
@@ -212,7 +211,11 @@ export default function NewDocumentPage() {
       try {
         setIsTranslating(true);
         setTranslationError(null);
-        await postTranslation(document.documentId, accessToken);
+        const response = await postTranslation(
+          document.documentId,
+          accessToken
+        );
+        console.log("response", response);
       } catch (e) {
         console.error("[번역 시작 실패]", e);
         setIsTranslating(false);
