@@ -230,7 +230,7 @@ export default function NewDocumentPage() {
 
         eventSource.onerror = () => {
           console.log("🔴 ERROR 발생");
-          console.log("readyState:", eventSource.readyState);
+          console.log("readyState:", eventSource);
 
           if (eventSource.readyState === EventSource.CLOSED) {
             console.log("✅ 서버가 정상적으로 스트림 종료함");
