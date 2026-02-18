@@ -225,6 +225,7 @@ export default function NewDocumentPage() {
       const poll = async () => {
         try {
           const data = await getTranslation(document.documentId, accessToken);
+          console.log("data", data);
           if (!Array.isArray(data) || data.length === 0) return;
 
           const translatedCount = data.filter(
