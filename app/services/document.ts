@@ -1,3 +1,5 @@
+import { EventSourcePolyfill } from "event-source-polyfill";
+
 export const postDocuments = async (
   formData: FormData,
   accessToken?: string
@@ -187,12 +189,19 @@ export const getTranslationStatusPoll = async (
   };
 };
 
-export const getTranslationStatus = (documentId: string | number) => {
+export const getTranslationStatus = (
+  documentId: string | number,
+  accessToken: string
+) => {
   const apiUrl = "https://be-paper-dot.store";
-
   const url = `${apiUrl}/api/v1/documents/${documentId}/translation-events`;
 
-  return new EventSource(url);
+  return new EventSourcePolyfill(url, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    withCredentials: true,
+  });
 };
 
 export const postTranslation = async (

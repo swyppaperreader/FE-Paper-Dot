@@ -12,6 +12,7 @@ import {
 } from "@/app/services/document";
 import { useAccessTokenStore, useLoginStore } from "@/app/store/useLogin";
 import { useRouter } from "next/navigation";
+import { MessageEvent } from "event-source-polyfill";
 
 interface UploadingFile {
   id: string;
@@ -234,10 +235,13 @@ export default function NewDocumentPage() {
 
         while (!cancelledRef.current && reconnectCount < MAX_RECONNECT) {
           reconnectCount += 1;
-          const eventSource = getTranslationStatus(document.documentId);
+          const eventSource = getTranslationStatus(
+            document.documentId,
+            accessToken
+          );
           eventSourceRef.current = eventSource;
 
-          eventSource.addEventListener("progress", (event: MessageEvent) => {
+          eventSource.addEventListener("message", (event: MessageEvent) => {
             try {
               const data = JSON.parse(event.data);
               console.log("data", data);
