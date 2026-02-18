@@ -187,30 +187,16 @@ export const getTranslationStatusPoll = async (
   };
 };
 
-export const getTranslationStatus = (
-  documentId: string | number,
-  accessToken?: string
-) => {
+export const getTranslationStatus = (documentId: string | number) => {
   const apiUrl = "https://be-paper-dot.store";
 
   const url = `${apiUrl}/api/v1/documents/${documentId}/translation-events`;
 
-  const eventSource = new EventSource(url, {
+  return new EventSource(url, {
     withCredentials: true,
   });
-
-  eventSource.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-    console.log("진행률:", data);
-  };
-
-  eventSource.onerror = (error) => {
-    console.error("SSE error:", error);
-    eventSource.close();
-  };
-
-  return eventSource;
 };
+
 export const postTranslation = async (
   documentId: string,
   accessToken?: string

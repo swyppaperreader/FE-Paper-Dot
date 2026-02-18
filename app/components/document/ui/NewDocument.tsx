@@ -216,8 +216,22 @@ export default function NewDocumentPage() {
         setIsTranslating(true);
         setTranslationError(null);
         await postTranslation(document.documentId, accessToken);
-        const data = getTranslationStatus(document.documentId, accessToken);
-        console.log("data", data);
+        const eventSource = getTranslationStatus(document.documentId);
+        eventSource.onmessage = (event) => {
+          console.log("raw:", event.data);
+
+          try {
+            const data = JSON.parse(event.data);
+            console.log("파싱:", data);
+          } catch {
+            console.log("문자열 데이터:", event.data);
+          }
+        };
+
+        eventSource.onerror = (error) => {
+          console.error("SSE 에러:", error);
+          eventSource.close();
+        };
       } catch (e) {
         console.error("[번역 시작 실패]", e);
         setIsTranslating(false);
