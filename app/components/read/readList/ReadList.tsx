@@ -6,7 +6,6 @@ import ReadHeader from "../../header/ReadHeader";
 import styles from "./readList.module.css";
 import { getDocumentDetail } from "@/app/services/document";
 import { useAccessTokenStore } from "@/app/store/useLogin";
-
 interface TranslationPair {
   docUnitId: number;
   sourceText: string;
@@ -27,43 +26,59 @@ const SAMPLE_DATA: TranslationPair[] = [
   },
   {
     docUnitId: 3,
-    sourceText: "Despite these advances, concerns about the negative effects of technology on education have emerged.",
-    translatedText: "이러한 발전에도 불구하고, 교육에 대한 기술의 부정적인 영향에 대한 우려가 제기되었다.",
+    sourceText:
+      "Despite these advances, concerns about the negative effects of technology on education have emerged.",
+    translatedText:
+      "이러한 발전에도 불구하고, 교육에 대한 기술의 부정적인 영향에 대한 우려가 제기되었다.",
   },
   {
     docUnitId: 4,
-    sourceText: "Excessive screen time can lead to eye strain and fatigue, reducing the effectiveness of learning.",
-    translatedText: "과도한 화면 노출은 눈의 피로와 피곤함을 초래할 수 있으며, 학습의 효과를 감소시킨다.",
+    sourceText:
+      "Excessive screen time can lead to eye strain and fatigue, reducing the effectiveness of learning.",
+    translatedText:
+      "과도한 화면 노출은 눈의 피로와 피곤함을 초래할 수 있으며, 학습의 효과를 감소시킨다.",
   },
   {
     docUnitId: 5,
-    sourceText: "Furthermore, the constant connectivity brought about by digital devices may encourage procrastination and reduce concentration.",
-    translatedText: "더욱이, 디지털 기기가 가져온 지속적인 연결성은 미루는 습관을 조장하고 집중력을 감소시킬 수 있다.",
+    sourceText:
+      "Furthermore, the constant connectivity brought about by digital devices may encourage procrastination and reduce concentration.",
+    translatedText:
+      "더욱이, 디지털 기기가 가져온 지속적인 연결성은 미루는 습관을 조장하고 집중력을 감소시킬 수 있다.",
   },
   {
     docUnitId: 6,
-    sourceText: "Students often find themselves distracted by social media and other online content, making it difficult to maintain focus on their studies.",
-    translatedText: "학생들은 종종 소셜 미디어와 다른 온라인 콘텐츠로 인해 산만해지며, 자신의 학습에 집중을 유지하기 어렵다.",
+    sourceText:
+      "Students often find themselves distracted by social media and other online content, making it difficult to maintain focus on their studies.",
+    translatedText:
+      "학생들은 종종 소셜 미디어와 다른 온라인 콘텐츠로 인해 산만해지며, 자신의 학습에 집중을 유지하기 어렵다.",
   },
   {
     docUnitId: 7,
-    sourceText: "Additionally, the digital divide—the gap between those with access to technology and those without—continues to create inequalities in educational opportunities.",
-    translatedText: "또한, 기술에 접근할 수 있는 사람들과 그렇지 못한 사람들 사이의 격차인 디지털 격차는 계속해서 교육 기회의 불평등을 만든다.",
+    sourceText:
+      "Additionally, the digital divide—the gap between those with access to technology and those without—continues to create inequalities in educational opportunities.",
+    translatedText:
+      "또한, 기술에 접근할 수 있는 사람들과 그렇지 못한 사람들 사이의 격차인 디지털 격차는 계속해서 교육 기회의 불평등을 만든다.",
   },
   {
     docUnitId: 8,
-    sourceText: "While technology offers tremendous potential, it is crucial to find a balance between digital learning and traditional methods.",
-    translatedText: "기술은 엄청난 잠재력을 제공하지만, 디지털 학습과 전통적인 방법 사이의 균형을 찾는 것이 중요하다.",
+    sourceText:
+      "While technology offers tremendous potential, it is crucial to find a balance between digital learning and traditional methods.",
+    translatedText:
+      "기술은 엄청난 잠재력을 제공하지만, 디지털 학습과 전통적인 방법 사이의 균형을 찾는 것이 중요하다.",
   },
   {
     docUnitId: 9,
-    sourceText: "Educators must develop strategies to minimize distractions and ensure that technology enhances rather than hinders the learning process.",
-    translatedText: "교육자들은 산만함을 최소화하고 기술이 학습 과정을 방해하기보다 개선하도록 보장하는 전략을 개발해야 한다.",
+    sourceText:
+      "Educators must develop strategies to minimize distractions and ensure that technology enhances rather than hinders the learning process.",
+    translatedText:
+      "교육자들은 산만함을 최소화하고 기술이 학습 과정을 방해하기보다 개선하도록 보장하는 전략을 개발해야 한다.",
   },
   {
     docUnitId: 10,
-    sourceText: "In conclusion, technology is a powerful tool that can significantly improve education when used properly.",
-    translatedText: "결론적으로, 기술은 올바르게 사용될 때 교육을 크게 개선할 수 있는 강력한 도구이다.",
+    sourceText:
+      "In conclusion, technology is a powerful tool that can significantly improve education when used properly.",
+    translatedText:
+      "결론적으로, 기술은 올바르게 사용될 때 교육을 크게 개선할 수 있는 강력한 도구이다.",
   },
 ];
 
@@ -105,7 +120,9 @@ export default function ReadList() {
       try {
         const parsed = JSON.parse(stored);
         if (Array.isArray(parsed) && parsed.length > 0) return false;
-      } catch { /* ignore */ }
+      } catch {
+        /* ignore */
+      }
     }
     return true;
   });
@@ -120,15 +137,54 @@ export default function ReadList() {
   const [selectedPageIndex, setSelectedPageIndex] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [showSidebar, setShowSidebar] = useState(true);
-  const [filterMode, setFilterMode] = useState<"all" | "korean" | "english">("all");
+  const [filterMode, setFilterMode] = useState<"all" | "korean" | "english">(
+    "all"
+  );
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
-  const [pdfDocument, setPdfDocument] = useState<import("pdfjs-dist").PDFDocumentProxy | null>(null);
+  const [pdfDocument, setPdfDocument] = useState<
+    import("pdfjs-dist").PDFDocumentProxy | null
+  >(null);
   const [pageImages, setPageImages] = useState<Map<number, string>>(new Map());
 
   // 핵심 매핑: 각 data index → 소속 페이지(1-based)
   const [dataToPage, setDataToPage] = useState<number[]>([]);
   // 페이지(1-based) → 해당 페이지 첫 data index
-  const [pageToFirstIdx, setPageToFirstIdx] = useState<Map<number, number>>(new Map());
+  const [pageToFirstIdx, setPageToFirstIdx] = useState<Map<number, number>>(
+    new Map()
+  );
+
+  const BOOKMARKS_KEY = "paper-dot-bookmarks";
+  const [bookmarkedIds, setBookmarkedIds] = useState<Set<number>>(() => {
+    if (typeof window === "undefined") return new Set();
+    try {
+      const documentId = sessionStorage.getItem("documentId") ?? "sample";
+      const stored = localStorage.getItem(`${BOOKMARKS_KEY}-${documentId}`);
+      if (stored) {
+        const arr = JSON.parse(stored) as number[];
+        if (Array.isArray(arr)) return new Set(arr);
+      }
+    } catch {
+      /* ignore */
+    }
+    return new Set();
+  });
+
+  useEffect(() => {
+    const documentId = sessionStorage.getItem("documentId") ?? "sample";
+    localStorage.setItem(
+      `${BOOKMARKS_KEY}-${documentId}`,
+      JSON.stringify([...bookmarkedIds])
+    );
+  }, [bookmarkedIds]);
+
+  const toggleBookmark = useCallback((docUnitId: number) => {
+    setBookmarkedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(docUnitId)) next.delete(docUnitId);
+      else next.add(docUnitId);
+      return next;
+    });
+  }, []);
 
   const contentScrollRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -169,7 +225,10 @@ export default function ReadList() {
           for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
           pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
         } else if (pdfUrl) {
-          pdf = await pdfjsLib.getDocument({ url: pdfUrl, withCredentials: true }).promise;
+          pdf = await pdfjsLib.getDocument({
+            url: pdfUrl,
+            withCredentials: true,
+          }).promise;
         }
 
         if (!pdf) return;
@@ -206,7 +265,8 @@ export default function ReadList() {
           ctx.fillStyle = "#ffffff";
           ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-          await page.render({ canvas, canvasContext: ctx, viewport: scaled }).promise;
+          await page.render({ canvas, canvasContext: ctx, viewport: scaled })
+            .promise;
           images.set(pageNum, canvas.toDataURL("image/png"));
         } catch (e) {
           console.warn(`페이지 ${pageNum} 렌더링 실패:`, e);
@@ -244,7 +304,11 @@ export default function ReadList() {
         const words = src.split(" ").filter(Boolean);
         let found = false;
 
-        for (let wLen = Math.min(5, words.length); wLen >= 3 && !found; wLen--) {
+        for (
+          let wLen = Math.min(5, words.length);
+          wLen >= 3 && !found;
+          wLen--
+        ) {
           const phrase = words.slice(0, wLen).join(" ");
           for (let p = 0; p < pageTexts.length; p++) {
             if (pageTexts[p].includes(phrase)) {
@@ -341,39 +405,46 @@ export default function ReadList() {
   }, [dataToPage]);
 
   // ─── 6. 페이지 이동 ───
-  const scrollToPage = useCallback((pageIndex: number) => {
-    const pageNum = pageIndex + 1;
-    const dataIdx = pageToFirstIdx.get(pageNum);
+  const scrollToPage = useCallback(
+    (pageIndex: number) => {
+      const pageNum = pageIndex + 1;
+      const dataIdx = pageToFirstIdx.get(pageNum);
 
-    if (dataIdx !== undefined && itemRefs.current[dataIdx]) {
+      if (dataIdx !== undefined && itemRefs.current[dataIdx]) {
+        const el = contentScrollRef.current;
+        const target = itemRefs.current[dataIdx];
+        if (el && target) {
+          // scrollIntoView 대신 직접 계산 (스크롤 컨테이너 내부 정확한 위치)
+          const containerRect = el.getBoundingClientRect();
+          const targetRect = target.getBoundingClientRect();
+          const offset = targetRect.top - containerRect.top + el.scrollTop;
+          el.scrollTo({ top: offset, behavior: "smooth" });
+        }
+        setSelectedPageIndex(pageIndex);
+        return;
+      }
+
+      // 폴백
       const el = contentScrollRef.current;
-      const target = itemRefs.current[dataIdx];
-      if (el && target) {
-        // scrollIntoView 대신 직접 계산 (스크롤 컨테이너 내부 정확한 위치)
-        const containerRect = el.getBoundingClientRect();
-        const targetRect = target.getBoundingClientRect();
-        const offset = targetRect.top - containerRect.top + el.scrollTop;
-        el.scrollTo({ top: offset, behavior: "smooth" });
+      if (el) {
+        el.scrollTo({ top: pageIndex * el.clientHeight, behavior: "smooth" });
       }
       setSelectedPageIndex(pageIndex);
-      return;
-    }
+    },
+    [pageToFirstIdx]
+  );
 
-    // 폴백
-    const el = contentScrollRef.current;
-    if (el) {
-      el.scrollTo({ top: pageIndex * el.clientHeight, behavior: "smooth" });
-    }
-    setSelectedPageIndex(pageIndex);
-  }, [pageToFirstIdx]);
-
-  const handlePageChange = useCallback((page: number) => {
-    const pageIndex = Math.max(0, Math.min(page - 1, totalPages - 1));
-    scrollToPage(pageIndex);
-  }, [totalPages, scrollToPage]);
+  const handlePageChange = useCallback(
+    (page: number) => {
+      const pageIndex = Math.max(0, Math.min(page - 1, totalPages - 1));
+      scrollToPage(pageIndex);
+    },
+    [totalPages, scrollToPage]
+  );
 
   const handleToggleSidebar = () => setShowSidebar((prev) => !prev);
-  const handleFilterChange = (mode: "all" | "korean" | "english") => setFilterMode(mode);
+  const handleFilterChange = (mode: "all" | "korean" | "english") =>
+    setFilterMode(mode);
 
   // ─── 7. PDF URL 가져오기 ───
   useEffect(() => {
@@ -383,12 +454,18 @@ export default function ReadList() {
         const documentId = sessionStorage.getItem("documentId");
         if (!documentId) return;
 
-        const detail = await getDocumentDetail(documentId, accessToken ?? undefined);
+        const detail = await getDocumentDetail(
+          documentId,
+          accessToken ?? undefined
+        );
         if (detail.storagePath) {
-          const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://be-paper-dot.store";
+          const apiUrl =
+            process.env.NEXT_PUBLIC_API_URL || "https://be-paper-dot.store";
           const url = detail.storagePath.startsWith("http")
             ? detail.storagePath
-            : `${apiUrl}${detail.storagePath.startsWith("/") ? "" : "/"}${detail.storagePath}`;
+            : `${apiUrl}${detail.storagePath.startsWith("/") ? "" : "/"}${
+                detail.storagePath
+              }`;
           setPdfUrl(url);
         }
       } catch (error) {
@@ -465,19 +542,55 @@ export default function ReadList() {
                   </div>
                 )}
                 <div
-                  className={styles.docUnitIdItem}
-                  ref={(el) => { itemRefs.current[index] = el; }}>
+                  className={`${styles.docUnitIdItem} ${
+                    bookmarkedIds.has(item.docUnitId)
+                      ? styles.docUnitIdItemBookmarked
+                      : ""
+                  }`}
+                  ref={(el) => {
+                    itemRefs.current[index] = el;
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => toggleBookmark(item.docUnitId)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      toggleBookmark(item.docUnitId);
+                    }
+                  }}
+                  aria-pressed={bookmarkedIds.has(item.docUnitId)}
+                  aria-label={
+                    bookmarkedIds.has(item.docUnitId)
+                      ? "북마크 해제"
+                      : "북마크 추가"
+                  }>
+                  {bookmarkedIds.has(item.docUnitId) && (
+                    <>
+                      <img
+                        src="/Bookmark.svg"
+                        alt=""
+                        width={24}
+                        height={24}
+                        className={styles.bookmarkIcon}
+                      />
+                    </>
+                  )}
                   {filterMode === "all" && (
                     <>
                       <p className={styles.sourceText}>{item.sourceText}</p>
-                      <p className={styles.translatedText}>{item.translatedText}</p>
+                      <p className={styles.translatedText}>
+                        {item.translatedText}
+                      </p>
                     </>
                   )}
                   {filterMode === "english" && (
                     <p className={styles.sourceText}>{item.sourceText}</p>
                   )}
                   {filterMode === "korean" && (
-                    <p className={styles.translatedText}>{item.translatedText}</p>
+                    <p className={styles.translatedText}>
+                      {item.translatedText}
+                    </p>
                   )}
                 </div>
               </div>

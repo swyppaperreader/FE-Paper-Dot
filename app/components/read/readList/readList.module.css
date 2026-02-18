@@ -141,7 +141,25 @@
 .docUnitIdItem {
   display: flex;
   flex-direction: column;
+  position: relative;
   gap: 12px;
+  cursor: pointer;
+  padding: 8px 0;
+  margin: -8px 0;
+  border-radius: 8px;
+  transition: background-color 0.15s;
+}
+
+.bookmarkIcon {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.bookmarkIcon:hover {
+  opacity: 0.5;
+  background-color: #d4dbe8;
 }
 
 .sourceText {
@@ -150,6 +168,12 @@
   font-weight: 700;
   line-height: 150%;
   letter-spacing: -0.32px;
+}
+
+.sourceText::selection,
+.translatedText::selection {
+  background-color: rgba(255, 235, 59, 0.6);
+  color: #1a1a1a;
 }
 
 .translatedText {
