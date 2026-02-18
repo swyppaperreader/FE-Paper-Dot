@@ -228,9 +228,17 @@ export default function NewDocumentPage() {
           }
         };
 
-        eventSource.onerror = (error) => {
-          console.error("SSE 에러:", error);
-          eventSource.close();
+        eventSource.onerror = () => {
+          console.log("🔴 ERROR 발생");
+          console.log("readyState:", eventSource.readyState);
+
+          if (eventSource.readyState === EventSource.CLOSED) {
+            console.log("✅ 서버가 정상적으로 스트림 종료함");
+          } else if (eventSource.readyState === EventSource.CONNECTING) {
+            console.log("⚠️ 재연결 시도 중 (네트워크 문제 가능성)");
+          } else {
+            console.log("❌ 실제 네트워크 에러 가능성");
+          }
         };
       } catch (e) {
         console.error("[번역 시작 실패]", e);
