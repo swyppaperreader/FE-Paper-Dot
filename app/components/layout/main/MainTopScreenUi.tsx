@@ -1,6 +1,6 @@
 import Image from "next/image";
 import styles from "./mainTopScreen.module.css";
-import Button from "@/app/components/button/Button";
+import Link from "next/link";
 
 export default function MainTopScreenUi() {
   return (
@@ -13,7 +13,9 @@ export default function MainTopScreenUi() {
           논문, 전공서적, 리포트, 매뉴얼.. 등 다양한 문서를 문장단위 번역으로
           끊김 없이 읽어보세요.
         </p>
-        <Button>지금 시작하기</Button>
+        <Link href="/newdocument" className={styles.buttonLink}>
+          지금 시작하기
+        </Link>
         <div className={styles.textButton}>
           <Image src="/text.svg" alt="text" width={24} height={24} />
           <span>텍스트 번역</span>
