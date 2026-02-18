@@ -6,6 +6,7 @@ import styles from "./NewDocument.module.css";
 import { formatFileSize } from "@/app/utils/useFormatFileSize";
 import {
   getTranslation,
+  getTranslationStatus,
   postDocuments,
   postTranslation,
 } from "@/app/services/document";
@@ -197,7 +198,7 @@ export default function NewDocumentPage() {
     if (!document?.documentId || !uploadingFiles[0]?.file || !accessToken)
       return;
 
-    const POLL_MS = 3000;
+    const POLL_MS = 5000;
 
     const applyResult = (list: TranslationPair[]) => {
       if (list.length === 0) return;
@@ -216,6 +217,11 @@ export default function NewDocumentPage() {
         setIsTranslating(true);
         setTranslationError(null);
         await postTranslation(document.documentId, accessToken);
+        const data = await getTranslationStatus(
+          document.documentId,
+          accessToken
+        );
+        console.log("data", data);
       } catch (e) {
         console.error("[번역 시작 실패]", e);
         setIsTranslating(false);
@@ -223,36 +229,36 @@ export default function NewDocumentPage() {
         return;
       }
 
-      const poll = async () => {
-        try {
-          const data = await getTranslation(document.documentId, accessToken);
-          console.log("data", data);
-          if (!Array.isArray(data) || data.length === 0) return;
+      // const poll = async () => {
+      //   try {
+      //     const data = await getTranslation(document.documentId, accessToken);
+      //     console.log("data", data);
+      //     if (!Array.isArray(data) || data.length === 0) return;
 
-          const translatedCount = data.filter(
-            (item) =>
-              item.translatedText != null &&
-              String(item.translatedText).trim() !== ""
-          ).length;
-          const total = data.length;
-          setTranslationProgress({ translated: translatedCount, total });
+      //     const translatedCount = data.filter(
+      //       (item) =>
+      //         item.translatedText != null &&
+      //         String(item.translatedText).trim() !== ""
+      //     ).length;
+      //     const total = data.length;
+      //     setTranslationProgress({ translated: translatedCount, total });
 
-          const allTranslated = translatedCount === total;
-          if (!allTranslated) return;
+      //     const allTranslated = translatedCount === total;
+      //     if (!allTranslated) return;
 
-          clearInterval(intervalId);
-          pollingIntervalRef.current = null;
-          setTranslationProgress(null);
-          applyResult(data);
-          setIsTranslating(false);
-        } catch (e) {
-          console.error("[번역 결과 조회]", e);
-        }
-      };
+      //     clearInterval(intervalId);
+      //     pollingIntervalRef.current = null;
+      //     setTranslationProgress(null);
+      //     applyResult(data);
+      //     setIsTranslating(false);
+      //   } catch (e) {
+      //     console.error("[번역 결과 조회]", e);
+      //   }
+      // };
 
-      poll();
-      const intervalId = setInterval(poll, POLL_MS);
-      pollingIntervalRef.current = intervalId;
+      // poll();
+      // const intervalId = setInterval(poll, POLL_MS);
+      // pollingIntervalRef.current = intervalId;
     };
 
     run();

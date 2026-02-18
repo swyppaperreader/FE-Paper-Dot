@@ -187,6 +187,25 @@ export const getTranslationStatusPoll = async (
   };
 };
 
+export const getTranslationStatus = async (
+  documentId: string | number,
+  accessToken?: string
+) => {
+  const apiUrl = "https://be-paper-dot.store";
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+  };
+  if (accessToken) {
+    headers["Authorization"] = `Bearer ${accessToken}`;
+  }
+  const response = await fetch(
+    `${apiUrl}/api/v1/documents/${documentId}/translation-events`,
+    { method: "GET", headers, credentials: "include" }
+  );
+  const data = await response.json();
+  return data;
+};
+
 export const postTranslation = async (
   documentId: string,
   accessToken?: string
