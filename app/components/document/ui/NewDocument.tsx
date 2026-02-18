@@ -229,7 +229,11 @@ export default function NewDocumentPage() {
         await postTranslation(document.documentId, accessToken);
         if (cancelledRef.current) return;
 
-        while (!cancelledRef.current) {
+        const MAX_RECONNECT = 60;
+        let reconnectCount = 0;
+
+        while (!cancelledRef.current && reconnectCount < MAX_RECONNECT) {
+          reconnectCount += 1;
           const eventSource = getTranslationStatus(document.documentId);
           eventSourceRef.current = eventSource;
 
@@ -268,6 +272,12 @@ export default function NewDocumentPage() {
             setIsTranslating(false);
             return;
           }
+
+          if (reconnectCount >= MAX_RECONNECT && !cancelledRef.current) {
+            setTranslationError("번역 대기 시간이 초과되었어요. 잠시 후 다시 시도해주세요.");
+            setIsTranslating(false);
+          }
+          await new Promise((r) => setTimeout(r, 3000));
         }
       } catch (e) {
         if (!cancelledRef.current) {
