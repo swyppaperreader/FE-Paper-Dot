@@ -46,9 +46,7 @@ export default function NewDocumentPage() {
     translated: number;
     total: number;
   } | null>(null);
-  const [translationStatus, setTranslationStatus] = useState<string | null>(
-    null
-  );
+  const [, setTranslationStatus] = useState<string | null>(null);
   const [translatedText, setTranslatedText] = useState<TranslationPair[]>([]);
   const [batchFailures, setBatchFailures] = useState<
     { start: number; end: number; reason: string }[]

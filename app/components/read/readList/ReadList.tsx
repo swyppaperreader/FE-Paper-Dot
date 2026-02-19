@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import Image from "next/image";
 import ReadHeader from "../../header/ReadHeader";
 import styles from "./readList.module.css";
@@ -8,15 +8,6 @@ interface TranslationPair {
   docUnitId: number;
   sourceText: string;
   translatedText: string;
-}
-
-/** 텍스트 정규화: 소문자 + 영숫자/공백만 남김 */
-function normalize(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
 }
 
 export default function ReadList() {
@@ -41,19 +32,25 @@ export default function ReadList() {
   });
 
   const [selectedPageIndex, setSelectedPageIndex] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
   const [showSidebar, setShowSidebar] = useState(true);
   const [filterMode, setFilterMode] = useState<"all" | "korean" | "english">(
     "all"
   );
-  const [pageImages, setPageImages] = useState<Map<number, string>>(new Map());
 
-  // 핵심 매핑: 각 data index → 소속 페이지(1-based)
-  const [dataToPage, setDataToPage] = useState<number[]>([]);
-  // 페이지(1-based) → 해당 페이지 첫 data index
-  const [pageToFirstIdx, setPageToFirstIdx] = useState<Map<number, number>>(
-    new Map()
+  // 파생 값: data 기준으로 렌더 시 계산 (effect 내 setState 제거)
+  const dataToPage = useMemo(
+    () => (data.length === 0 ? [] : data.map((_, i) => i + 1)),
+    [data]
   );
+  const totalPages = data.length || 1;
+  const pageToFirstIdx = useMemo(() => {
+    const p2i = new Map<number, number>();
+    dataToPage.forEach((pageNum, i) => {
+      if (!p2i.has(pageNum)) p2i.set(pageNum, i);
+    });
+    return p2i;
+  }, [dataToPage]);
+  const pageImages = useMemo(() => new Map<number, string>(), []);
 
   const BOOKMARKS_KEY = "paper-dot-bookmarks";
   const [bookmarkedIds, setBookmarkedIds] = useState<Set<number>>(() => {
@@ -91,50 +88,7 @@ export default function ReadList() {
   const contentScrollRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  // ─── 1. 데이터 없을 때 초기 상태 정리 ───
-  useEffect(() => {
-    if (data.length === 0) {
-      setDataToPage([]);
-      setTotalPages(1);
-      setPageToFirstIdx(new Map());
-    }
-  }, [data.length]);
-
-  // ─── 3. PDF 썸네일 렌더링 ───
-  useEffect(() => {
-    const renderPages = async () => {
-      if (data.length === 0) return;
-      const numPages = data.length;
-      const images = new Map<number, string>();
-
-      for (let pageNum = 1; pageNum <= numPages; pageNum++) {
-        try {
-          const page = data[pageNum - 1];
-          images.set(pageNum, page.translatedText);
-        } catch (e) {
-          console.warn(`페이지 ${pageNum} 렌더링 실패:`, e);
-        }
-      }
-      setPageImages(images);
-    };
-
-    renderPages();
-  }, [data]);
-
-  // ─── 4. 번역 항목 ↔ 페이지 매핑 (항목 1개 = 1페이지) ───
-  useEffect(() => {
-    if (data.length === 0) return;
-    const assigned = data.map((_, i) => i + 1);
-    setTotalPages(data.length);
-    setDataToPage(assigned);
-    const p2i = new Map<number, number>();
-    assigned.forEach((pageNum, i) => {
-      if (!p2i.has(pageNum)) p2i.set(pageNum, i);
-    });
-    setPageToFirstIdx(p2i);
-  }, [data]);
-
-  // ─── 5. 스크롤 → 현재 페이지 감지 ───
+  // ─── 스크롤 → 현재 페이지 감지 ───
   useEffect(() => {
     const el = contentScrollRef.current;
     if (!el || dataToPage.length === 0) return;
@@ -321,7 +275,7 @@ export default function ReadList() {
                   }>
                   {bookmarkedIds.has(item.docUnitId) && (
                     <>
-                      <img
+                      <Image
                         src="/Bookmark.svg"
                         alt=""
                         width={24}

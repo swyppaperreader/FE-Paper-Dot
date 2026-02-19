@@ -191,6 +191,7 @@ export const getTranslationStatusPoll = async (
 
 export const getTranslationStatus = (
   documentId: string | number,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- reserved for future auth header
   accessToken: string
 ) => {
   const apiUrl = "https://be-paper-dot.store";
