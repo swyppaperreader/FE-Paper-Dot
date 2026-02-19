@@ -43,6 +43,9 @@ export const metadata: Metadata = {
     description:
       "논문, 전공서적, 리포트, 메뉴얼 등 다양한 영어 문서를 원문과 한글 번역을 문장 단위로 병렬 표시해 더 쉽고 빠르게 이해하세요.",
   },
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
