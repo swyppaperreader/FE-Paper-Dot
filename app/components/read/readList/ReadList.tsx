@@ -10,6 +10,9 @@ interface TranslationPair {
   translatedText: string;
 }
 
+/** 페이지당 문장(항목) 수 (7~8문장 단위) */
+const ITEMS_PER_PAGE = 8;
+
 export default function ReadList() {
   const [data] = useState<TranslationPair[]>(() => {
     if (typeof window === "undefined") return [];
@@ -37,20 +40,22 @@ export default function ReadList() {
     "all"
   );
 
-  // 파생 값: data 기준으로 렌더 시 계산 (effect 내 setState 제거)
+  // 파생 값: 7~8문장 단위로 페이지 묶음
   const dataToPage = useMemo(
-    () => (data.length === 0 ? [] : data.map((_, i) => i + 1)),
+    () =>
+      data.length === 0
+        ? []
+        : data.map((_, i) => Math.floor(i / ITEMS_PER_PAGE) + 1),
     [data]
   );
-  const totalPages = data.length || 1;
+  const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE) || 1;
   const pageToFirstIdx = useMemo(() => {
     const p2i = new Map<number, number>();
-    dataToPage.forEach((pageNum, i) => {
-      if (!p2i.has(pageNum)) p2i.set(pageNum, i);
-    });
+    for (let p = 1; p <= totalPages; p++) {
+      p2i.set(p, (p - 1) * ITEMS_PER_PAGE);
+    }
     return p2i;
-  }, [dataToPage]);
-  const pageImages = useMemo(() => new Map<number, string>(), []);
+  }, [totalPages]);
 
   const BOOKMARKS_KEY = "paper-dot-bookmarks";
   const [bookmarkedIds, setBookmarkedIds] = useState<Set<number>>(() => {
@@ -209,18 +214,29 @@ export default function ReadList() {
                     onClick={() => scrollToPage(index)}
                     aria-pressed={index === selectedPageIndex}>
                     <div className={styles.pagePreview}>
-                      {pageImages.has(index + 1) ? (
-                        <Image
-                          src={pageImages.get(index + 1) || ""}
-                          alt={`Page ${index + 1}`}
-                          width={108}
-                          height={140}
-                          className={styles.pageThumbImage}
-                          unoptimized
-                        />
-                      ) : (
-                        <div className={styles.pagePreviewPlaceholder} />
-                      )}
+                      {(() => {
+                        const firstIdx = index * ITEMS_PER_PAGE;
+                        const item = data[firstIdx];
+                        if (!item) {
+                          return (
+                            <div className={styles.pagePreviewPlaceholder} />
+                          );
+                        }
+                        const pageItems = data.slice(
+                          firstIdx,
+                          firstIdx + ITEMS_PER_PAGE
+                        );
+                        const previewText = pageItems
+                          .map((x) => x.translatedText || x.sourceText)
+                          .join(" ");
+                        return (
+                          <div
+                            className={styles.pagePreviewText}
+                            title={previewText}>
+                            {previewText || " "}
+                          </div>
+                        );
+                      })()}
                     </div>
                     <span className={styles.pageNumber}>{index + 1}</span>
                   </button>
@@ -235,70 +251,60 @@ export default function ReadList() {
           role="region"
           aria-label="문서 본문"
           style={showSidebar ? {} : { width: "100%" }}>
-          {data.map((item, index) => {
-            // 이전 항목과 페이지가 다르면 구분선 표시 (첫 항목 제외)
-            const showDivider =
-              dataToPage.length > 0 &&
-              index > 0 &&
-              dataToPage[index] !== dataToPage[index - 1];
-
-            return (
-              <div key={item.docUnitId}>
-                <div
-                  className={`${styles.docUnitIdItem} ${
-                    bookmarkedIds.has(item.docUnitId)
-                      ? styles.docUnitIdItemBookmarked
-                      : ""
-                  }`}
-                  ref={(el) => {
-                    itemRefs.current[index] = el;
-                  }}
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => toggleBookmark(item.docUnitId)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      toggleBookmark(item.docUnitId);
-                    }
-                  }}
-                  aria-pressed={bookmarkedIds.has(item.docUnitId)}
-                  aria-label={
-                    bookmarkedIds.has(item.docUnitId)
-                      ? "북마크 해제"
-                      : "북마크 추가"
-                  }>
-                  {bookmarkedIds.has(item.docUnitId) && (
-                    <>
-                      <Image
-                        src="/Bookmark.svg"
-                        alt=""
-                        width={24}
-                        height={24}
-                        className={styles.bookmarkIcon}
-                      />
-                    </>
-                  )}
-                  {filterMode === "all" && (
-                    <>
-                      <p className={styles.sourceText}>{item.sourceText}</p>
-                      <p className={styles.translatedText}>
-                        {item.translatedText}
-                      </p>
-                    </>
-                  )}
-                  {filterMode === "english" && (
+          {data.map((item, index) => (
+            <div key={item.docUnitId}>
+              <div
+                className={`${styles.docUnitIdItem} ${
+                  bookmarkedIds.has(item.docUnitId)
+                    ? styles.docUnitIdItemBookmarked
+                    : ""
+                }`}
+                ref={(el) => {
+                  itemRefs.current[index] = el;
+                }}
+                role="button"
+                tabIndex={0}
+                onClick={() => toggleBookmark(item.docUnitId)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    toggleBookmark(item.docUnitId);
+                  }
+                }}
+                aria-pressed={bookmarkedIds.has(item.docUnitId)}
+                aria-label={
+                  bookmarkedIds.has(item.docUnitId)
+                    ? "북마크 해제"
+                    : "북마크 추가"
+                }>
+                {bookmarkedIds.has(item.docUnitId) && (
+                  <>
+                    <Image
+                      src="/Bookmark.svg"
+                      alt=""
+                      width={24}
+                      height={24}
+                      className={styles.bookmarkIcon}
+                    />
+                  </>
+                )}
+                {filterMode === "all" && (
+                  <>
                     <p className={styles.sourceText}>{item.sourceText}</p>
-                  )}
-                  {filterMode === "korean" && (
                     <p className={styles.translatedText}>
                       {item.translatedText}
                     </p>
-                  )}
-                </div>
+                  </>
+                )}
+                {filterMode === "english" && (
+                  <p className={styles.sourceText}>{item.sourceText}</p>
+                )}
+                {filterMode === "korean" && (
+                  <p className={styles.translatedText}>{item.translatedText}</p>
+                )}
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
       </div>
     </main>

@@ -99,11 +99,12 @@ export default function ReadHeader({
             <p className={styles.readHeaderPageNumberTotal}>/ {totalPages}</p>
           </div>
         </div>
-        {fileName && (
-          <p className={styles.readHeaderFileName}>{fileName}</p>
-        )}
+        {fileName && <p className={styles.readHeaderFileName}>{fileName}</p>}
         <div className={styles.readHeaderRightSection}>
-          <HeaderToggle filterMode={filterMode} onFilterChange={onFilterChange} />
+          <HeaderToggle
+            filterMode={filterMode}
+            onFilterChange={onFilterChange}
+          />
           <HeaderModal isReadHeader={true} className={styles.readHeaderModal} />
         </div>
       </div>
