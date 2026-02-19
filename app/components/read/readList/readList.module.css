@@ -109,6 +109,13 @@
   word-break: break-word;
 }
 
+.pagePreviewTextSourceText {
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1.35;
+  color: #374151;
+}
+
 .pageNumber {
   position: absolute;
   bottom: -18%;

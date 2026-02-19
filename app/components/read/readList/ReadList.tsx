@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
-import Image from "next/image";
 import ReadHeader from "../../header/ReadHeader";
 import styles from "./readList.module.css";
 interface TranslationPair {
@@ -80,15 +79,6 @@ export default function ReadList() {
       JSON.stringify([...bookmarkedIds])
     );
   }, [bookmarkedIds]);
-
-  const toggleBookmark = useCallback((docUnitId: number) => {
-    setBookmarkedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(docUnitId)) next.delete(docUnitId);
-      else next.add(docUnitId);
-      return next;
-    });
-  }, []);
 
   const contentScrollRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -227,13 +217,21 @@ export default function ReadList() {
                           firstIdx + ITEMS_PER_PAGE
                         );
                         const previewText = pageItems
-                          .map((x) => x.translatedText || x.sourceText)
+                          .map((x) => x.translatedText)
+                          .join(" ");
+                        const prevSourceText = pageItems
+                          .map((x) => x.sourceText)
                           .join(" ");
                         return (
                           <div
                             className={styles.pagePreviewText}
                             title={previewText}>
-                            {previewText || " "}
+                            <p className={styles.pagePreviewTextSourceText}>
+                              {prevSourceText || " "}
+                            </p>
+                            <p className={styles.pagePreviewTextText}>
+                              {previewText || " "}
+                            </p>
                           </div>
                         );
                       })()}
@@ -251,58 +249,20 @@ export default function ReadList() {
           role="region"
           aria-label="문서 본문"
           style={showSidebar ? {} : { width: "100%" }}>
-          {data.map((item, index) => (
+          {data.map((item) => (
             <div key={item.docUnitId}>
-              <div
-                className={`${styles.docUnitIdItem} ${
-                  bookmarkedIds.has(item.docUnitId)
-                    ? styles.docUnitIdItemBookmarked
-                    : ""
-                }`}
-                ref={(el) => {
-                  itemRefs.current[index] = el;
-                }}
-                role="button"
-                tabIndex={0}
-                onClick={() => toggleBookmark(item.docUnitId)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    toggleBookmark(item.docUnitId);
-                  }
-                }}
-                aria-pressed={bookmarkedIds.has(item.docUnitId)}
-                aria-label={
-                  bookmarkedIds.has(item.docUnitId)
-                    ? "북마크 해제"
-                    : "북마크 추가"
-                }>
-                {bookmarkedIds.has(item.docUnitId) && (
-                  <>
-                    <Image
-                      src="/Bookmark.svg"
-                      alt=""
-                      width={24}
-                      height={24}
-                      className={styles.bookmarkIcon}
-                    />
-                  </>
-                )}
-                {filterMode === "all" && (
-                  <>
-                    <p className={styles.sourceText}>{item.sourceText}</p>
-                    <p className={styles.translatedText}>
-                      {item.translatedText}
-                    </p>
-                  </>
-                )}
-                {filterMode === "english" && (
+              {filterMode === "all" && (
+                <>
                   <p className={styles.sourceText}>{item.sourceText}</p>
-                )}
-                {filterMode === "korean" && (
                   <p className={styles.translatedText}>{item.translatedText}</p>
-                )}
-              </div>
+                </>
+              )}
+              {filterMode === "english" && (
+                <p className={styles.sourceText}>{item.sourceText}</p>
+              )}
+              {filterMode === "korean" && (
+                <p className={styles.translatedText}>{item.translatedText}</p>
+              )}
             </div>
           ))}
         </div>
