@@ -244,11 +244,6 @@ export default function ReadList() {
 
             return (
               <div key={item.docUnitId}>
-                {showDivider && (
-                  <div className={styles.pageDivider}>
-                    Page {dataToPage[index]}
-                  </div>
-                )}
                 <div
                   className={`${styles.docUnitIdItem} ${
                     bookmarkedIds.has(item.docUnitId)
