@@ -65,15 +65,21 @@ export default function ReadList() {
     rect: DOMRect;
   } | null>(null);
   const selectionModalRef = useRef<HTMLDivElement>(null);
+  const selectionModalTextRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    selectionModalTextRef.current = selectionModal?.text ?? null;
+  }, [selectionModal]);
 
   const closeSelectionModal = useCallback(() => setSelectionModal(null), []);
 
   const handleCopySelection = useCallback(() => {
-    if (selectionModal?.text) {
-      navigator.clipboard.writeText(selectionModal.text).catch(() => {});
-      closeSelectionModal();
+    const text = selectionModalTextRef.current;
+    if (text) {
+      navigator.clipboard.writeText(text).catch(() => {});
+      setSelectionModal(null);
     }
-  }, [selectionModal?.text, closeSelectionModal]);
+  }, []);
 
   // 본문 영역에서 텍스트 선택 시 모달 표시
   useEffect(() => {
