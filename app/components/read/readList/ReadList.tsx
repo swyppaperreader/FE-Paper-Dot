@@ -56,32 +56,77 @@ export default function ReadList() {
     return p2i;
   }, [totalPages]);
 
-  const BOOKMARKS_KEY = "paper-dot-bookmarks";
-  const [bookmarkedIds, setBookmarkedIds] = useState<Set<number>>(() => {
-    if (typeof window === "undefined") return new Set();
-    try {
-      const documentId = sessionStorage.getItem("documentId") ?? "";
-      const stored = localStorage.getItem(`${BOOKMARKS_KEY}-${documentId}`);
-      if (stored) {
-        const arr = JSON.parse(stored) as number[];
-        if (Array.isArray(arr)) return new Set(arr);
-      }
-    } catch {
-      /* ignore */
-    }
-    return new Set();
-  });
-
-  useEffect(() => {
-    const documentId = sessionStorage.getItem("documentId") ?? "";
-    localStorage.setItem(
-      `${BOOKMARKS_KEY}-${documentId}`,
-      JSON.stringify([...bookmarkedIds])
-    );
-  }, [bookmarkedIds]);
-
   const contentScrollRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  // 문장 선택 시 모달(팝오버) 상태
+  const [selectionModal, setSelectionModal] = useState<{
+    text: string;
+    rect: DOMRect;
+  } | null>(null);
+  const selectionModalRef = useRef<HTMLDivElement>(null);
+
+  const closeSelectionModal = useCallback(() => setSelectionModal(null), []);
+
+  const handleCopySelection = useCallback(() => {
+    if (selectionModal?.text) {
+      navigator.clipboard.writeText(selectionModal.text).catch(() => {});
+      closeSelectionModal();
+    }
+  }, [selectionModal?.text, closeSelectionModal]);
+
+  // 본문 영역에서 텍스트 선택 시 모달 표시
+  useEffect(() => {
+    const contentEl = contentScrollRef.current;
+    if (!contentEl) return;
+
+    const onMouseUp = () => {
+      const sel = window.getSelection();
+      if (!sel) return;
+      const text = sel.toString().trim();
+      if (!text) {
+        setSelectionModal(null);
+        return;
+      }
+      const anchorNode = sel.anchorNode;
+      if (!anchorNode || !contentEl.contains(anchorNode)) return;
+      const range = sel.getRangeAt(0);
+      const rect = range.getBoundingClientRect();
+      if (rect.width > 0 || rect.height > 0) {
+        setSelectionModal({ text, rect });
+      }
+    };
+
+    const onSelectionChange = () => {
+      const sel = window.getSelection();
+      if (!sel || sel.toString().trim() === "") {
+        setSelectionModal(null);
+      }
+    };
+
+    contentEl.addEventListener("mouseup", onMouseUp, { passive: true });
+    document.addEventListener("selectionchange", onSelectionChange);
+    return () => {
+      contentEl.removeEventListener("mouseup", onMouseUp);
+      document.removeEventListener("selectionchange", onSelectionChange);
+    };
+  }, []);
+
+  // 모달 외부 클릭 시 닫기
+  useEffect(() => {
+    if (!selectionModal) return;
+    const onPointerDown = (e: PointerEvent) => {
+      const target = e.target as Node;
+      if (
+        selectionModalRef.current &&
+        !selectionModalRef.current.contains(target)
+      ) {
+        closeSelectionModal();
+      }
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [selectionModal, closeSelectionModal]);
 
   // ─── 스크롤 → 현재 페이지 감지 ───
   useEffect(() => {
@@ -267,6 +312,44 @@ export default function ReadList() {
           ))}
         </div>
       </div>
+
+      {/* 텍스트 선택 시 팝오버 모달 */}
+      {selectionModal && (
+        <div
+          ref={selectionModalRef}
+          className={styles.selectionModal}
+          style={{
+            top: selectionModal.rect.bottom + 8,
+            left: Math.min(
+              selectionModal.rect.left,
+              typeof window !== "undefined"
+                ? window.innerWidth - 320
+                : selectionModal.rect.left
+            ),
+          }}
+          role="dialog"
+          aria-label="선택한 텍스트">
+          <p className={styles.selectionModalText}>
+            {selectionModal.text.length > 200
+              ? `${selectionModal.text.slice(0, 200)}…`
+              : selectionModal.text}
+          </p>
+          <div className={styles.selectionModalActions}>
+            <button
+              type="button"
+              className={styles.selectionModalBtn}
+              onClick={handleCopySelection}>
+              복사
+            </button>
+            <button
+              type="button"
+              className={styles.selectionModalBtn}
+              onClick={closeSelectionModal}>
+              닫기
+            </button>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
