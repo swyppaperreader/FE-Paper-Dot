@@ -23,6 +23,10 @@ export default function MyDocument() {
     startIdx + ITEMS_PER_PAGE
   );
 
+  const handleContinueReading = () => {
+    router.push(`/read`);
+  };
+
   useEffect(() => {
     const fetchDocuments = async () => {
       const response = await getDocumentList(userData?.userId as string);
@@ -80,7 +84,9 @@ export default function MyDocument() {
       ) : (
         <>
           <div className={styles.recentDocumentPrompt}>
-            <p className={styles.recentDocumentPromptText}>
+            <p
+              className={styles.recentDocumentPromptText}
+              onClick={handleContinueReading}>
               {userData?.nickname}님, {recentDocument?.title}를 이어서 볼까요?
             </p>
           </div>
