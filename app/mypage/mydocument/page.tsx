@@ -24,25 +24,20 @@ export default function MyDocument() {
   );
 
   useEffect(() => {
-    if (currentPage > totalPages && totalPages >= 1) {
-      setCurrentPage(totalPages);
-    }
-  }, [totalPages, currentPage]);
-
-  useEffect(() => {
     const fetchDocuments = async () => {
       const response = await getDocumentList(userData?.userId as string);
       console.log("response", response);
-      setDocuments(
-        response.map((doc: DocumentListItem) => ({
-          documentId: doc.documentId,
-          title: doc.title,
-          languageSrc: doc.languageSrc,
-          languageTgt: doc.languageTgt,
-          totalPages: doc.totalPages,
-          lastTranslatedAt: doc.lastTranslatedAt,
-        }))
-      );
+      const newDocs = response.map((doc: DocumentListItem) => ({
+        documentId: doc.documentId,
+        title: doc.title,
+        languageSrc: doc.languageSrc,
+        languageTgt: doc.languageTgt,
+        totalPages: doc.totalPages,
+        lastTranslatedAt: doc.lastTranslatedAt,
+      }));
+      setDocuments(newDocs);
+      const newTotalPages = Math.ceil(newDocs.length / ITEMS_PER_PAGE) || 1;
+      setCurrentPage((prev) => Math.min(prev, newTotalPages));
     };
     fetchDocuments();
   }, [userData?.userId]);
@@ -174,7 +169,7 @@ export default function MyDocument() {
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
                 aria-label="이전 페이지">
-                <img
+                <Image
                   src="/leftListBtn.png"
                   alt="leftArrow"
                   width={20}
@@ -209,7 +204,7 @@ export default function MyDocument() {
                 }
                 disabled={currentPage === totalPages}
                 aria-label="다음 페이지">
-                <img
+                <Image
                   src="/rightListBtn.png"
                   alt="rightArrow"
                   width={20}
