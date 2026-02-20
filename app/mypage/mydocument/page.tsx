@@ -1,22 +1,35 @@
 "use client";
 
+import { DocumentListItem, getDocumentList } from "@/app/api/document";
 import Button from "@/app/components/button/Button";
 import styles from "@/app/components/mypage/ui/MyPage.module.css";
+import { useLoginStore } from "@/app/store/useLogin";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-
-interface Document {
-  id: string;
-  name: string;
-  type: "pdf";
-  date: string;
-  size: string;
-}
+import { useEffect, useState } from "react";
 
 export default function MyDocument() {
-  const [documents] = useState<Document[]>([]);
   const router = useRouter();
+  const [documents, setDocuments] = useState<DocumentListItem[]>([]);
+  const userData = useLoginStore((state) => state.userInfo);
+
+  useEffect(() => {
+    const fetchDocuments = async () => {
+      const response = await getDocumentList(userData?.userId as string);
+      console.log(response);
+      setDocuments(
+        response.map((doc: DocumentListItem) => ({
+          documentId: doc.documentId,
+          title: doc.title,
+          languageSrc: doc.languageSrc,
+          languageTgt: doc.languageTgt,
+          totalPages: doc.totalPages,
+          lastTranslatedAt: doc.lastTranslatedAt,
+        }))
+      );
+    };
+    fetchDocuments();
+  }, []);
 
   const handleStartNewDocument = () => {
     router.push("/newdocument");
@@ -106,14 +119,18 @@ export default function MyDocument() {
                         width={20}
                         height={20}
                       />
-                      <span className={styles.tableCellText}>{doc.name}</span>
+                      <span className={styles.tableCellText}>{doc.title}</span>
                     </div>
                   </td>
                   <td className={styles.tableCellInfo}>
-                    <span className={styles.tableCellInfoText}>{doc.date}</span>
+                    <span className={styles.tableCellInfoText}>
+                      {doc.lastTranslatedAt}
+                    </span>
                   </td>
                   <td className={styles.tableCellInfo}>
-                    <span className={styles.tableCellInfoText}>{doc.size}</span>
+                    <span className={styles.tableCellInfoText}>
+                      {doc.totalPages}
+                    </span>
                   </td>
                   <td className={styles.tableCellIcon}>
                     <Image

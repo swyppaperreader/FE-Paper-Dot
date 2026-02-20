@@ -3,7 +3,8 @@
  * 백엔드 Swagger 문서: https://be-paper-dot.store/swagger-ui/index.html
  */
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://be-paper-dot.store';
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL || "https://be-paper-dot.store";
 
 /**
  * API 에러 타입
@@ -15,7 +16,7 @@ export class ApiError extends Error {
     public response?: unknown
   ) {
     super(message);
-    this.name = 'ApiError';
+    this.name = "ApiError";
   }
 }
 
@@ -24,13 +25,13 @@ export class ApiError extends Error {
  */
 async function handleResponse<T>(response: Response): Promise<T> {
   // HTML 응답 감지 (인증 실패 시 로그인 페이지 반환되는 경우)
-  const contentType = response.headers.get('content-type') || '';
-  if (contentType.includes('text/html')) {
-    throw new ApiError('인증이 필요합니다. 로그인해주세요.', 401);
+  const contentType = response.headers.get("content-type") || "";
+  if (contentType.includes("text/html")) {
+    throw new ApiError("인증이 필요합니다. 로그인해주세요.", 401);
   }
 
   if (!response.ok) {
-    let errorMessage = '알 수 없는 오류가 발생했습니다.';
+    let errorMessage = "알 수 없는 오류가 발생했습니다.";
     let errorData = null;
 
     try {
@@ -58,29 +59,29 @@ async function handleResponse<T>(response: Response): Promise<T> {
 function getErrorMessage(statusCode: number): string {
   switch (statusCode) {
     case 400:
-      return '잘못된 요청입니다. 입력값을 확인해주세요.';
+      return "잘못된 요청입니다. 입력값을 확인해주세요.";
     case 401:
-      return '인증이 필요합니다. 로그인해주세요.';
+      return "인증이 필요합니다. 로그인해주세요.";
     case 403:
-      return '접근 권한이 없습니다.';
+      return "접근 권한이 없습니다.";
     case 404:
-      return '요청한 리소스를 찾을 수 없습니다.';
+      return "요청한 리소스를 찾을 수 없습니다.";
     case 409:
-      return '이미 존재하는 리소스입니다.';
+      return "이미 존재하는 리소스입니다.";
     case 413:
-      return '파일 크기가 너무 큽니다.';
+      return "파일 크기가 너무 큽니다.";
     case 415:
-      return '지원하지 않는 파일 형식입니다.';
+      return "지원하지 않는 파일 형식입니다.";
     case 422:
-      return '처리할 수 없는 요청입니다.';
+      return "처리할 수 없는 요청입니다.";
     case 429:
-      return '요청 횟수가 초과되었습니다. 잠시 후 다시 시도해주세요.';
+      return "요청 횟수가 초과되었습니다. 잠시 후 다시 시도해주세요.";
     case 500:
-      return '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+      return "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.";
     case 502:
-      return '서버에 연결할 수 없습니다.';
+      return "서버에 연결할 수 없습니다.";
     case 503:
-      return '서비스가 일시적으로 사용할 수 없습니다.';
+      return "서비스가 일시적으로 사용할 수 없습니다.";
     default:
       return `오류가 발생했습니다. (${statusCode})`;
   }
@@ -91,11 +92,11 @@ function getErrorMessage(statusCode: number): string {
  */
 function getAuthHeaders(accessToken?: string): HeadersInit {
   const headers: HeadersInit = {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   };
 
   if (accessToken) {
-    headers['Authorization'] = `Bearer ${accessToken}`;
+    headers["Authorization"] = `Bearer ${accessToken}`;
   }
 
   return headers;
@@ -121,8 +122,8 @@ export interface UploadDocumentResponse {
   documentId: number;
   fileId: number;
   storagePath: string;
-  fileType: 'ORIGINAL_PDF' | 'TRANSLATED_PDF';
-  status: 'UPLOADED' | 'TRANSLATING' | 'TRANSLATED' | 'FAILED';
+  fileType: "ORIGINAL_PDF" | "TRANSLATED_PDF";
+  status: "UPLOADED" | "TRANSLATING" | "TRANSLATED" | "FAILED";
   originalFilename: string;
   mimeType: string;
   fileSizeBytes: number;
@@ -162,11 +163,10 @@ export interface DocumentDetail {
 export interface DocumentListItem {
   documentId: number;
   title: string;
-  originalFilename: string;
-  status: string;
-  fileSizeBytes: number;
-  createdAt: string;
-  updatedAt: string;
+  languageSrc: string;
+  languageTgt: string;
+  totalPages: number;
+  lastTranslatedAt: string;
 }
 
 /**
@@ -188,64 +188,27 @@ export async function uploadDocument(
   accessToken?: string
 ): Promise<UploadDocumentResponse> {
   const formData = new FormData();
-  formData.append('ownerId', String(request.ownerId));
-  formData.append('title', request.title);
-  formData.append('languageSrc', request.languageSrc);
-  formData.append('languageTgt', request.languageTgt);
-  formData.append('file', request.file);
+  formData.append("ownerId", String(request.ownerId));
+  formData.append("title", request.title);
+  formData.append("languageSrc", request.languageSrc);
+  formData.append("languageTgt", request.languageTgt);
+  formData.append("file", request.file);
 
   const headers: HeadersInit = {};
   if (accessToken) {
-    headers['Authorization'] = `Bearer ${accessToken}`;
+    headers["Authorization"] = `Bearer ${accessToken}`;
   }
 
   const response = await fetch(`${API_BASE_URL}/documents`, {
-    method: 'POST',
+    method: "POST",
     headers,
     body: formData,
-    credentials: 'include',
+    credentials: "include",
   });
 
   return handleResponse<UploadDocumentResponse>(response);
 }
 
-/**
- * 문서 목록 조회
- * GET /api/v1/papers 또는 /api/v1/documents
- */
-export async function getDocumentList(
-  accessToken?: string
-): Promise<DocumentListItem[]> {
-  const response = await fetch(`${API_BASE_URL}/api/v1/papers`, {
-    method: 'GET',
-    headers: getAuthHeaders(accessToken),
-    credentials: 'include',
-  });
-
-  return handleResponse<DocumentListItem[]>(response);
-}
-
-/**
- * 문서 상세 조회
- * GET /api/v1/papers/{id} 또는 /api/v1/documents/{id}
- */
-export async function getDocumentDetail(
-  documentId: number | string,
-  accessToken?: string
-): Promise<DocumentDetail> {
-  const response = await fetch(`${API_BASE_URL}/api/v1/papers/${documentId}`, {
-    method: 'GET',
-    headers: getAuthHeaders(accessToken),
-    credentials: 'include',
-  });
-
-  return handleResponse<DocumentDetail>(response);
-}
-
-/**
- * 번역된 문서 단위 조회
- * GET /api/v1/documents/{documentId}/translation-pairs
- */
 export async function getTranslatedDocumentUnits(
   documentId: number | string,
   accessToken?: string
@@ -253,42 +216,52 @@ export async function getTranslatedDocumentUnits(
   const response = await fetch(
     `${API_BASE_URL}/api/v1/documents/${documentId}/translation-pairs`,
     {
-      method: 'GET',
+      method: "GET",
       headers: getAuthHeaders(accessToken),
-      credentials: 'include',
+      credentials: "include",
     }
   );
 
   return handleResponse<TranslatedDocumentUnit[]>(response);
 }
 
-/**
- * 문서 처리(번역) 요청
- * POST /api/v1/documents/{documentId}/process
- */
 export async function processDocument(
   request: ProcessDocumentRequest,
   accessToken?: string
 ): Promise<void> {
   const params = new URLSearchParams();
   if (request.overwrite) {
-    params.append('overwrite', 'true');
+    params.append("overwrite", "true");
   }
 
   const queryString = params.toString();
-  const url = `${API_BASE_URL}/api/v1/documents/${request.documentId}/process${queryString ? `?${queryString}` : ''}`;
+  const url = `${API_BASE_URL}/api/v1/documents/${request.documentId}/process${
+    queryString ? `?${queryString}` : ""
+  }`;
 
   const headers: HeadersInit = {};
   if (accessToken) {
-    headers['Authorization'] = `Bearer ${accessToken}`;
+    headers["Authorization"] = `Bearer ${accessToken}`;
   }
 
   const response = await fetch(url, {
-    method: 'POST',
+    method: "POST",
     headers,
-    credentials: 'include',
+    credentials: "include",
   });
 
   await handleResponse<void>(response);
 }
 
+export async function getDocumentList(
+  ownerId: number | string
+): Promise<DocumentListItem[]> {
+  const response = await fetch(
+    `${API_BASE_URL}/api/v1/translation-histories/${ownerId}`,
+    {
+      method: "GET",
+      credentials: "include",
+    }
+  );
+  return handleResponse<DocumentListItem[]>(response);
+}
