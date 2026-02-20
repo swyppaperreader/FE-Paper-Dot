@@ -81,7 +81,7 @@ export default function MyDocument() {
         <>
           <div className={styles.recentDocumentPrompt}>
             <p className={styles.recentDocumentPromptText}>
-              {userData?.nickname}님, [위대한 개츠비]를 이어서 볼까요?
+              {userData?.nickname}님, {recentDocument?.title}를 이어서 볼까요?
             </p>
           </div>
 
