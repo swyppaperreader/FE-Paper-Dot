@@ -118,9 +118,7 @@ export default function MyDocument() {
                     </th>
                     <th
                       className={styles.tableLastHeaderCell}
-                      style={{ width: "20%" }}>
-                      용량
-                    </th>
+                      style={{ width: "20%" }}></th>
                   </tr>
                 </thead>
                 <tbody className={styles.tableBodyContainer}>
