@@ -16,7 +16,10 @@ export default function MyDocument() {
 
   useEffect(() => {
     const fetchDocuments = async () => {
-      const response = await getDocumentList(userData?.userId as string);
+      const response = await getDocumentList(
+        userData?.userId as string,
+        accessToken as string
+      );
       console.log(response);
       setDocuments(
         response.map((doc: DocumentListItem) => ({
