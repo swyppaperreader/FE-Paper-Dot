@@ -3,7 +3,7 @@
 import { DocumentListItem, getDocumentList } from "@/app/api/document";
 import Button from "@/app/components/button/Button";
 import styles from "@/app/components/mypage/ui/MyPage.module.css";
-import { useAccessTokenStore, useLoginStore } from "@/app/store/useLogin";
+import { useLoginStore } from "@/app/store/useLogin";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -16,7 +16,7 @@ export default function MyDocument() {
   useEffect(() => {
     const fetchDocuments = async () => {
       const response = await getDocumentList(userData?.userId as string);
-      console.log(response);
+      console.log("response", response);
       setDocuments(
         response.map((doc: DocumentListItem) => ({
           documentId: doc.documentId,
@@ -29,7 +29,7 @@ export default function MyDocument() {
       );
     };
     fetchDocuments();
-  }, []);
+  }, [userData?.userId]);
 
   const handleStartNewDocument = () => {
     router.push("/newdocument");
