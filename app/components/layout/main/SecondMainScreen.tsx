@@ -1,6 +1,6 @@
 import Image from "next/image";
-import Button from "@/app/components/button/Button";
 import styles from "./secondMainScreen.module.css";
+import Link from "next/link";
 
 export default function SecondMainScreen() {
   return (
@@ -11,7 +11,9 @@ export default function SecondMainScreen() {
             번역하고,
             <br /> 문장별로 확인하니까
           </h1>
-          <Button>지금 시작하기</Button>
+          <Link href="/newdocument" className={styles.buttonLink}>
+            지금 시작하기
+          </Link>
           <p className={styles.description}>
             &quot;어디 읽고 있었지? PDF와 번역창을 번갈아 보느라 놓쳤어&quot;
             <br /> 고민할 필요 없어요.
