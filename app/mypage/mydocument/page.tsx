@@ -12,15 +12,10 @@ export default function MyDocument() {
   const router = useRouter();
   const [documents, setDocuments] = useState<DocumentListItem[]>([]);
   const userData = useLoginStore((state) => state.userInfo);
-  const accessToken = useAccessTokenStore((state) => state.accessToken);
-  console.log(accessToken);
 
   useEffect(() => {
     const fetchDocuments = async () => {
-      const response = await getDocumentList(
-        userData?.userId as string,
-        accessToken as string
-      );
+      const response = await getDocumentList(userData?.userId as string);
       console.log(response);
       setDocuments(
         response.map((doc: DocumentListItem) => ({

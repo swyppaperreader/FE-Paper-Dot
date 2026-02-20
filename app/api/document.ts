@@ -258,7 +258,7 @@ export async function getDocumentList(
   accessToken?: string
 ): Promise<DocumentListItem[]> {
   const response = await fetch(
-    `${API_BASE_URL}/api/v1/translation-histories/${ownerId}`,
+    `${API_BASE_URL}/api/v1/documents/translation-histories/${ownerId}`,
     {
       method: "GET",
       headers: getAuthHeaders(accessToken),
