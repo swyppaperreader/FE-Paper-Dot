@@ -155,13 +155,24 @@ export default function ReadList() {
 
     const detect = () => {
       const scrollTop = el.scrollTop;
+      const scrollHeight = el.scrollHeight;
+      const clientHeight = el.clientHeight;
+      const maxScroll = Math.max(0, scrollHeight - clientHeight);
+
+      // 스크롤이 맨 아래에 가까우면 마지막 페이지로 (여유 있게 감지)
+      const threshold = Math.max(120, clientHeight * 0.15);
+      const atBottom = maxScroll <= 1 || scrollTop >= maxScroll - threshold;
+      if (atBottom && boundaries.length > 0) {
+        const lastPage = boundaries[boundaries.length - 1].pageNum;
+        setSelectedPageIndex(lastPage - 1);
+        return;
+      }
 
       // 역순 탐색: scrollTop이 해당 항목의 offsetTop을 지났으면 그 페이지
       let currentPage = boundaries[0].pageNum;
       for (let b = boundaries.length - 1; b >= 0; b--) {
         const ref = itemRefs.current[boundaries[b].dataIdx];
         if (!ref) continue;
-        // offsetTop = 항목의 스크롤 컨테이너(position:relative) 기준 위치
         if (scrollTop + 60 >= ref.offsetTop) {
           currentPage = boundaries[b].pageNum;
           break;
@@ -278,17 +289,11 @@ export default function ReadList() {
                             className={styles.pagePreviewText}
                             title={previewText}>
                             <div className={styles.pagePreviewRow}>
-                              <span className={styles.pagePreviewLabel}>
-                                원문
-                              </span>
                               <p className={styles.pagePreviewTextSourceText}>
                                 {prevSourceText || " "}
                               </p>
                             </div>
                             <div className={styles.pagePreviewRow}>
-                              <span className={styles.pagePreviewLabel}>
-                                번역
-                              </span>
                               <p className={styles.pagePreviewTextText}>
                                 {previewText || " "}
                               </p>
