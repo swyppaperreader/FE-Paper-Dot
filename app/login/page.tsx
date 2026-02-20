@@ -4,23 +4,16 @@ import React from "react";
 import Image from "next/image";
 import styles from "./login.module.css";
 
-const OAUTH_BASE = "https://be-paper-dot.store";
-
 export default function LoginPage() {
-  /** 로그인 후 돌아올 경로 (루트 /) */
-  const returnUrl =
-    typeof window !== "undefined" ? `${window.location.origin}/` : "";
+  // const REST_API_KEY = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID;
+  // const REDIRECT_URI = process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI;
 
   const handleKakaoLogin = () => {
-    const url = new URL(`${OAUTH_BASE}/oauth2/authorization/kakao`);
-    if (returnUrl) url.searchParams.set("redirect_uri", returnUrl);
-    window.location.href = url.toString();
+    window.location.href = `https://be-paper-dot.store/oauth2/authorization/kakao`;
   };
 
   const handleGoogleLogin = () => {
-    const url = new URL(`${OAUTH_BASE}/oauth2/authorization/google`);
-    if (returnUrl) url.searchParams.set("redirect_uri", returnUrl);
-    window.location.href = url.toString();
+    window.location.href = `https://be-paper-dot.store/oauth2/authorization/google`;
   };
 
   return (
