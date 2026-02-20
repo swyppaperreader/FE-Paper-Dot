@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import styles from "./mainTopScreen.module.css";
 import Link from "next/link";
