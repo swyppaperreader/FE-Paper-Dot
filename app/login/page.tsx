@@ -7,8 +7,9 @@ import styles from "./login.module.css";
 const OAUTH_BASE = "https://be-paper-dot.store";
 
 export default function LoginPage() {
-  /** 로그인 후 돌아올 프론트 주소 (현재 페이지 origin) */
-  const returnUrl = typeof window !== "undefined" ? window.location.origin : "";
+  /** 로그인 후 돌아올 경로 (루트 /) */
+  const returnUrl =
+    typeof window !== "undefined" ? `${window.location.origin}/` : "";
 
   const handleKakaoLogin = () => {
     const url = new URL(`${OAUTH_BASE}/oauth2/authorization/kakao`);
