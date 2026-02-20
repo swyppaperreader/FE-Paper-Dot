@@ -774,6 +774,12 @@
   border-top: 1px solid #e1e1e1;
 }
 
+.paginationPages {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .pageBtn {
   width: 36px;
   height: 36px;

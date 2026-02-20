@@ -8,10 +8,26 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+const ITEMS_PER_PAGE = 6;
+
 export default function MyDocument() {
   const router = useRouter();
   const [documents, setDocuments] = useState<DocumentListItem[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const userData = useLoginStore((state) => state.userInfo);
+
+  const totalPages = Math.ceil(documents.length / ITEMS_PER_PAGE) || 1;
+  const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedDocuments = documents.slice(
+    startIdx,
+    startIdx + ITEMS_PER_PAGE
+  );
+
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages >= 1) {
+      setCurrentPage(totalPages);
+    }
+  }, [totalPages, currentPage]);
 
   useEffect(() => {
     const fetchDocuments = async () => {
@@ -34,6 +50,8 @@ export default function MyDocument() {
   const handleStartNewDocument = () => {
     router.push("/newdocument");
   };
+
+  const recentDocument = documents[0];
 
   return (
     <main className={styles.section}>
@@ -68,14 +86,16 @@ export default function MyDocument() {
         <>
           <div className={styles.recentDocumentPrompt}>
             <p className={styles.recentDocumentPromptText}>
-              김유저님, [위대한 개츠비]를 이어서 볼까요?
+              {userData?.nickname}님, [위대한 개츠비]를 이어서 볼까요?
             </p>
           </div>
 
           <div className={styles.documentInfo}>
             <div className={styles.documentInfoContent}>
               <Image src="/pdfLogo.svg" alt="pdf" width={40} height={40} />
-              <p className={styles.documentInfoImageText}>위대한 개츠비</p>
+              <p className={styles.documentInfoImageText}>
+                {recentDocument?.title || "제목 없음"}
+              </p>
               <Button className={styles.documentInfoButton}>이어서 보기</Button>
             </div>
             <div className={styles.documentInfoProgressContainer}>
@@ -105,7 +125,7 @@ export default function MyDocument() {
               </tr>
             </thead>
             <tbody className={styles.tableBodyContainer}>
-              {documents.map((doc) => (
+              {paginatedDocuments.map((doc) => (
                 <tr key={doc.documentId} className={styles.tableRow}>
                   <td className={styles.tableCell}>
                     <div
@@ -124,7 +144,7 @@ export default function MyDocument() {
                   </td>
                   <td className={styles.tableCellInfo}>
                     <span className={styles.tableCellInfoText}>
-                      {doc.lastTranslatedAt}
+                      {new Date(doc.lastTranslatedAt).toLocaleDateString()}
                     </span>
                   </td>
                   <td className={styles.tableCellInfo}>
@@ -144,6 +164,60 @@ export default function MyDocument() {
               ))}
             </tbody>
           </table>
+          {totalPages > 1 && (
+            <div className={styles.pagination}>
+              <button
+                type="button"
+                className={`${styles.pageBtn} ${
+                  currentPage === 1 ? styles.pageBtnDisabled : ""
+                }`}
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                aria-label="이전 페이지">
+                <img
+                  src="/leftListBtn.png"
+                  alt="leftArrow"
+                  width={20}
+                  height={20}
+                />
+              </button>
+              <span className={styles.paginationPages}>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (page) => (
+                    <button
+                      key={page}
+                      type="button"
+                      className={
+                        currentPage === page
+                          ? `${styles.pageBtn} ${styles.pageBtnActive}`
+                          : styles.pageBtn
+                      }
+                      onClick={() => setCurrentPage(page)}
+                      aria-current={currentPage === page ? "page" : undefined}>
+                      {page}
+                    </button>
+                  )
+                )}
+              </span>
+              <button
+                type="button"
+                className={`${styles.pageBtn} ${
+                  currentPage === totalPages ? styles.pageBtnDisabled : ""
+                }`}
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(totalPages, p + 1))
+                }
+                disabled={currentPage === totalPages}
+                aria-label="다음 페이지">
+                <img
+                  src="/rightListBtn.png"
+                  alt="rightArrow"
+                  width={20}
+                  height={20}
+                />
+              </button>
+            </div>
+          )}
         </>
       )}
     </main>
