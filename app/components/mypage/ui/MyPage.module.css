@@ -260,6 +260,7 @@
   width: 100%;
   flex-direction: column;
   padding: 60px 36px 60px 20px;
+  min-height: calc(100vh - 60px);
 }
 
 .accountSection {
@@ -759,6 +760,21 @@
   opacity: 0.5;
 }
 
+/* ==================== 문서 테이블 래퍼 (페이지네이션 고정) ==================== */
+.documentTableWrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  margin-top: 20px;
+}
+
+.tableScrollArea {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
 /* ==================== 페이지네이션 ==================== */
 .tableContainer {
   position: relative;
@@ -769,9 +785,11 @@
   justify-content: center;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
   margin-top: 24px;
   padding: 16px 0;
   border-top: 1px solid #e1e1e1;
+  background: #fff;
 }
 
 .paginationPages {
@@ -780,13 +798,16 @@
   gap: 4px;
 }
 
+.pageButton {
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
 .pageBtn {
   width: 36px;
   height: 36px;
-  border: 1px solid #e1e1e1;
-  background: white;
-  border-radius: 6px;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   color: #6b7280;
   cursor: pointer;
@@ -794,6 +815,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 
 .pageBtn:hover:not(.pageBtnDisabled) {
@@ -1207,7 +1229,7 @@
   justify-content: flex-end;
 }
 
-.charCountWrapper+.deleteModalButtons {
+.charCountWrapper + .deleteModalButtons {
   margin-top: 24px !important;
   margin-bottom: 0 !important;
   padding-top: 0 !important;

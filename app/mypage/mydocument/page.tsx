@@ -101,118 +101,128 @@ export default function MyDocument() {
           </div>
 
           <h2 className={styles.recentDocumentsTitle}>최근 읽은 문서</h2>
-          <table className={styles.documentsTable}>
-            <thead className={styles.tableHeader}>
-              <tr>
-                <th className={styles.tableHeaderCell} style={{ width: "40%" }}>
-                  파일명
-                </th>
-                <th
-                  className={styles.tableLastHeaderCell}
-                  style={{ width: "20%" }}>
-                  날짜
-                </th>
-                <th
-                  className={styles.tableLastHeaderCell}
-                  style={{ width: "20%" }}>
-                  용량
-                </th>
-              </tr>
-            </thead>
-            <tbody className={styles.tableBodyContainer}>
-              {paginatedDocuments.map((doc) => (
-                <tr key={doc.documentId} className={styles.tableRow}>
-                  <td className={styles.tableCell}>
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: "12px",
-                      }}>
-                      <Image
-                        src="/smallPdfIcon.svg"
-                        alt="pdf"
-                        width={20}
-                        height={20}
-                      />
-                      <span className={styles.tableCellText}>{doc.title}</span>
-                    </div>
-                  </td>
-                  <td className={styles.tableCellInfo}>
-                    <span className={styles.tableCellInfoText}>
-                      {new Date(doc.lastTranslatedAt).toLocaleDateString()}
-                    </span>
-                  </td>
-                  <td className={styles.tableCellInfo}>
-                    <span className={styles.tableCellInfoText}>
-                      {doc.totalPages}
-                    </span>
-                  </td>
-                  <td className={styles.tableCellIcon}>
-                    <Image
-                      src="/trash.svg"
-                      alt="delete"
-                      width={20}
-                      height={20}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {totalPages > 1 && (
-            <div className={styles.pagination}>
-              <button
-                type="button"
-                className={`${styles.pageBtn} ${
-                  currentPage === 1 ? styles.pageBtnDisabled : ""
-                }`}
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-                aria-label="이전 페이지">
-                <Image
-                  src="/leftListBtn.png"
-                  alt="leftArrow"
-                  width={20}
-                  height={20}
-                />
-              </button>
-              <span className={styles.paginationPages}>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                  (page) => (
-                    <button
-                      key={page}
-                      type="button"
-                      className={
-                        currentPage === page
-                          ? `${styles.pageBtn} ${styles.pageBtnActive}`
-                          : styles.pageBtn
-                      }
-                      onClick={() => setCurrentPage(page)}
-                      aria-current={currentPage === page ? "page" : undefined}>
-                      {page}
-                    </button>
-                  )
-                )}
-              </span>
-              <button
-                type="button"
-                className={`${styles.pageBtn} ${
-                  currentPage === totalPages ? styles.pageBtnDisabled : ""
-                }`}
-                onClick={() =>
-                  setCurrentPage((p) => Math.min(totalPages, p + 1))
-                }
-                disabled={currentPage === totalPages}
-                aria-label="다음 페이지">
-                <Image
-                  src="/rightListBtn.png"
-                  alt="rightArrow"
-                  width={20}
-                  height={20}
-                />
-              </button>
+          <div className={styles.documentTableWrapper}>
+            <div className={styles.tableScrollArea}>
+              <table className={styles.documentsTable}>
+                <thead className={styles.tableHeader}>
+                  <tr>
+                    <th
+                      className={styles.tableHeaderCell}
+                      style={{ width: "40%" }}>
+                      파일명
+                    </th>
+                    <th
+                      className={styles.tableLastHeaderCell}
+                      style={{ width: "20%" }}>
+                      날짜
+                    </th>
+                    <th
+                      className={styles.tableLastHeaderCell}
+                      style={{ width: "20%" }}>
+                      용량
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className={styles.tableBodyContainer}>
+                  {paginatedDocuments.map((doc) => (
+                    <tr key={doc.documentId} className={styles.tableRow}>
+                      <td className={styles.tableCell}>
+                        <div
+                          style={{
+                            display: "flex",
+                            gap: "12px",
+                          }}>
+                          <Image
+                            src="/smallPdfIcon.svg"
+                            alt="pdf"
+                            width={20}
+                            height={20}
+                          />
+                          <span className={styles.tableCellText}>
+                            {doc.title}
+                          </span>
+                        </div>
+                      </td>
+                      <td className={styles.tableCellInfo}>
+                        <span className={styles.tableCellInfoText}>
+                          {new Date(doc.lastTranslatedAt).toLocaleDateString()}
+                        </span>
+                      </td>
+                      <td className={styles.tableCellInfo}>
+                        <span className={styles.tableCellInfoText}>
+                          {doc.totalPages}
+                        </span>
+                      </td>
+                      <td className={styles.tableCellIcon}>
+                        <Image
+                          src="/trash.svg"
+                          alt="delete"
+                          width={20}
+                          height={20}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          )}
+            {totalPages > 1 && (
+              <div className={styles.pagination}>
+                <button
+                  type="button"
+                  className={`${styles.pageButton} ${
+                    currentPage === 1 ? styles.pageBtnDisabled : ""
+                  }`}
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  aria-label="이전 페이지">
+                  <Image
+                    src="/leftListBtn.png"
+                    alt="leftArrow"
+                    width={20}
+                    height={20}
+                  />
+                </button>
+                <span className={styles.paginationPages}>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                    (page) => (
+                      <button
+                        key={page}
+                        type="button"
+                        className={
+                          currentPage === page
+                            ? `${styles.pageBtn} ${styles.pageBtnActive}`
+                            : styles.pageBtn
+                        }
+                        onClick={() => setCurrentPage(page)}
+                        aria-current={
+                          currentPage === page ? "page" : undefined
+                        }>
+                        {page}
+                      </button>
+                    )
+                  )}
+                </span>
+                <button
+                  type="button"
+                  className={`${styles.pageButton} ${
+                    currentPage === totalPages ? styles.pageBtnDisabled : ""
+                  }`}
+                  onClick={() =>
+                    setCurrentPage((p) => Math.min(totalPages, p + 1))
+                  }
+                  disabled={currentPage === totalPages}
+                  aria-label="다음 페이지">
+                  <Image
+                    src="/rightListBtn.png"
+                    alt="rightArrow"
+                    width={20}
+                    height={20}
+                  />
+                </button>
+              </div>
+            )}
+          </div>
         </>
       )}
     </main>
