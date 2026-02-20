@@ -277,12 +277,22 @@ export default function ReadList() {
                           <div
                             className={styles.pagePreviewText}
                             title={previewText}>
-                            <p className={styles.pagePreviewTextSourceText}>
-                              {prevSourceText || " "}
-                            </p>
-                            <p className={styles.pagePreviewTextText}>
-                              {previewText || " "}
-                            </p>
+                            <div className={styles.pagePreviewRow}>
+                              <span className={styles.pagePreviewLabel}>
+                                원문
+                              </span>
+                              <p className={styles.pagePreviewTextSourceText}>
+                                {prevSourceText || " "}
+                              </p>
+                            </div>
+                            <div className={styles.pagePreviewRow}>
+                              <span className={styles.pagePreviewLabel}>
+                                번역
+                              </span>
+                              <p className={styles.pagePreviewTextText}>
+                                {previewText || " "}
+                              </p>
+                            </div>
                           </div>
                         );
                       })()}
@@ -300,8 +310,12 @@ export default function ReadList() {
           role="region"
           aria-label="문서 본문"
           style={showSidebar ? {} : { width: "100%" }}>
-          {data.map((item) => (
-            <div key={item.docUnitId}>
+          {data.map((item, index) => (
+            <div
+              key={item.docUnitId}
+              ref={(el) => {
+                itemRefs.current[index] = el;
+              }}>
               {filterMode === "all" && (
                 <>
                   <p className={styles.sourceText}>{item.sourceText}</p>

@@ -70,8 +70,8 @@
 
 .readHeaderPageNumber {
   display: flex;
-  align-items: center;
-  gap: 5px;
+  align-items: baseline;
+  gap: 4px;
   font-size: 0.875rem;
   font-weight: 400;
   line-height: 150%;
@@ -80,30 +80,26 @@
   flex-shrink: 0;
 }
 
-.readHeaderPageNumberPageContainer {
-  border-radius: 4px;
-  border: 1px solid #dee3eb;
-  width: 36px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.readHeaderPageNumberCurrent {
+  color: #21232a;
+  font-weight: 600;
+  min-width: 1ch;
 }
 
-.readHeaderPageNumberPage {
-  color: #21232a;
-  font-size: 0.875rem;
-  font-weight: 400;
-  line-height: 150%;
-  letter-spacing: -0.28px;
+.readHeaderPageNumberSeparator {
+  color: #9ca3af;
 }
 
 .readHeaderPageNumberTotal {
   color: #21232a;
-  font-size: 0.875rem;
-  font-weight: 400;
-  line-height: 150%;
-  letter-spacing: -0.4px;
+  font-weight: 500;
+  min-width: 1ch;
+}
+
+.readHeaderPageNumberUnit {
+  color: #737a82;
+  font-size: 0.8125rem;
+  margin-left: 2px;
 }
 
 .readHeaderFileName {
