@@ -278,26 +278,24 @@ export default function ReadList() {
                           firstIdx,
                           firstIdx + ITEMS_PER_PAGE
                         );
-                        const previewText = pageItems
-                          .map((x) => x.translatedText)
-                          .join(" ");
-                        const prevSourceText = pageItems
-                          .map((x) => x.sourceText)
-                          .join(" ");
                         return (
-                          <div
-                            className={styles.pagePreviewText}
-                            title={previewText}>
-                            <div className={styles.pagePreviewRow}>
-                              <p className={styles.pagePreviewTextSourceText}>
-                                {prevSourceText || " "}
-                              </p>
-                            </div>
-                            <div className={styles.pagePreviewRow}>
-                              <p className={styles.pagePreviewTextText}>
-                                {previewText || " "}
-                              </p>
-                            </div>
+                          <div className={styles.pagePreviewText}>
+                            {pageItems.flatMap((x) => [
+                              <div
+                                key={`${x.docUnitId}-en`}
+                                className={styles.pagePreviewRow}>
+                                <p className={styles.pagePreviewTextSourceText}>
+                                  {x.sourceText || " "}
+                                </p>
+                              </div>,
+                              <div
+                                key={`${x.docUnitId}-ko`}
+                                className={styles.pagePreviewRow}>
+                                <p className={styles.pagePreviewTextText}>
+                                  {x.translatedText || " "}
+                                </p>
+                              </div>,
+                            ])}
                           </div>
                         );
                       })()}
