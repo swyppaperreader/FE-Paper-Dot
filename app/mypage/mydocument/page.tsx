@@ -13,6 +13,7 @@ export default function MyDocument() {
   const [documents, setDocuments] = useState<DocumentListItem[]>([]);
   const userData = useLoginStore((state) => state.userInfo);
   const accessToken = useAccessTokenStore((state) => state.accessToken);
+  console.log(accessToken);
 
   useEffect(() => {
     const fetchDocuments = async () => {
