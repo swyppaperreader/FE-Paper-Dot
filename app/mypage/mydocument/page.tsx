@@ -106,7 +106,7 @@ export default function MyDocument() {
             </thead>
             <tbody className={styles.tableBodyContainer}>
               {documents.map((doc) => (
-                <tr key={doc.id} className={styles.tableRow}>
+                <tr key={doc.documentId} className={styles.tableRow}>
                   <td className={styles.tableCell}>
                     <div
                       style={{
