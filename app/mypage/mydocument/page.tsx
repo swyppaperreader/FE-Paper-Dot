@@ -3,7 +3,7 @@
 import { DocumentListItem, getDocumentList } from "@/app/api/document";
 import Button from "@/app/components/button/Button";
 import styles from "@/app/components/mypage/ui/MyPage.module.css";
-import { useLoginStore } from "@/app/store/useLogin";
+import { useAccessTokenStore, useLoginStore } from "@/app/store/useLogin";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -12,6 +12,7 @@ export default function MyDocument() {
   const router = useRouter();
   const [documents, setDocuments] = useState<DocumentListItem[]>([]);
   const userData = useLoginStore((state) => state.userInfo);
+  const accessToken = useAccessTokenStore((state) => state.accessToken);
 
   useEffect(() => {
     const fetchDocuments = async () => {

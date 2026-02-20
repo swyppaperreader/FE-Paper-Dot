@@ -254,12 +254,14 @@ export async function processDocument(
 }
 
 export async function getDocumentList(
-  ownerId: number | string
+  ownerId: number | string,
+  accessToken?: string
 ): Promise<DocumentListItem[]> {
   const response = await fetch(
     `${API_BASE_URL}/api/v1/translation-histories/${ownerId}`,
     {
       method: "GET",
+      headers: getAuthHeaders(accessToken),
       credentials: "include",
     }
   );
