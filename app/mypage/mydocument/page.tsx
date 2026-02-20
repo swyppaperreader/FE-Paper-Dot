@@ -66,9 +66,7 @@ export default function MyDocument() {
                 <br />
                 텍스트 또는 파일을 번역하고 관리해보세요
               </p>
-              <button
-                className={styles.emptyStatePromptButton}
-                onClick={handleStartNewDocument}>
+              <button className={styles.emptyStatePromptButton}>
                 지금 시작하기
               </button>
             </div>
@@ -84,9 +82,7 @@ export default function MyDocument() {
       ) : (
         <>
           <div className={styles.recentDocumentPrompt}>
-            <p
-              className={styles.recentDocumentPromptText}
-              onClick={handleContinueReading}>
+            <p className={styles.recentDocumentPromptText}>
               {userData?.nickname}님, {recentDocument?.title}를 이어서 볼까요?
             </p>
           </div>
@@ -97,7 +93,11 @@ export default function MyDocument() {
               <p className={styles.documentInfoImageText}>
                 {recentDocument?.title || "제목 없음"}
               </p>
-              <Button className={styles.documentInfoButton}>이어서 보기</Button>
+              <Button
+                className={styles.documentInfoButton}
+                onClick={handleContinueReading}>
+                이어서 보기
+              </Button>
             </div>
             <div className={styles.documentInfoProgressContainer}>
               <p className={styles.documentInfoProgressText}>진행율</p>
