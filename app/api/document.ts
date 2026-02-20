@@ -253,7 +253,7 @@ export async function processDocument(
   await handleResponse<void>(response);
 }
 
-export async function ㅋgetDocumentList(
+export async function getDocumentList(
   ownerId: number | string
 ): Promise<DocumentListItem[]> {
   const response = await fetch(
