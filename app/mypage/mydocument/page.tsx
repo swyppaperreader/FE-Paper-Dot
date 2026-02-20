@@ -179,8 +179,8 @@ export default function MyDocument() {
                   <Image
                     src="/leftListBtn.png"
                     alt="leftArrow"
-                    width={20}
-                    height={20}
+                    width={36}
+                    height={36}
                   />
                 </button>
                 <span className={styles.paginationPages}>
@@ -216,8 +216,8 @@ export default function MyDocument() {
                   <Image
                     src="/rightListBtn.png"
                     alt="rightArrow"
-                    width={20}
-                    height={20}
+                    width={36}
+                    height={36}
                   />
                 </button>
               </div>

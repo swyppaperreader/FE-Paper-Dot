@@ -788,8 +788,6 @@
   flex-shrink: 0;
   margin-top: 24px;
   padding: 16px 0;
-  border-top: 1px solid #e1e1e1;
-  background: #fff;
 }
 
 .paginationPages {
@@ -805,8 +803,6 @@
 }
 
 .pageBtn {
-  width: 36px;
-  height: 36px;
   font-size: 16px;
   font-weight: 600;
   color: #6b7280;
@@ -816,6 +812,8 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  border: none;
+  background: none;
 }
 
 .pageBtn:hover:not(.pageBtnDisabled) {
