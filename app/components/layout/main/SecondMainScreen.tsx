@@ -1,8 +1,11 @@
 import Image from "next/image";
 import styles from "./secondMainScreen.module.css";
 import Link from "next/link";
+import { useLoginStore } from "@/app/store/useLogin";
 
 export default function SecondMainScreen() {
+  const userInfo = useLoginStore((state) => state.userInfo);
+
   return (
     <section className={styles.container}>
       <div className={styles.contentContainer}>
@@ -11,7 +14,9 @@ export default function SecondMainScreen() {
             번역하고,
             <br /> 문장별로 확인하니까
           </h1>
-          <Link href="/newdocument" className={styles.buttonLink}>
+          <Link
+            href={userInfo?.userId ? "/newdocument" : "/login"}
+            className={styles.buttonLink}>
             지금 시작하기
           </Link>
           <p className={styles.description}>
