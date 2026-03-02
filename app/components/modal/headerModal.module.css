@@ -102,6 +102,10 @@
   }
 }
 
+.headerModalLogoutButtonContainer {
+  border-top: 1px solid #dee3eb;
+}
+
 .headerModalLogoutButton {
   width: 100%;
   display: flex;
@@ -113,7 +117,7 @@
   border: none;
   background-color: transparent;
   letter-spacing: -0.28px;
-  border: 1px solid #dee3eb;
+  border-top: 1px solid #dee3eb;
   cursor: pointer;
   &:hover {
     opacity: 0.5;
