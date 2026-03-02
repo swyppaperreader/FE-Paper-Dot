@@ -134,11 +134,13 @@ export default function HeaderModal({
               내 계정
             </Link>
           </div>
-          <Button
-            className={styles.headerModalLogoutButton}
-            onClick={handleLogoutClick}>
-            <p className={styles.headerModalEmail}>로그아웃</p>
-          </Button>
+          <div className={styles.headerModalLogoutButtonContainer}>
+            <Button
+              className={styles.headerModalLogoutButton}
+              onClick={handleLogoutClick}>
+              <p className={styles.headerModalEmail}>로그아웃</p>
+            </Button>
+          </div>
         </div>
       )}
     </div>
