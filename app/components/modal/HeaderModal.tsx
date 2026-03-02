@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, Activity } from "react";
 import styles from "./headerModal.module.css";
 import Button from "../button/Button";
 import Link from "next/link";
@@ -80,13 +80,13 @@ export default function HeaderModal({
       className={className ? className : styles.headerModalContainer}
       ref={modalRef}>
       <div className={styles.myPageButtonContainer}>
-        {!isReadHeader && (
+        <Activity mode={!isReadHeader ? "visible" : "hidden"}>
           <Button
             className={styles.newDocumentButton}
             onClick={() => router.push("/newdocument")}>
             새 문서 만들기
           </Button>
-        )}
+        </Activity>
         <Button
           className={styles.userImageButton}
           onClick={() => setIsOpen(!isOpen)}>
@@ -110,7 +110,7 @@ export default function HeaderModal({
           )}
         </Button>
       </div>
-      {isOpen && (
+      <Activity mode={isOpen ? "visible" : "hidden"}>
         <div className={styles.headerModalWrapper}>
           <div className={styles.headerModal}>
             <p className={styles.headerModalName}>
@@ -140,7 +140,7 @@ export default function HeaderModal({
             <p className={styles.headerModalEmail}>로그아웃</p>
           </Button>
         </div>
-      )}
+      </Activity>
     </div>
   );
 }
