@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, Activity } from "react";
 import styles from "./headerModal.module.css";
 import Button from "../button/Button";
 import Link from "next/link";
@@ -8,15 +8,6 @@ import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import { useAccessTokenStore, useLoginStore } from "@/app/store/useLogin";
 import { logout } from "@/app/services/logout";
-
-// HTTP URL을 HTTPS로 변환하는 유틸 함수
-const ensureHttps = (url: string): string => {
-  if (!url) return url;
-  if (url.startsWith("http://")) {
-    return url.replace("http://", "https://");
-  }
-  return url;
-};
 
 export default function HeaderModal({
   isReadHeader,
@@ -80,19 +71,19 @@ export default function HeaderModal({
       className={className ? className : styles.headerModalContainer}
       ref={modalRef}>
       <div className={styles.myPageButtonContainer}>
-        {!isReadHeader && (
+        <Activity mode={!isReadHeader ? "visible" : "hidden"}>
           <Button
             className={styles.newDocumentButton}
             onClick={() => router.push("/newdocument")}>
             새 문서 만들기
           </Button>
-        )}
+        </Activity>
         <Button
           className={styles.userImageButton}
           onClick={() => setIsOpen(!isOpen)}>
           {userInfo?.profileImageUrl?.includes("http") ? (
             <Image
-              src={ensureHttps(userInfo.profileImageUrl)}
+              src={userInfo.profileImageUrl}
               alt="user image"
               width={40}
               height={40}
@@ -110,7 +101,7 @@ export default function HeaderModal({
           )}
         </Button>
       </div>
-      {isOpen && (
+      <Activity mode={isOpen ? "visible" : "hidden"}>
         <div className={styles.headerModalWrapper}>
           <div className={styles.headerModal}>
             <p className={styles.headerModalName}>
@@ -142,7 +133,7 @@ export default function HeaderModal({
             </Button>
           </div>
         </div>
-      )}
+      </Activity>
     </div>
   );
 }
