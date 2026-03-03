@@ -101,7 +101,7 @@ export default function HeaderModal({
           )}
         </Button>
       </div>
-      {isOpen && (
+      <Activity mode={isOpen ? "visible" : "hidden"}>
         <div className={styles.headerModalWrapper}>
           <div className={styles.headerModal}>
             <p className={styles.headerModalName}>
@@ -131,7 +131,7 @@ export default function HeaderModal({
             <p className={styles.headerModalEmail}>로그아웃</p>
           </Button>
         </div>
-      )}
+      </Activity>
     </div>
   );
 }
