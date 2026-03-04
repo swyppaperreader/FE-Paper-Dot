@@ -71,13 +71,13 @@ export default function HeaderModal({
       className={className ? className : styles.headerModalContainer}
       ref={modalRef}>
       <div className={styles.myPageButtonContainer}>
-        <Activity mode={!isReadHeader ? "visible" : "hidden"}>
+        {!isReadHeader && (
           <Button
             className={styles.newDocumentButton}
             onClick={() => router.push("/newdocument")}>
             새 문서 만들기
           </Button>
-        </Activity>
+        )}
         <Button
           className={styles.userImageButton}
           onClick={() => setIsOpen(!isOpen)}>
@@ -125,13 +125,11 @@ export default function HeaderModal({
               내 계정
             </Link>
           </div>
-          <div className={styles.headerModalLogoutButtonContainer}>
-            <Button
-              className={styles.headerModalLogoutButton}
-              onClick={handleLogoutClick}>
-              <p className={styles.headerModalEmail}>로그아웃</p>
-            </Button>
-          </div>
+          <Button
+            className={styles.headerModalLogoutButton}
+            onClick={handleLogoutClick}>
+            <p className={styles.headerModalEmail}>로그아웃</p>
+          </Button>
         </div>
       </Activity>
     </div>

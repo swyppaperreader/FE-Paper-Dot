@@ -29,8 +29,8 @@ export default function SecondMainScreen() {
         </div>
         <div className={styles.contentRightContainer}>
           <Image
-            src="/mainSecondBg.svg"
-            alt=""
+            src="/mainSecondBg.png"
+            alt="메인페이지 2번째 이미지"
             fill
             className={styles.secondMainScreenImage}
           />

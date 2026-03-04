@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+
 import styles from "./thirdMainScreen.module.css";
 
 import Image from "next/image";
@@ -15,23 +16,21 @@ export default function ThirdMainScreen() {
             지금보다 훨씬 빠르게 읽을 수 있습니다.
           </p>
         </div>
-        <div className={styles.contentRight}>
+        <div className={styles.contentRight} style={{ aspectRatio: "800/394" }}>
           <Image
-            src="/thirdBackgroundImage1.webp"
-            alt=""
-            width={572}
-            height={394}
+            src="/thirdBackgroundImage1.png"
+            alt="메인페이지 1번째 이미지"
+            fill
             className={styles.contentRightImage}
           />
         </div>
       </div>
       <div className={styles.content}>
-        <div className={styles.contentRight}>
+        <div className={styles.contentRight} style={{ aspectRatio: "572/394" }}>
           <Image
-            src="/thirdBackgroundImage2.webp"
-            alt=""
-            width={572}
-            height={394}
+            src="/thirdBackgroundImage2.png"
+            alt="메인페이지 2번째 이미지"
+            fill
             className={styles.contentRightImage}
           />
         </div>
@@ -53,12 +52,11 @@ export default function ThirdMainScreen() {
             점프할 수 있습니다.
           </p>
         </div>
-        <div className={styles.contentRight}>
+        <div className={styles.contentRight} style={{ aspectRatio: "572/394" }}>
           <Image
-            src="/thirdBackgroundImage3.webp"
-            alt=""
-            width={572}
-            height={394}
+            src="/thirdBackgroundImage3.png"
+            alt="메인페이지 3번째 이미지"
+            fill
             className={styles.contentRightImage}
           />
         </div>

@@ -24,29 +24,24 @@ export default function MainTopScreenUi() {
           지금 시작하기
         </Link>
         <div className={styles.textButton}>
-          <Image src="/text.svg" alt="text" width={24} height={24} />
-          <span>텍스트 번역</span>
+          <Image
+            src="/text.png"
+            alt="text"
+            width={15}
+            height={15}
+            className={styles.textButtonImage}
+          />
+          <p className={styles.textButtonText}>텍스트 번역</p>
         </div>
       </div>
       <div className={styles.bgImageWrapper}>
         <Image
-          src="/bg.svg"
-          alt=""
-          width={800}
-          height={380}
-          priority
+          src="/mainTopScreenBg.png"
+          alt="메인페이지 배경 이미지"
+          width={920}
+          height={430}
           className={styles.bgImage}
         />
-        <div className={styles.backgroundSecondImageContainer}>
-          <Image
-            src="/backgroundSecond.svg"
-            alt=""
-            width={216}
-            height={180}
-            priority
-            className={styles.backgroundSecondImage}
-          />
-        </div>
       </div>
       <div className={styles.overLay} />
     </section>
