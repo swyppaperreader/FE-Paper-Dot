@@ -36,17 +36,17 @@
 }
 
 /* ========== 카드별 배경색 ========== */
-.cardsGrid>.cardWrapper:nth-child(1) {
+.cardsGrid > .cardWrapper:nth-child(1) {
   background: #edf3ff;
 }
 
-.cardsGrid>.cardWrapper:nth-child(2) {
+.cardsGrid > .cardWrapper:nth-child(2) {
   background: #f0f4fa;
   margin-top: 80px;
   /* 기존 스타일 유지 */
 }
 
-.cardsGrid>.cardWrapper:nth-child(3) {
+.cardsGrid > .cardWrapper:nth-child(3) {
   background: #f2f1ff;
 }
 
@@ -157,72 +157,107 @@
   background-color: #1d4084;
 }
 
-/* ========== 반응형 ========== */
-@media (max-width: 1024px) {
-  .cardsGrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+/* ========== 데스크톱 반응형 (웹 전용) ========== */
+@media (max-width: 1440px) {
+  .section {
+    padding: 64px 32px;
   }
-
+  .container {
+    max-width: 1000px;
+  }
+  .header {
+    margin-bottom: 48px;
+  }
   .mainTitle {
-    font-size: 28px;
+    font-size: 34px;
+  }
+  .cardsGrid {
+    gap: 24px;
+  }
+  .cardsGrid > .cardWrapper:nth-child(2) {
+    margin-top: 64px;
+  }
+  .cardWrapper {
+    padding: 18px;
+    gap: 16px;
+  }
+  .cardTitle {
+    font-size: 20px;
+  }
+  .bulletItem {
+    font-size: 15px;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1280px) {
   .section {
-    padding: 40px 20px;
+    padding: 48px 24px;
   }
-
+  .container {
+    max-width: 900px;
+  }
   .header {
     margin-bottom: 40px;
   }
-
   .mainTitle {
-    font-size: 24px;
+    font-size: 28px;
   }
-
   .cardsGrid {
-    grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 20px;
   }
-
+  .cardsGrid > .cardWrapper:nth-child(2) {
+    margin-top: 48px;
+  }
   .cardWrapper {
-    gap: 16px;
     padding: 16px;
+    gap: 12px;
   }
-
   .cardTitle {
+    font-size: 18px;
+  }
+  .bulletItem {
     font-size: 14px;
   }
-
-  .bulletItem {
-    font-size: 12px;
-    margin-bottom: 6px;
-  }
-
   .ctaButton {
     padding: 10px 16px;
-    font-size: 14px;
+    font-size: 15px;
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 1024px) {
   .section {
-    padding: 30px 16px;
+    padding: 40px 20px;
   }
-
+  .container {
+    max-width: 100%;
+    padding: 0 16px;
+  }
+  .header {
+    margin-bottom: 32px;
+  }
   .mainTitle {
-    font-size: 20px;
-    text-align: center;
+    font-size: 24px;
   }
-
+  .cardsGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .cardsGrid > .cardWrapper:nth-child(2) {
+    margin-top: 32px;
+  }
   .cardWrapper {
-    gap: 12px;
-    padding: 12px;
+    padding: 14px;
+    gap: 10px;
+    border-radius: 12px;
   }
-
   .cardTitle {
+    font-size: 16px;
+  }
+  .bulletItem {
     font-size: 13px;
+  }
+  .ctaButton {
+    padding: 8px 14px;
+    font-size: 14px;
   }
 }

@@ -49,7 +49,6 @@
   top: 95%;
   transform: translateY(-50%);
   display: flex;
-  flex-direction: row;
   align-items: center;
   padding: 16px 45px;
   box-sizing: border-box;
@@ -57,8 +56,6 @@
   border-radius: 9.6px;
   border: 1.2px solid #dee3eb;
   background: #fff;
-  color: #4b4d55;
-  font-size: 19.2px;
   box-shadow: 4.8px 4.8px 12px 1.2px #21232a0a;
 }
 
@@ -66,8 +63,18 @@
   flex-shrink: 0;
 }
 
-.textButton span {
-  line-height: 1.1;
+.textButtonImage {
+  width: 15px;
+  height: 15px;
+  object-fit: contain;
+  object-position: center;
+}
+
+.textButtonText {
+  font-size: 19.2px;
+  font-weight: 400;
+
+  letter-spacing: -0.36px;
 }
 
 .overLay {
@@ -84,19 +91,16 @@
 
 .bgImageWrapper {
   position: absolute;
-  bottom: 0;
-  left: 50%;
-  top: 100%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
+  bottom: -10%;
+  left: -5.5%;
+  right: 0;
   width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
-.backgroundSecondImageContainer {
-  position: absolute;
-  left: 20%;
+.bgImage {
+  object-fit: contain;
 }
 
 .buttonLink {
@@ -112,4 +116,81 @@
   height: 52px;
   align-items: center;
   justify-content: center;
+}
+
+/* ========== 데스크톱 반응형 (웹 전용) ========== */
+@media (max-width: 1440px) {
+  .title {
+    font-size: 2.5rem;
+  }
+  .textButton {
+    top: 95%;
+    transform: translateX(10%);
+    padding: 20px 40px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .bgImageWrapper {
+    bottom: -55%;
+    left: -5.5%;
+    width: 100%;
+    height: 100%;
+  }
+  .bgImage {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 1280px) {
+  .title {
+    font-size: 2.25rem;
+  }
+  .description {
+    font-size: 1rem;
+  }
+  .textButton {
+    left: 60%;
+    padding: 16px 36px;
+  }
+  .buttonLink {
+    font-size: 18px;
+    height: 48px;
+    padding-inline: 28px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .container {
+    height: 620px;
+  }
+
+  .content {
+    padding: 0;
+    margin: 0 auto;
+    margin-top: 100px;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .description {
+    font-size: 0.9375rem;
+  }
+
+  .textButton {
+    left: 60%;
+    top: 92%;
+    padding: 14px 28px;
+  }
+
+  .textButtonText {
+    font-size: 15px;
+  }
+  .buttonLink {
+    font-size: 16px;
+    height: 44px;
+    padding-inline: 24px;
+  }
 }
