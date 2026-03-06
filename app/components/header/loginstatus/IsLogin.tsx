@@ -34,7 +34,6 @@ export default function IsLogin() {
           },
         });
         const data = await response.json();
-        console.log("data", data);
         setUserInfoState(data);
       };
       fetchUserInfo();
