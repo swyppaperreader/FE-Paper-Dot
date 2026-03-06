@@ -12,23 +12,12 @@ export default function IsLogin() {
   const setUserInfoState = useLoginStore((state) => state.setUserInfo);
 
   useEffect(() => {
-    // const fetchUserInfo = async () => {
-    //   const response = await fetch("https://be-paper-dot.store/auth/token", {
-    //     method: "POST",
-    //     credentials: "include",
-    //   });
-    //   const data = await response.json();
-    //   setIsLogin(data);
-    //   setAccessToken(data.accessToken as string);
-    // };
-    // fetchUserInfo();
     const fetchUserInfo = async () => {
-      const response = await fetch("/api/auth/token", {
+      const response = await fetch("https://be-paper-dot.store/auth/token", {
         method: "POST",
         credentials: "include",
       });
       const data = await response.json();
-      console.log("data", data);
       setIsLogin(data);
       setAccessToken(data.accessToken as string);
     };
