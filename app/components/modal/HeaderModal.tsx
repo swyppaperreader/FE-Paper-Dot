@@ -8,6 +8,7 @@ import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import { useAccessTokenStore, useLoginStore } from "@/app/store/useLogin";
 import { logout } from "@/app/services/logout";
+import { useClickOutSide } from "@/app/hooks/useClickOutSide";
 
 export default function HeaderModal({
   isReadHeader,
@@ -38,24 +39,7 @@ export default function HeaderModal({
   }, [pathname]);
 
   // 바깥 클릭 감지
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        modalRef.current &&
-        !modalRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isOpen]);
+  useClickOutSide(modalRef as React.RefObject<HTMLElement>, setIsOpen);
 
   const handleLogoutClick = async () => {
     try {

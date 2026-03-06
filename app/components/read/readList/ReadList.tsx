@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import ReadHeader from "../../header/ReadHeader";
 import styles from "./readList.module.css";
+import { useClickOutSide } from "@/app/hooks/useClickOutSide";
 interface TranslationPair {
   docUnitId: number;
   sourceText: string;
@@ -119,20 +120,10 @@ export default function ReadList() {
   }, []);
 
   // 모달 외부 클릭 시 닫기
-  useEffect(() => {
-    if (!selectionModal) return;
-    const onPointerDown = (e: PointerEvent) => {
-      const target = e.target as Node;
-      if (
-        selectionModalRef.current &&
-        !selectionModalRef.current.contains(target)
-      ) {
-        closeSelectionModal();
-      }
-    };
-    document.addEventListener("pointerdown", onPointerDown);
-    return () => document.removeEventListener("pointerdown", onPointerDown);
-  }, [selectionModal, closeSelectionModal]);
+  useClickOutSide(
+    selectionModalRef as React.RefObject<HTMLElement>,
+    closeSelectionModal
+  );
 
   // ─── 스크롤 → 현재 페이지 감지 ───
   useEffect(() => {

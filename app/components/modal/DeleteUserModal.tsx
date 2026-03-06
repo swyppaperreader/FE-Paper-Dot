@@ -44,8 +44,15 @@ export default function DeleteUserModal({
         userInfo?.email?.includes("gmail.com") ? "google" : "kakao",
         accessToken
       );
-      console.log("response", response);
-    } catch {}
+      if (response.ok) {
+        setShowDeleteModal(false);
+        window.location.href = "/";
+      } else {
+        toast.error("회원 탈퇴에 실패했습니다.");
+      }
+    } catch (error) {
+      toast.error((error as Error).message);
+    }
   };
 
   return (
