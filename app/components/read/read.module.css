@@ -115,7 +115,6 @@
   text-align: center;
   cursor: text;
   transition: border-color 0.2s ease;
-  font-family: Roboto, sans-serif;
 }
 
 .pageIndicatorInput:hover {
@@ -150,7 +149,7 @@
   text-align: center;
   cursor: text;
   transition: border-color 0.2s ease;
-  font-family: Roboto, sans-serif;
+
   line-height: 1;
 }
 
@@ -188,7 +187,7 @@
   max-width: 300px;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-family: Roboto, sans-serif;
+
   letter-spacing: 0;
   line-height: 1.4;
 }
@@ -494,7 +493,7 @@
   white-space: normal;
   word-break: break-word;
   word-wrap: break-word;
-  font-family: Roboto, sans-serif;
+
   margin: 0;
   padding: 0;
 }
@@ -512,7 +511,7 @@
   font-size: 16px;
   line-height: 1.8;
   color: #333;
-  font-family: Roboto, sans-serif;
+
   margin-bottom: 16px;
   font-weight: 500;
   padding: 0;
@@ -522,7 +521,7 @@
   font-size: 16px;
   line-height: 1.8;
   color: #666;
-  font-family: Roboto, sans-serif;
+
   font-weight: 400;
   padding-left: 0;
   border-left: none;
@@ -649,7 +648,6 @@
   border-radius: 8px;
   cursor: pointer;
   transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
-  font-family: "Roboto", sans-serif;
 }
 
 .logoutModalCancelBtn:hover {
@@ -668,7 +666,6 @@
   border-radius: 8px;
   cursor: pointer;
   transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
-  font-family: "Roboto", sans-serif;
 }
 
 .logoutModalConfirmBtn:hover {

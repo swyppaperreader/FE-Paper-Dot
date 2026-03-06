@@ -13,7 +13,6 @@
 /* 모든 텍스트 공통 스타일 (상속) */
 .contentSection,
 .contentSection * {
-  font-family: "Roboto", sans-serif;
   font-weight: 400;
   font-size: 13px;
   line-height: 1.5;
