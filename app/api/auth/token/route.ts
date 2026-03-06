@@ -5,13 +5,12 @@ const BACKEND_URL = "https://be-paper-dot.store";
 
 export async function POST() {
   try {
-    const cookieStore = await cookies();
+    const cookieStore = cookies();
     const cookieHeader = cookieStore.toString();
 
     const response = await fetch(`${BACKEND_URL}/auth/token`, {
       method: "POST",
       headers: { cookie: cookieHeader },
-      credentials: "include",
     });
 
     const contentType = response.headers.get("content-type");
