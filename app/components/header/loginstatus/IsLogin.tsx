@@ -25,6 +25,7 @@ export default function IsLogin() {
     const fetchUserInfo = async () => {
       const response = await fetch("/api/auth/token", {
         method: "POST",
+        credentials: "include",
       });
       const data = await response.json();
       console.log("data", data);
