@@ -197,6 +197,10 @@
   transition: background-color 300ms;
 }
 
+.documentsTable {
+  width: 100%;
+}
+
 .tableHeader {
   align-items: center;
   border-bottom: 1px solid #e1e1e1;
