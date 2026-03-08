@@ -196,3 +196,99 @@
   cursor: pointer;
   transition: background-color 300ms;
 }
+
+.tableHeader {
+  align-items: center;
+  border-bottom: 1px solid #e1e1e1;
+}
+
+.tableHeaderCell {
+  color: #737a82;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 150%;
+  letter-spacing: -0.28px;
+  text-align: center;
+  padding-bottom: 8px;
+}
+
+.tableLastHeaderCell {
+  color: #737a82;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 150%;
+  letter-spacing: -0.28px;
+  text-align: left;
+  padding-bottom: 8px;
+}
+
+.tableBodyContainer {
+  width: 100%;
+}
+
+.tableRow {
+  display: table-row;
+  width: 100%;
+  border-bottom: 1px solid #dee3eb;
+}
+
+.tableCell {
+  color: #474952;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 150%;
+  letter-spacing: -0.32px;
+  padding: 20px 0;
+  vertical-align: middle;
+}
+
+.tableCellInfo {
+  text-align: left;
+  padding: 20px 0;
+  vertical-align: middle;
+}
+
+.tableCellInfoText {
+  color: #474952;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 150%;
+  letter-spacing: -0.28px;
+  text-align: left;
+}
+
+.tableCell:first-child {
+  padding-left: 32px;
+  padding-right: 16px;
+}
+
+.tableCellText {
+  color: #474952;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 150%;
+  letter-spacing: -0.32px;
+  width: 80%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tableCellContent {
+  align-items: center;
+}
+
+.tableCellIcon {
+  text-align: right;
+  padding: 20px 0;
+  vertical-align: middle;
+  padding-right: 25px;
+}
+
+.tableCellIconImage {
+  cursor: pointer;
+}
+
+.tableCellIconImage:hover {
+  opacity: 0.5;
+}
