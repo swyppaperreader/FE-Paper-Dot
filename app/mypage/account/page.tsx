@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import styles from "@/app/components/mypage/ui/MyPage.module.css";
+import styles from "@/app/mypage/account/account.module.css";
 import Button from "@/app/components/button/Button";
 import Image from "next/image";
 import { useAccessTokenStore, useLoginStore } from "@/app/store/useLogin";
