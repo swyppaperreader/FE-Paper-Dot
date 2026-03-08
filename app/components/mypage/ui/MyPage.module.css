@@ -192,59 +192,6 @@
 }
 
 /* ==================== 페이지네이션 ==================== */
-.tableContainer {
-  position: relative;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-  margin-top: 24px;
-  padding: 16px 0;
-}
-
-.paginationPages {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.pageButton {
-  border: none;
-  background: none;
-  cursor: pointer;
-}
-
-.pageBtn {
-  font-size: 16px;
-  color: #6b7280;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border: none;
-  background: none;
-}
-
-.pageBtn:hover:not(.pageBtnDisabled) {
-  border-color: #4787ff;
-  color: #4787ff;
-  background: #f0f4fd;
-}
-
-.pageBtnActive {
-  color: #4787ff;
-}
-
-.pageBtnDisabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
 
 .logoutModal {
   position: fixed;
