@@ -124,19 +124,11 @@
   flex: 1;
 }
 
-/* ==================== 문서 테이블 래퍼 (페이지네이션 고정) ==================== */
 .documentTableWrapper {
   display: flex;
   flex-direction: column;
   flex: 1;
-  min-height: 0;
   margin-top: 20px;
-}
-
-.tableScrollArea {
-  flex: 1;
-  min-height: 0;
-  overflow: auto;
 }
 
 .emptyStatePrompt {
