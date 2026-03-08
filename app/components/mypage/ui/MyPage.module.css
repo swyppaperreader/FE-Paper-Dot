@@ -246,7 +246,6 @@
   cursor: not-allowed;
 }
 
-/* ==================== 로그아웃 모달 ==================== */
 .logoutModal {
   position: fixed;
   top: 0;
