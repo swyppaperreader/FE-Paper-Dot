@@ -102,15 +102,12 @@
   }
 }
 
-.headerModalLogoutButtonContainer {
-  border-top: 1px solid #dee3eb;
-}
-
 .headerModalLogoutButton {
   width: 100%;
   display: flex;
   padding: 16px;
   color: #8f959d;
+  border-top: 1px solid #dee3eb;
   font-size: 14px;
   font-weight: 400;
   line-height: 150%;
