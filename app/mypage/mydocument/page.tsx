@@ -2,7 +2,7 @@
 
 import { DocumentListItem, getDocumentList } from "@/app/api/document";
 import Button from "@/app/components/button/Button";
-import styles from "@/app/components/mypage/ui/MyPage.module.css";
+import styles from "@/app/mypage/mydocument/document.module.css";
 import { useLoginStore } from "@/app/store/useLogin";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -53,7 +53,7 @@ export default function MyDocument() {
   const recentDocument = documents[0];
 
   return (
-    <main className={styles.section}>
+    <main className={styles.container}>
       {documents.length === 0 ? (
         <section className={styles.emptyStateSection}>
           <div className={styles.emptyStatePrompt}>
