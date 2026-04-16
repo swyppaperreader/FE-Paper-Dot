@@ -1,17 +1,34 @@
 "use client";
 
-import React from "react";
 import Image from "next/image";
 import styles from "./login.module.css";
 import Link from "next/link";
+import { createClient } from "../lib/client";
 
 export default function LoginPage() {
+  const supabase = createClient();
+
+  const redirectTo =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/auth/callback`
+      : undefined;
+
   const handleKakaoLogin = () => {
-    window.location.href = `https://be-paper-dot.store/oauth2/authorization/kakao`;
+    supabase.auth.signInWithOAuth({
+      provider: "kakao",
+      options: {
+        redirectTo,
+      },
+    });
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = `https://be-paper-dot.store/oauth2/authorization/google`;
+    supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo,
+      },
+    });
   };
 
   return (

@@ -16,11 +16,13 @@ interface LoginState {
     nickname: string;
     email?: string;
   }) => void;
+  clearUserInfo: () => void;
 }
 
 export const useLoginStore = create<LoginState>((set) => ({
   login: false,
   userInfo: null,
+  clearUserInfo: () => set({ userInfo: null, login: false }),
   setUserInfo: (userInfo: {
     userId?: string;
     profileImageUrl: string;

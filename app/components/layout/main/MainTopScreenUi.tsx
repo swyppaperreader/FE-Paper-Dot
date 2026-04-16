@@ -2,12 +2,9 @@
 
 import Image from "next/image";
 import styles from "./mainTopScreen.module.css";
-import Link from "next/link";
-import { useLoginStore } from "@/app/store/useLogin";
+import StartButton from "../../button/StartButton";
 
 export default function MainTopScreenUi() {
-  const userInfo = useLoginStore((state) => state.userInfo);
-
   return (
     <section className={styles.container}>
       <div className={styles.content}>
@@ -18,11 +15,7 @@ export default function MainTopScreenUi() {
           논문, 전공서적, 리포트, 매뉴얼.. 등 다양한 문서를 문장단위 번역으로
           끊김 없이 읽어보세요.
         </p>
-        <Link
-          href={userInfo?.userId ? "/newdocument" : "/login"}
-          className={styles.buttonLink}>
-          지금 시작하기
-        </Link>
+        <StartButton className={styles.buttonLink} />
         <div className={styles.textButton}>
           <Image
             src="/text.png"
