@@ -1,106 +1,62 @@
 "use client";
 
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import HeaderModal from "../../modal/HeaderModal";
-import Link from "next/link";
-import styles from "../../modal/headerModal.module.css";
 import { useAccessTokenStore, useLoginStore } from "@/app/store/useLogin";
-
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://be-paper-dot.store";
 
 export default function IsLogin() {
   const setAccessToken = useAccessTokenStore((state) => state.setAccessToken);
   const setUserInfoState = useLoginStore((state) => state.setUserInfo);
   const setLogin = useLoginStore((state) => state.setLogin);
-  const isLogin = useLoginStore((state) => state.login);
 
   useEffect(() => {
-    const syncSessionFromBackend = async () => {
+    const syncSupabaseUser = async () => {
       try {
-        const tokenRes = await fetch(`${API_BASE_URL}/auth/token`, {
-          method: "POST",
+        const userRes = await fetch("/api/auth/user", {
+          method: "GET",
           credentials: "include",
         });
-        if (!tokenRes.ok) {
-          return;
-        }
-        const tokenData = (await tokenRes.json()) as { accessToken?: string };
-        if (!tokenData?.accessToken) {
-          return;
-        }
-
-        const userRes = await fetch(`${API_BASE_URL}/users/me`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${tokenData.accessToken}`,
-          },
-        });
-        if (!userRes.ok) {
-          return;
-        }
-
-        const userData = (await userRes.json()) as {
-          email?: string;
-          nickname?: string;
-          profileImageUrl?: string;
+        const data = (await userRes.json()) as {
+          user?: {
+            email?: string;
+            id?: string;
+            user_metadata?: {
+              name?: string;
+              avatar_url?: string;
+              profileImageUrl?: string;
+            };
+          } | null;
         };
 
-        setAccessToken(tokenData.accessToken);
+        if (!userRes.ok || !data.user) {
+          setLogin(false);
+          setAccessToken(null);
+          setUserInfoState({
+            userId: "",
+            profileImageUrl: "",
+            nickname: "",
+            email: "",
+          });
+          return;
+        }
+
+        const metadata = data.user.user_metadata ?? {};
         setUserInfoState({
-          profileImageUrl: userData.profileImageUrl ?? "",
-          nickname: userData.nickname ?? "",
-          email: userData.email ?? "",
+          profileImageUrl:
+            metadata.profileImageUrl ?? metadata.avatar_url ?? "",
+          nickname: metadata.name ?? "",
+          email: data.user.email ?? "",
+          userId: data.user.id ?? "",
         });
+        setAccessToken(null);
         setLogin(true);
       } catch (error) {
-        console.error("세션 동기화 실패:", error);
+        console.error("Supabase 유저 동기화 실패:", error);
       }
     };
 
-    void syncSessionFromBackend();
+    syncSupabaseUser();
   }, [setAccessToken, setLogin, setUserInfoState]);
 
-  useEffect(() => {
-    if (!isLogin) {
-      setLogin(false);
-      setAccessToken(null);
-      setUserInfoState({
-        profileImageUrl: "",
-        nickname: "",
-        email: "",
-      });
-      return;
-    }
-
-    setLogin(true);
-    setAccessToken(null);
-    setUserInfoState({
-      profileImageUrl: "",
-      nickname: "",
-      email: "",
-    });
-  }, [setAccessToken, setLogin, setUserInfoState, isLogin]);
-
-  return (
-    <>
-      {isLogin ? (
-        <HeaderModal
-          onLogout={() => {
-            setLogin(false);
-            setAccessToken(null);
-            setUserInfoState({
-              profileImageUrl: "",
-              nickname: "",
-              email: "",
-            });
-          }}
-        />
-      ) : (
-        <Link href="/login" className={styles.loginLink}>
-          로그인/회원가입
-        </Link>
-      )}
-    </>
-  );
+  return <HeaderModal />;
 }

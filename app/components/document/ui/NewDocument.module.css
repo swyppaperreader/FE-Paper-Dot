@@ -3,6 +3,7 @@
   min-height: calc(100vh - 60px);
   display: flex;
   flex-direction: column;
+  background-color: #ffffff;
 }
 
 .main {
@@ -594,51 +595,5 @@
 
   .progressPercent {
     font-size: 12px;
-  }
-}
-
-/* ==================== DARK MODE SUPPORT ==================== */
-@media (prefers-color-scheme: dark) {
-  .container {
-    background-color: var(--color-background, #1f2121);
-  }
-
-  .uploadArea {
-    background-color: var(--color-secondary, rgba(119, 124, 124, 0.15));
-    border-color: var(--color-border, rgba(119, 124, 124, 0.3));
-  }
-
-  .uploadArea:hover {
-    background-color: var(--color-secondary, rgba(119, 124, 124, 0.25));
-  }
-
-  .uploadAreaDragging {
-    background-color: rgba(50, 184, 198, 0.15);
-  }
-
-  /* ⭐ 다크모드: 업로드 아이콘 원형 배경 */
-  .uploadIconWrapper {
-    background-color: rgba(119, 124, 124, 0.3);
-  }
-
-  .uploadArea:hover .uploadIconWrapper {
-    background-color: rgba(119, 124, 124, 0.4);
-  }
-
-  .uploadAreaDragging .uploadIconWrapper {
-    background-color: rgba(50, 184, 198, 0.25);
-  }
-
-  .uploadingItem {
-    background-color: var(--color-surface, #262828);
-    border-color: var(--color-card-border, rgba(119, 124, 124, 0.2));
-  }
-
-  .fileIcon {
-    background-color: var(--color-secondary, rgba(119, 124, 124, 0.15));
-  }
-
-  .progressBarContainer {
-    background-color: var(--color-secondary, rgba(119, 124, 124, 0.15));
   }
 }

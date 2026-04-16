@@ -2,6 +2,7 @@
 
 import { DocumentListItem, getDocumentList } from "@/app/api/document";
 import Button from "@/app/components/button/Button";
+import StartButton from "@/app/components/button/StartButton";
 import styles from "@/app/mypage/mydocument/document.module.css";
 import { useLoginStore } from "@/app/store/useLogin";
 import Image from "next/image";
@@ -30,7 +31,6 @@ export default function MyDocument() {
   useEffect(() => {
     const fetchDocuments = async () => {
       const response = await getDocumentList(userData?.userId as string);
-      console.log("response", response);
       const newDocs = response.map((doc: DocumentListItem) => ({
         documentId: doc.documentId,
         title: doc.title,
@@ -45,10 +45,6 @@ export default function MyDocument() {
     };
     fetchDocuments();
   }, [userData?.userId]);
-
-  const handleStartNewDocument = () => {
-    router.push("/newdocument");
-  };
 
   const recentDocument = documents[0];
 
@@ -66,9 +62,7 @@ export default function MyDocument() {
                 <br />
                 텍스트 또는 파일을 번역하고 관리해보세요
               </p>
-              <button className={styles.emptyStatePromptButton}>
-                지금 시작하기
-              </button>
+              <StartButton className={styles.emptyStatePromptButton} />
             </div>
           </div>
 

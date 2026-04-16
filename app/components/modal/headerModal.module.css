@@ -108,10 +108,12 @@
   padding: 16px;
   color: #8f959d;
   border-top: 1px solid #dee3eb;
+  border-bottom: none;
+  border-left: none;
+  border-right: none;
   font-size: 14px;
   font-weight: 400;
   line-height: 150%;
-  border: none;
   background-color: transparent;
   letter-spacing: -0.28px;
   cursor: pointer;
@@ -143,4 +145,25 @@
   &:hover {
     opacity: 0.5;
   }
+}
+
+.loginButton {
+  border: 1px solid #dee3eb;
+  padding: 11.5px 16px;
+  border-radius: 8px;
+  background-color: transparent;
+  cursor: pointer;
+  transition: all 300ms;
+  &:hover {
+    opacity: 0.5;
+  }
+}
+
+.loginButtonText {
+  color: #21232a;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 150%;
+  letter-spacing: -0.28px;
+  cursor: pointer;
 }
