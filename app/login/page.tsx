@@ -8,12 +8,9 @@ import { createClient } from "../lib/client";
 export default function LoginPage() {
   const supabase = createClient();
 
-  const redirectTo =
-    typeof window !== "undefined"
-      ? `${window.location.origin}/auth/callback`
-      : undefined;
-
   const handleKakaoLogin = () => {
+    const redirectTo = `${window.location.origin}/auth/callback`;
+
     supabase.auth.signInWithOAuth({
       provider: "kakao",
       options: {
@@ -23,6 +20,9 @@ export default function LoginPage() {
   };
 
   const handleGoogleLogin = () => {
+    const redirectTo = `${window.location.origin}/auth/callback`;
+    const supabase = createClient();
+
     supabase.auth.signInWithOAuth({
       provider: "google",
       options: {

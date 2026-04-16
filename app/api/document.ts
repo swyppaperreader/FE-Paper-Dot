@@ -6,9 +6,6 @@
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "https://be-paper-dot.store";
 
-/**
- * API 에러 타입
- */
 export class ApiError extends Error {
   constructor(
     message: string,
