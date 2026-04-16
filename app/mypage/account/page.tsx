@@ -6,7 +6,7 @@ import Button from "@/app/components/button/Button";
 import Image from "next/image";
 import { useAccessTokenStore, useLoginStore } from "@/app/store/useLogin";
 import { logout } from "@/app/services/logout";
-import { useHttps } from "@/app/utils/useHttps";
+import { useHttps as toHttps } from "@/app/utils/useHttps";
 import DeleteUserModal from "@/app/components/modal/DeleteUserModal";
 
 export default function MyAccount() {
@@ -15,6 +15,9 @@ export default function MyAccount() {
   const setUserInfoState = useLoginStore((state) => state.setUserInfo);
   const accessToken = useAccessTokenStore((state) => state.accessToken);
   const setAccessToken = useAccessTokenStore((state) => state.setAccessToken);
+  const profileImageSrc = userInfo?.profileImageUrl
+    ? toHttps(userInfo.profileImageUrl)
+    : "/userImage.svg";
 
   const handleLogoutClick = async () => {
     try {
@@ -44,7 +47,7 @@ export default function MyAccount() {
           <div className={styles.accountProfileImageSmallContainer}>
             {userInfo?.profileImageUrl?.includes("http") ? (
               <Image
-                src={useHttps(userInfo.profileImageUrl)}
+                src={profileImageSrc}
                 alt="profile"
                 width={80}
                 height={80}

@@ -1,60 +1,94 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import HeaderModal from "../../modal/HeaderModal";
 import Link from "next/link";
 import styles from "../../modal/headerModal.module.css";
 import { useAccessTokenStore, useLoginStore } from "@/app/store/useLogin";
 
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://be-paper-dot.store";
+
 export default function IsLogin() {
-  const [isLogin, setIsLogin] = useState<{ accessToken: string } | null>(null);
   const setAccessToken = useAccessTokenStore((state) => state.setAccessToken);
   const setUserInfoState = useLoginStore((state) => state.setUserInfo);
+  const setLogin = useLoginStore((state) => state.setLogin);
+  const isLogin = useLoginStore((state) => state.login);
 
   useEffect(() => {
-    const fetchUserInfo = async () => {
-      const response = await fetch("https://be-paper-dot.store/auth/token", {
-        method: "POST",
-        credentials: "include",
-      });
-      const data = await response.json();
-      setIsLogin(data);
-      setAccessToken(data.accessToken as string);
-    };
-    fetchUserInfo();
-  }, [setAccessToken]);
+    const syncSessionFromBackend = async () => {
+      try {
+        const tokenRes = await fetch(`${API_BASE_URL}/auth/token`, {
+          method: "POST",
+          credentials: "include",
+        });
+        if (!tokenRes.ok) {
+          return;
+        }
+        const tokenData = (await tokenRes.json()) as { accessToken?: string };
+        if (!tokenData?.accessToken) {
+          return;
+        }
 
-  useEffect(() => {
-    if (isLogin?.accessToken) {
-      const fetchUserInfo = async () => {
-        const response = await fetch("https://be-paper-dot.store/users/me", {
+        const userRes = await fetch(`${API_BASE_URL}/users/me`, {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${isLogin?.accessToken as string}`,
+            Authorization: `Bearer ${tokenData.accessToken}`,
           },
         });
-        const data = await response.json();
-        setUserInfoState(data);
-      };
-      fetchUserInfo();
-    } else {
-      // accessToken이 없으면 userInfo도 초기화하여 로그인 전 상태로 복귀
+        if (!userRes.ok) {
+          return;
+        }
+
+        const userData = (await userRes.json()) as {
+          email?: string;
+          nickname?: string;
+          profileImageUrl?: string;
+        };
+
+        setAccessToken(tokenData.accessToken);
+        setUserInfoState({
+          profileImageUrl: userData.profileImageUrl ?? "",
+          nickname: userData.nickname ?? "",
+          email: userData.email ?? "",
+        });
+        setLogin(true);
+      } catch (error) {
+        console.error("세션 동기화 실패:", error);
+      }
+    };
+
+    void syncSessionFromBackend();
+  }, [setAccessToken, setLogin, setUserInfoState]);
+
+  useEffect(() => {
+    if (!isLogin) {
+      setLogin(false);
+      setAccessToken(null);
       setUserInfoState({
         profileImageUrl: "",
         nickname: "",
         email: "",
       });
-      setAccessToken(null);
+      return;
     }
-  }, [isLogin?.accessToken, setUserInfoState, setAccessToken]);
+
+    setLogin(true);
+    setAccessToken(null);
+    setUserInfoState({
+      profileImageUrl: "",
+      nickname: "",
+      email: "",
+    });
+  }, [setAccessToken, setLogin, setUserInfoState, isLogin]);
 
   return (
     <>
-      {isLogin?.accessToken ? (
+      {isLogin ? (
         <HeaderModal
-          accessToken={isLogin?.accessToken}
           onLogout={() => {
-            setIsLogin(null);
+            setLogin(false);
+            setAccessToken(null);
             setUserInfoState({
               profileImageUrl: "",
               nickname: "",
