@@ -21,6 +21,7 @@ export default function LoginPage() {
 
   const handleGoogleLogin = () => {
     const redirectTo = `${window.location.origin}/auth/callback`;
+    const supabase = createClient();
 
     supabase.auth.signInWithOAuth({
       provider: "google",
