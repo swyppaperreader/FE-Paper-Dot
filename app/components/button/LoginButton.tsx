@@ -1,3 +1,5 @@
+"use client";
+
 import { LOGIN_BUTTON_TEXT } from "@/app/consts/loginButton";
 import { login } from "@/app/lib/login";
 import Image from "next/image";
