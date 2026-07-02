@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import styles from "@/app/components/modal/headerModal.module.css";
 import Button from "@/app/components/common/button/Button";
 import Link from "next/link";
@@ -18,9 +18,9 @@ export default function HeaderModal({
   className?: string;
 }) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [openPath, setOpenPath] = useState<string | null>(null);
   const pathname = usePathname();
   const modalRef = useRef<HTMLDivElement>(null);
-  const prevPathnameRef = useRef<string>(pathname);
   const userInfo = useLoginStore((state) => state.userInfo);
   const clearUserInfo = useLoginStore((state) => state.clearUserInfo);
   const isLogin = useLoginStore((state) => state.login);
@@ -28,23 +28,31 @@ export default function HeaderModal({
 
   const supabase = createClient();
 
-  // 경로 변경 시 모달 닫기
-  useEffect(() => {
-    if (prevPathnameRef.current !== pathname) {
-      prevPathnameRef.current = pathname;
-      setIsOpen(false);
+  const closeModal = () => {
+    setIsOpen(false);
+    setOpenPath(null);
+  };
+
+  const toggleModal = () => {
+    if (isOpen) {
+      closeModal();
+      return;
     }
-  }, [pathname]);
+    setOpenPath(pathname);
+    setIsOpen(true);
+  };
+
+  const isModalVisible = isOpen && openPath === pathname && isLogin;
 
   // 바깥 클릭 감지
-  useClickOutSide(modalRef as React.RefObject<HTMLElement>, setIsOpen);
+  useClickOutSide(modalRef as React.RefObject<HTMLElement>, closeModal);
 
   const handleLogoutClick = async () => {
     try {
       await supabase.auth.signOut();
 
       clearUserInfo();
-      setIsOpen(false);
+      closeModal();
     } catch (error) {
       console.error("Logout error:", error);
     }
@@ -73,7 +81,7 @@ export default function HeaderModal({
         )}
         <Button
           className={styles.userImageButton}
-          onClick={() => setIsOpen(!isOpen)}>
+          onClick={toggleModal}>
           {userInfo?.profileImageUrl && (
             <Image
               src={userInfo.profileImageUrl}
@@ -86,7 +94,7 @@ export default function HeaderModal({
           )}
         </Button>
       </div>
-      {isOpen && isLogin && (
+      {isModalVisible && (
         <div className={styles.headerModalWrapper}>
           <div className={styles.headerModal}>
             <p className={styles.headerModalName}>
@@ -100,13 +108,13 @@ export default function HeaderModal({
             <Link
               href="/mypage/mydocument"
               className={styles.headerMiddleTitle}
-              onClick={() => setIsOpen(false)}>
+              onClick={closeModal}>
               내 문서함
             </Link>
             <Link
               href="/mypage/account"
               className={styles.headerMiddleTitle}
-              onClick={() => setIsOpen(false)}>
+              onClick={closeModal}>
               내 계정
             </Link>
           </div>
