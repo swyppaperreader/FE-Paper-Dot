@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import styles from "./readHeader.module.css";
-import HeaderModal from "../modal/HeaderModal";
-import HeaderToggle from "./toggle/headerToggle";
-import Button from "../button/Button";
+import styles from "@/app/components/header/readHeader.module.css";
+import HeaderModal from "@/app/components/modal/HeaderModal";
+import HeaderToggle from "@/app/components/header/toggle/HeaderToggle";
+import Button from "@/app/components/common/button/Button";
 
 interface ReadHeaderProps {
   fileName: string;

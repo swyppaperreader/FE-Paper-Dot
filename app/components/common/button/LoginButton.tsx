@@ -1,6 +1,6 @@
 "use client";
 
-import { LOGIN_BUTTON_TEXT } from "@/app/consts/loginButton";
+import { LOGIN_BUTTON_TEXT } from "@/app/constants/loginButton";
 import { login } from "@/app/lib/login";
 import Image from "next/image";
 

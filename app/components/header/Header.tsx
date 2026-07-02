@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import styles from "./header.module.css";
+import styles from "@/app/components/header/header.module.css";
 import IsLogin from "@/app/components/header/loginstatus/IsLogin";
 
 export default function Header() {

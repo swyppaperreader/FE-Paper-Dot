@@ -249,6 +249,45 @@ export const getTranslation = async (
   return getTranslatedDocument(documentId, accessToken);
 };
 
+// 문서 목록 항목
+export interface DocumentListItem {
+  documentId: number;
+  title: string;
+  languageSrc: string;
+  languageTgt: string;
+  totalPages: number;
+  lastTranslatedAt: string;
+}
+
+export const getDocumentList = async (
+  ownerId: number | string
+): Promise<DocumentListItem[]> => {
+  try {
+    const response = await fetch(
+      `https://be-paper-dot.store/api/v1/documents/translation-histories?ownerId=${ownerId}`,
+      {
+        method: "GET",
+        credentials: "include",
+      }
+    );
+
+    const contentType = response.headers.get("content-type") || "";
+    if (contentType.includes("text/html")) {
+      throw new Error("인증이 필요합니다. 로그인해주세요.");
+    }
+
+    if (!response.ok) {
+      throw new Error("문서 목록을 가져오는데 실패했습니다.");
+    }
+
+    return response.json();
+  } catch (error) {
+    throw new Error(
+      (error as Error).message || "문서 목록을 가져오는데 실패했습니다."
+    );
+  }
+};
+
 // 문서 상세 정보 가져오기
 export interface DocumentDetail {
   documentId: number;

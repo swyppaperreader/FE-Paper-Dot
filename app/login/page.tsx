@@ -1,10 +1,8 @@
-"use client";
-
 import Image from "next/image";
-import styles from "./login.module.css";
 import Link from "next/link";
-import LoginButton from "../components/button/LoginButton";
-import { TERMS } from "../consts/term";
+import styles from "@/app/login/login.module.css";
+import LoginButton from "@/app/components/common/button/LoginButton";
+import { TERMS } from "@/app/constants/term";
 
 export default function LoginPage() {
   return (

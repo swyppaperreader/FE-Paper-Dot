@@ -43,6 +43,7 @@
   justify-content: center;
   gap: 12px;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .kakaoButton {
@@ -60,6 +61,7 @@
   justify-content: center;
   gap: 12px;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .termsContainer {

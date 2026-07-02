@@ -1,8 +1,6 @@
-"use client";
-
 import Image from "next/image";
-import styles from "./secondMainScreen.module.css";
-import StartButton from "../../button/StartButton";
+import styles from "@/app/components/home/secondMainScreen.module.css";
+import StartButton from "@/app/components/common/button/StartButton";
 
 export default function SecondMainScreen() {
   return (

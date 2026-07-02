@@ -1,6 +1,6 @@
-import styles from "./thirdMainScreen.module.css";
+import styles from "@/app/components/home/thirdMainScreen.module.css";
 import Image from "next/image";
-import { thirdMainScreenBlocks } from "@/app/consts/mainConsts";
+import { thirdMainScreenBlocks } from "@/app/constants/mainConsts";
 
 export default function ThirdMainScreen() {
   return (

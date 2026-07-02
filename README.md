@@ -7,7 +7,7 @@
 - 📤 **PDF 업로드**: 드래그 앤 드롭 또는 파일 선택으로 PDF 업로드
 - 🔍 **텍스트 추출**: PDF에서 텍스트를 자동으로 추출하고 문장 단위로 분리
 - 🌐 **AI 번역**: Google Gemini AI를 사용한 자연스러운 한글 번역
-- 📖 **다양한 읽기 모드**: 
+- 📖 **다양한 읽기 모드**:
   - 나란히 보기 (영어 + 한글)
   - 영어만 보기
   - 한글만 보기
@@ -80,11 +80,13 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 #### 3. PowerShell 스크립트 사용 (Windows)
 
 **터미널 1 (백엔드):**
+
 ```powershell
 .\start-backend.ps1
 ```
 
 **터미널 2 (프론트엔드):**
+
 ```powershell
 .\start-frontend.ps1
 ```
@@ -94,6 +96,7 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 #### 1. 환경 변수 설정
 
 Vercel 대시보드에서:
+
 1. 프로젝트 → Settings → Environment Variables
 2. `GEMINI_API_KEY` 추가 (Google AI Studio에서 발급)
 
@@ -127,6 +130,7 @@ vercel --prod
 ### 🔧 기술 스택
 
 **프론트엔드:**
+
 - React 19.2.0
 - Vite 7.3.0
 - React Router 7.11.0
@@ -134,6 +138,7 @@ vercel --prod
 - PDF.js 4.10.38
 
 **백엔드:**
+
 - Vercel Serverless Functions (Node.js)
 - Google Gemini AI (gemini-2.0-flash)
 - Python FastAPI (로컬 개발용)
@@ -143,26 +148,31 @@ vercel --prod
 ### 1. PDF.js Worker 파일 오류 ✅ 해결
 
 **문제:**
+
 - CDN에서 PDF.js worker 파일을 로드할 때 오류 발생
 - `Source file not found: pdf.worker.min.js` 에러
 
 **해결:**
+
 - `node_modules/pdfjs-dist`에서 worker 파일을 `public/` 폴더로 복사
 - `scripts/copy-pdf-worker.js` 스크립트 추가
 - `npm install` 시 자동 복사 (`postinstall` 스크립트)
 - CDN 의존성 제거, 로컬 파일 사용
 
 **파일:**
+
 - `scripts/copy-pdf-worker.js`
 - `package.json` (postinstall 스크립트)
 
 ### 2. Vercel 빌드 오류 ✅ 해결
 
 **문제:**
+
 - `vite: command not found` 에러
 - `Cannot find module 'tailwindcss'` 에러
 
 **해결:**
+
 - `package.json`에 모든 의존성 명시
 - `package-lock.json` 정리
 - 빌드 명령어에 `npm run copy-pdf-worker` 추가
@@ -170,66 +180,80 @@ vercel --prod
 ### 3. Vercel API 404 오류 ✅ 해결
 
 **문제:**
+
 - `/api/translate` 엔드포인트에서 404 Not Found
 - Vercel Serverless Functions 인식 실패
 
 **해결:**
+
 - `api/translate.js` 파일을 프로젝트 루트에 배치
 - `vercel.json` 설정 최적화
 - CORS 헤더 추가
 - OPTIONS 핸들러 추가
 
 **파일:**
+
 - `api/translate.js`
 - `vercel.json`
 
 ### 4. Gemini API 모델 오류 ✅ 해결
 
 **문제:**
+
 - `404 models/gemini-1.5-flash is not found for API version v1beta`
 - v1beta API에서 gemini-1.5-flash 모델을 찾을 수 없음
 
 **해결:**
+
 - 모델명을 `gemini-2.0-flash`로 변경
 - v1 API와 호환되는 최신 모델 사용
 
 **파일:**
+
 - `api/translate.js` (모델명 변경)
 
 ### 5. 로컬 개발 환경 404 오류 ✅ 해결
 
 **문제:**
+
 - 로컬에서 `/api/translate` 호출 시 404 오류
 - Vite 개발 서버에서 API 엔드포인트 접근 불가
 
 **해결:**
+
 - `vite.config.js`에 프록시 설정 추가
 - 로컬 개발 시 Python 백엔드 사용
 - 또는 `vercel dev`로 로컬 Serverless Functions 테스트
 
 **파일:**
+
 - `vite.config.js` (프록시 설정)
 
 ### 6. CORS 오류 ✅ 해결
 
 **문제:**
+
 - 브라우저에서 CORS 정책 위반 오류
 
 **해결:**
+
 - `api/translate.js`에 CORS 헤더 추가
 - `vercel.json`에 CORS 헤더 설정
 - OPTIONS 메서드 핸들러 추가
 
 **파일:**
+
 - `api/translate.js`
 - `vercel.json`
 
 ### 7. LF/CRLF 경고 ✅ 해결
 
 **문제:**
+
 - Git에서 `LF will be replaced by CRLF` 경고
 
 **해결:**
+
 - `git config core.autocrlf true` 설정 (Windows)
 - 또는 `.gitattributes` 파일로 통일
 
@@ -278,6 +302,7 @@ npm run lint
 PDF에서 추출한 문장들을 번역합니다.
 
 **요청:**
+
 ```json
 {
   "sentences": [
@@ -288,6 +313,7 @@ PDF에서 추출한 문장들을 번역합니다.
 ```
 
 **응답:**
+
 ```json
 {
   "status": "success",
@@ -343,4 +369,3 @@ MIT
 - [Google Gemini AI](https://ai.google.dev/) - 번역 AI
 - [PDF.js](https://mozilla.github.io/pdf.js/) - PDF 텍스트 추출
 - [Vercel](https://vercel.com/) - 배포 플랫폼
-     

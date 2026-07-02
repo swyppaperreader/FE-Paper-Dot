@@ -1,12 +1,12 @@
 "use client";
 
 import React from "react";
-import Footer from "../footer/Footer";
-import Header from "../header/Header";
-import Sidebar from "@/app/mypage/sidebar/page";
+import Footer from "@/app/components/footer/Footer";
+import Header from "@/app/components/header/Header";
+import Sidebar from "@/app/components/mypage/Sidebar";
 import { usePathname } from "next/navigation";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   const isMypage =

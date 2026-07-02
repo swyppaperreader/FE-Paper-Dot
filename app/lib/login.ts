@@ -1,4 +1,4 @@
-import { createClient } from "./client";
+import { createClient } from "@/app/lib/client";
 
 export const login = async ({ provider }: { provider: "kakao" | "google" }) => {
   const supabase = createClient();
