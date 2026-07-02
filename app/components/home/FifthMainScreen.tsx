@@ -1,10 +1,8 @@
-"use client";
-
-import { steps } from "@/app/consts/mainConsts";
-import styles from "./fifthMainScreen.module.css";
+import { steps } from "@/app/constants/mainConsts";
+import styles from "@/app/components/home/fifthMainScreen.module.css";
 import Image from "next/image";
 
-export default function HowToUse() {
+export default function FifthMainScreen() {
   return (
     <section className={styles.section}>
       <div className={styles.header}>

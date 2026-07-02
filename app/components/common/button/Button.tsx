@@ -1,4 +1,6 @@
-import styles from "./button.module.css";
+"use client";
+
+import styles from "@/app/components/common/button/button.module.css";
 
 export default function Button({
   children,

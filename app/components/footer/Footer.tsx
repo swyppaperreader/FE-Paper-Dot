@@ -1,7 +1,7 @@
 // Footer.tsx
 import Link from "next/link";
 import Image from "next/image";
-import styles from "./Footer.module.css";
+import styles from "@/app/components/footer/Footer.module.css";
 
 export default function Footer() {
   return (

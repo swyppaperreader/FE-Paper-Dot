@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
-import ReadHeader from "../../header/ReadHeader";
-import styles from "./readList.module.css";
+import ReadHeader from "@/app/components/header/ReadHeader";
+import styles from "@/app/components/read/readList/readList.module.css";
 import { useClickOutSide } from "@/app/hooks/useClickOutSide";
 interface TranslationPair {
   docUnitId: number;

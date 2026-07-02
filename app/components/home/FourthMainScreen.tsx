@@ -1,10 +1,8 @@
-"use client";
-
 import Image from "next/image";
-import styles from "./forthMainScreen.module.css";
-import { targetUsers } from "@/app/consts/mainConsts";
+import styles from "@/app/components/home/fourthMainScreen.module.css";
+import { targetUsers } from "@/app/constants/mainConsts";
 
-export default function CheckSection() {
+export default function FourthMainScreen() {
   return (
     <section className={styles.section}>
       <div className={styles.container}>
@@ -19,12 +17,10 @@ export default function CheckSection() {
         <div className={styles.cardsGrid}>
           {targetUsers.map((user) => (
             <div key={user.id} className={styles.cardWrapper}>
-              {/* 회색 정사각형 영역 */}
               <div className={styles.imageArea}>
                 <Image src={user.imageSrc} alt={user.title} fill priority />
               </div>
 
-              {/* 텍스트 영역 */}
               <div className={styles.contentArea}>
                 <h3 className={styles.cardTitle}>{user.title}</h3>
                 <ul className={styles.bulletList}>

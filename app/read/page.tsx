@@ -1,10 +1,10 @@
 import { Suspense } from "react";
-import Read from "@/app/components/read/Read";
+import ReadList from "@/app/components/read/readList/ReadList";
 
 export const dynamic = "force-dynamic";
 
 function ReadPageContent() {
-  return <Read />;
+  return <ReadList />;
 }
 
 export default function ReadPage() {

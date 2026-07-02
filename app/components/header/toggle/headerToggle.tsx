@@ -1,7 +1,7 @@
 "use client";
 
-import Button from "../../button/Button";
-import styles from "../readHeader.module.css";
+import Button from "@/app/components/common/button/Button";
+import styles from "@/app/components/header/readHeader.module.css";
 
 interface HeaderToggleProps {
   filterMode: "all" | "korean" | "english";

@@ -2,8 +2,8 @@
 
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import styles from "./NewDocument.module.css";
-import { formatFileSize } from "@/app/utils/useFormatFileSize";
+import styles from "@/app/components/document/NewDocument.module.css";
+import { formatFileSize } from "@/app/utils/formatFileSize";
 import {
   getTranslation,
   postDocuments,

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import HeaderModal from "../../modal/HeaderModal";
+import HeaderModal from "@/app/components/modal/HeaderModal";
 import { useAccessTokenStore, useLoginStore } from "@/app/store/useLogin";
 
 export default function IsLogin() {

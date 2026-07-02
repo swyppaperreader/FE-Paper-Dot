@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import "react-toastify/dist/ReactToastify.css";
-import "./globals.css";
+import "@/app/globals.css";
 import { Roboto } from "next/font/google";
-import Layout from "./components/layout/Layout";
+import AppShell from "@/app/components/layout/AppShell";
 
 const roboto = Roboto({
   weight: ["300", "400", "500", "700"],
@@ -57,7 +57,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className={`${roboto.variable} font-sans`}>
-        <Layout>{children}</Layout>
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );

@@ -1,8 +1,6 @@
-"use client";
-
 import Image from "next/image";
-import styles from "./mainTopScreen.module.css";
-import StartButton from "../../button/StartButton";
+import styles from "@/app/components/home/mainTopScreen.module.css";
+import StartButton from "@/app/components/common/button/StartButton";
 
 export default function MainTopScreenUi() {
   return (

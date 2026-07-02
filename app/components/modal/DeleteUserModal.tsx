@@ -1,10 +1,10 @@
 "use client";
 
 import styles from "@/app/components/modal/DeleteUserModal.module.css";
-import { DELETE_REASON_OPTIONS } from "@/app/consts/deleteConsts";
+import { DELETE_REASON_OPTIONS } from "@/app/constants/deleteConsts";
 import { ChevronDown } from "lucide-react";
 import { useRef, useState } from "react";
-import Button from "../button/Button";
+import Button from "@/app/components/common/button/Button";
 import { useClickOutSide } from "@/app/hooks/useClickOutSide";
 import { toast, ToastContainer } from "react-toastify";
 import { withdraw } from "@/app/services/withdraw";

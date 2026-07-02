@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import styles from "./headerModal.module.css";
-import Button from "../button/Button";
+import styles from "@/app/components/modal/headerModal.module.css";
+import Button from "@/app/components/common/button/Button";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
